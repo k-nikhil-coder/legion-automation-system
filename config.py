@@ -134,9 +134,13 @@ FEEDS: Dict[str, Dict[str, Any]] = {
 
 # Hyderabad Event Ecosystem Configurations
 COMMUDLE_HYDERABAD_URL = os.environ.get("COMMUDLE_HYDERABAD_URL", FEEDS["commudle_hyderabad"]["primary"])
+COMMUDLE_FALLBACK_URL = os.environ.get("COMMUDLE_FALLBACK_URL", FEEDS["commudle_hyderabad"]["fallback"])
 LUMA_HYDERABAD_URL = os.environ.get("LUMA_HYDERABAD_URL", FEEDS["luma_hyderabad"]["primary"])
 LUMA_INDIA_FEED = os.environ.get("LUMA_INDIA_FEED", FEEDS["luma_hyderabad"]["fallback"])
-MEETUP_HYDERABAD_URL = os.environ.get("MEETUP_HYDERABAD_URL", FEEDS["meetup_hyderabad"]["primary"])
+MEETUP_HYDERABAD_URL = os.environ.get(
+    "MEETUP_HYDERABAD_URL",
+    "https://www.meetup.com/find/?location=in--Hyderabad&radius=25&source=EVENTS&categoryFilter=technology"
+)
 UNSTOP_HACKATHONS_URL = os.environ.get("UNSTOP_HACKATHONS_URL", FEEDS["unstop_hackathons"]["primary"])
 DEVPOST_HYDERABAD_URL = os.environ.get("DEVPOST_HYDERABAD_URL", FEEDS["devpost_hyderabad"]["primary"])
 
@@ -148,8 +152,17 @@ HYDERABAD_COMMUNITIES = [
     "AI Community Hyderabad"
 ]
 
+COMMUDLE_COMMUNITY_SLUGS = [
+    ("GDG Hyderabad", "gdg-hyderabad"),
+    ("HydPy", "hydpy"),
+    ("React Hyderabad", "react-hyderabad"),
+    ("AWS User Group Hyderabad", "aws-hyderabad"),
+    ("AI Community Hyderabad", "ai-hyderabad")
+]
+
 HYDERABAD_VENUES = [
     "T-Hub",
+    "T-Hub Phase 2",
     "IIIT Hyderabad",
     "IIIT-H",
     "Hitec City",
@@ -164,6 +177,13 @@ HYDERABAD_VENUES = [
     "WeWork Nanakramguda",
     "EPAM",
     "People Tech",
-    "CBIT"
+    "CBIT",
+    "T-Works",
+    "HICC",
+    "HITEX",
+    "Mindspace",
+    "Knowledge City",
+    "Cyber Towers"
 ]
+
 

@@ -571,6 +571,12 @@ class TestCollectorsEdgeCases(unittest.TestCase):
         self.assertEqual(items[0]["url"], "https://remoteok.com/jobs/123")
         self.assertEqual(items[0]["category"], "job")
 
+    @patch("collectors.fetch_hyderabad_venue_events")
+    @patch("collectors.fetch_devpost_hyderabad_hackathons")
+    @patch("collectors.fetch_unstop_hackathons")
+    @patch("collectors.fetch_meetup_hyderabad_events")
+    @patch("collectors.fetch_luma_hyderabad_events")
+    @patch("collectors.fetch_commudle_events")
     @patch("collectors.fetch_tech_events")
     @patch("collectors.fetch_remoteok_jobs")
     @patch("collectors.fetch_weworkremotely_jobs")
@@ -578,7 +584,8 @@ class TestCollectorsEdgeCases(unittest.TestCase):
     @patch("collectors.fetch_hacker_news")
     @patch("collectors.fetch_devpost_hackathons")
     def test_collect_all_items_fault_tolerance(
-        self, mock_devpost, mock_hn, mock_reddit, mock_wwr, mock_remoteok, mock_events
+        self, mock_devpost, mock_hn, mock_reddit, mock_wwr, mock_remoteok, mock_events,
+        mock_commudle, mock_luma, mock_meetup, mock_unstop, mock_devpost_hyd, mock_venue
     ):
         # If one collector throws an uncaught error, others should continue without unmocked network calls
         mock_devpost.side_effect = RuntimeError("Devpost API broke")
@@ -587,6 +594,12 @@ class TestCollectorsEdgeCases(unittest.TestCase):
         mock_wwr.return_value = []
         mock_remoteok.return_value = []
         mock_events.return_value = []
+        mock_commudle.return_value = []
+        mock_luma.return_value = []
+        mock_meetup.return_value = []
+        mock_unstop.return_value = []
+        mock_devpost_hyd.return_value = []
+        mock_venue.return_value = []
         
         items = collectors.collect_all_items(limit_per_feed=2)
         # Verify that even with RuntimeError in Devpost, HN and Reddit returned items safely
@@ -842,7 +855,723 @@ class TestLegionFeedIntegration(unittest.TestCase):
         called_url = mock_web_open.call_args[0][0]
         self.assertTrue(called_url.startswith("file:///"))
 
+
+class TestHyderabadVenueDetection(unittest.TestCase):
+    def test_detect_thub_variants(self):
+        self.assertEqual(formatter.detect_hyderabad_venue("T-Hub Phase 2, Knowledge City"), "T-Hub Phase 2")
+        self.assertEqual(formatter.detect_hyderabad_venue("Event at THub 2.0"), "T-Hub Phase 2")
+        self.assertEqual(formatter.detect_hyderabad_venue("Networking at T-Hub"), "T-Hub")
+        self.assertEqual(formatter.detect_hyderabad_venue("Workshop at T-Hub Phase 2"), "T-Hub Phase 2")
+        self.assertEqual(formatter.detect_hyderabad_venue("Conference at T-Hub Phase II"), "T-Hub Phase 2")
+        self.assertEqual(formatter.detect_hyderabad_venue("Symposium at T-Hub, Phase 2"), "T-Hub Phase 2")
+        self.assertEqual(formatter.detect_hyderabad_venue("Hackathon at T-Hub-Phase-2"), "T-Hub Phase 2")
+
+    def test_detect_iiit_hyderabad_variants(self):
+        self.assertEqual(formatter.detect_hyderabad_venue("Hackathon at IIIT Hyderabad"), "IIIT Hyderabad")
+        self.assertEqual(formatter.detect_hyderabad_venue("CIE, IIIT-H Campus"), "IIIT Hyderabad")
+        self.assertEqual(formatter.detect_hyderabad_venue("Research talk at IIITH"), "IIIT Hyderabad")
+        self.assertEqual(formatter.detect_hyderabad_venue("Workshop at International Institute of Information Technology Hyderabad"), "IIIT Hyderabad")
+
+    def test_detect_wework_variants(self):
+        self.assertEqual(formatter.detect_hyderabad_venue("WeWork Krishe Emerald Kondapur"), "WeWork Kondapur")
+        self.assertEqual(formatter.detect_hyderabad_venue("WeWork Rajapushpa Summit Nanakramguda"), "WeWork Nanakramguda")
+        self.assertEqual(formatter.detect_hyderabad_venue("WeWork Hyderabad Coworking"), "WeWork")
+
+    def test_detect_tech_hubs_and_companies(self):
+        self.assertEqual(formatter.detect_hyderabad_venue("DevX, Hitec City"), "DevX")
+        self.assertEqual(formatter.detect_hyderabad_venue("Hardware prototyping at T-Works"), "T-Works")
+        self.assertEqual(formatter.detect_hyderabad_venue("Meetup at People Tech"), "People Tech")
+        self.assertEqual(formatter.detect_hyderabad_venue("Conference at EPAM Hyderabad"), "EPAM")
+        self.assertEqual(formatter.detect_hyderabad_venue("College hackathon at CBIT"), "CBIT")
+        self.assertEqual(formatter.detect_hyderabad_venue("Global DevFest at HICC"), "HICC")
+        self.assertEqual(formatter.detect_hyderabad_venue("Expo at HITEX Exhibition Centre"), "HITEX")
+        self.assertEqual(formatter.detect_hyderabad_venue("Tech talks at Mindspace Madhapur"), "Mindspace Madhapur")
+        self.assertEqual(formatter.detect_hyderabad_venue("Office at Salarpuria Sattva Knowledge City"), "Knowledge City")
+        self.assertEqual(formatter.detect_hyderabad_venue("Cyber Towers, Hitec City"), "Cyber Towers")
+
+    def test_detect_neighborhood_hubs(self):
+        self.assertEqual(formatter.detect_hyderabad_venue("Office in Gachibowli, Hyderabad"), "Gachibowli")
+        self.assertEqual(formatter.detect_hyderabad_venue("Cafe in Kondapur"), "Kondapur")
+        self.assertEqual(formatter.detect_hyderabad_venue("Coworking in Madhapur"), "Madhapur")
+        self.assertEqual(formatter.detect_hyderabad_venue("WaveRock, Nanakramguda"), "Nanakramguda")
+        self.assertEqual(formatter.detect_hyderabad_venue("Tower at Financial District"), "Financial District")
+        self.assertEqual(formatter.detect_hyderabad_venue("Banjara Hills Road 12"), "Banjara Hills")
+        self.assertEqual(formatter.detect_hyderabad_venue("Jubilee Hills Checkpost"), "Jubilee Hills")
+
+    def test_detect_venue_empty_and_unrelated(self):
+        self.assertIsNone(formatter.detect_hyderabad_venue(""))
+        self.assertIsNone(formatter.detect_hyderabad_venue(None))
+        self.assertIsNone(formatter.detect_hyderabad_venue("San Francisco, CA"))
+        self.assertIsNone(formatter.detect_hyderabad_venue("Whitefield, Bangalore"))
+
+
+class TestHyderabadLocationRouting(unittest.TestCase):
+    def test_is_hyderabad_offline(self):
+        # Hyderabad physical location
+        self.assertTrue(formatter.is_hyderabad_offline({
+            "title": "GDG Hyderabad Annual DevFest",
+            "location": "Hyderabad",
+            "summary": "Join in-person tech community gathering."
+        }))
+
+        # Venue without explicit 'Hyderabad' in location string
+        self.assertTrue(formatter.is_hyderabad_offline({
+            "title": "Startup Pitch Night",
+            "location": "T-Hub Phase 2, Gachibowli",
+            "summary": "Pitch your AI startup."
+        }))
+
+        # Explicit online event even with 'Hyderabad' in community name -> False
+        self.assertFalse(formatter.is_hyderabad_offline({
+            "title": "GDG Hyderabad Virtual Webinar",
+            "location": "Online (Zoom)",
+            "summary": "Join our virtual Zoom session from home."
+        }))
+
+        # Online event discussing venues in summary must NOT be marked offline
+        self.assertFalse(formatter.is_hyderabad_offline({
+            "title": "GDG Hyderabad Online Meet",
+            "location": "Online",
+            "summary": "Discussing venue selection for our upcoming annual developer conference."
+        }))
+        self.assertFalse(formatter.is_hyderabad_offline({
+            "title": "HydPy Virtual Python Concurrency",
+            "location": "Online (Google Meet)",
+            "summary": "Online webinar. Note: No offline venue for this edition."
+        }))
+
+        # Hybrid event with in-person venue -> True
+        self.assertTrue(formatter.is_hyderabad_offline({
+            "title": "GDG Hyderabad Hybrid DevFest",
+            "location": "Online & T-Hub Phase 2",
+            "summary": "Attend in person at T-Hub or watch the virtual livestream."
+        }))
+
+        # Non-Hyderabad offline event
+        self.assertFalse(formatter.is_hyderabad_offline({
+            "title": "Bangalore PyData Meetup",
+            "location": "Koramangala, Bangalore",
+            "summary": "In-person at Microsoft Reactor."
+        }))
+
+    def test_is_location_allowed(self):
+        # 1. Hyderabad offline -> allowed
+        self.assertTrue(formatter.is_location_allowed({
+            "title": "React Hyderabad Meetup",
+            "location": "DevX, Hitec City",
+            "summary": "In-person React workshop."
+        }))
+
+        # 2. Virtual / Online / Remote -> allowed
+        self.assertTrue(formatter.is_location_allowed({
+            "title": "Global AI Sprint",
+            "location": "Online",
+            "summary": "Worldwide virtual hackathon."
+        }))
+        self.assertTrue(formatter.is_location_allowed({
+            "title": "Remote Python Role",
+            "location": "Remote",
+            "summary": "Work from anywhere in India."
+        }))
+
+        # 3. Disallowed other offline cities -> discarded
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Bangalore DevOps Summit",
+            "location": "Bangalore",
+            "summary": "In-person conference at Chancery Pavilion."
+        }))
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Delhi Tech Mixer",
+            "location": "New Delhi, Connaught Place",
+            "summary": "Offline networking mixer."
+        }))
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Mumbai FinTech Workshop",
+            "location": "BKC, Mumbai",
+            "summary": "In-person workshop."
+        }))
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Pune Cloud Community",
+            "location": "Pune, Maharashtra",
+            "summary": "In-person meetup at Hinjawadi."
+        }))
+
+        # 4. Other city explicitly in title (e.g. "Bangalore React Conference", "Mumbai AI Hackathon") -> discarded
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Bangalore React Conference",
+            "location": "Convention Center",
+            "summary": "Two days of talks and networking."
+        }))
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Mumbai AI Hackathon",
+            "location": "IIT Bombay Campus",
+            "summary": "In-person student hackathon."
+        }))
+        self.assertFalse(formatter.is_location_allowed({
+            "title": "Pune Cloud Meetup",
+            "location": "Auditorium B",
+            "summary": "Cloud architecture talks."
+        }))
+
+        # 5. Other city event with explicit virtual/online stream -> allowed
+        self.assertTrue(formatter.is_location_allowed({
+            "title": "Bangalore React Conference (Virtual Livestream)",
+            "location": "Bangalore",
+            "summary": "Streamed live across India via YouTube livestream."
+        }))
+
+        # 6. National / Pan-India competition -> allowed
+        self.assertTrue(formatter.is_location_allowed({
+            "title": "Smart India Hackathon 2026",
+            "location": "Pan-India",
+            "summary": "Open to college teams across India with remote phases."
+        }))
+
+
+class TestHyderabadBadgesAndFormatting(unittest.TestCase):
+    def test_get_location_badge(self):
+        hyd_item = {
+            "title": "HydPy Monthly Meetup",
+            "location": "IIIT Hyderabad, Gachibowli",
+            "summary": "Python talks and networking."
+        }
+        self.assertEqual(formatter.get_location_badge(hyd_item), "[HYDERABAD - OFFLINE]")
+
+        online_item = {
+            "title": "Intro to PyTorch",
+            "location": "Online",
+            "summary": "Virtual webinar."
+        }
+        self.assertEqual(formatter.get_location_badge(online_item), "[ONLINE]")
+
+    def test_format_location_string(self):
+        # Hyderabad with venue
+        hyd_with_venue = {
+            "title": "AWS User Group Meetup",
+            "location": "T-Hub Phase 2, Gachibowli",
+            "summary": "Serverless architectures in-person."
+        }
+        self.assertEqual(
+            formatter.format_location_string(hyd_with_venue),
+            "[HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)"
+        )
+
+        # Hyderabad without specific venue
+        hyd_generic = {
+            "title": "Tech Walk-in",
+            "location": "Hyderabad",
+            "summary": "Walk-in interview."
+        }
+        self.assertEqual(
+            formatter.format_location_string(hyd_generic),
+            "[HYDERABAD - OFFLINE] Hyderabad"
+        )
+
+        # Virtual / Online
+        online_item = {
+            "title": "Global Hackathon",
+            "location": "Online",
+            "summary": "Virtual contest."
+        }
+        self.assertEqual(
+            formatter.format_location_string(online_item),
+            "[ONLINE] Online"
+        )
+
+    def test_get_location_tag(self):
+        hyd_item = {
+            "title": "HydPy Meetup",
+            "location": "T-Hub Phase 2, Gachibowli",
+            "summary": "Python meetup."
+        }
+        self.assertEqual(
+            formatter.get_location_tag(hyd_item),
+            "📍 Location: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)"
+        )
+
+        online_item = {
+            "title": "Webinar",
+            "location": "Online",
+            "summary": "Virtual event."
+        }
+        self.assertEqual(
+            formatter.get_location_tag(online_item),
+            "📍 Location: [ONLINE] Online"
+        )
+
+    def test_format_draft_hyderabad_offline(self):
+        item = {
+            "category": "event",
+            "title": "HydPy February Meetup",
+            "summary": "Deep dive into Python 3.13 and GIL-free concurrency.",
+            "date_str": "Feb 28, 2026",
+            "deadline": "Feb 27, 2026",
+            "location": "T-Hub Phase 2, Gachibowli",
+            "eligibility": "Python enthusiasts and software engineers",
+            "url": "https://www.commudle.com/events/hydpy-feb"
+        }
+        draft = formatter.format_draft(item)
+        self.assertIn("[HYDERABAD - OFFLINE]", draft)
+        self.assertIn("📍 Where: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)", draft)
+        self.assertTrue(draft.startswith("🗓️"))
+        self.assertIn("Feb 27, 2026", draft)
+        self.assertIn("https://www.commudle.com/events/hydpy-feb", draft)
+
+    def test_format_draft_virtual_event(self):
+        item = {
+            "category": "event",
+            "title": "Global Cloud Architecture Summit",
+            "summary": "Learn Kubernetes and microservices best practices.",
+            "date_str": "March 15, 2026",
+            "location": "Online",
+            "eligibility": "Cloud architects and DevOps engineers",
+            "url": "https://example.com/cloud-summit"
+        }
+        draft = formatter.format_draft(item)
+        self.assertIn("[ONLINE]", draft)
+        self.assertIn("📍 Where: [ONLINE] Online", draft)
+        self.assertTrue(draft.startswith("🗓️"))
+
+
+class TestHyderabadCollectors(unittest.TestCase):
+    @patch("collectors.fetch_data")
+    def test_fetch_commudle_events_json(self, mock_fetch):
+        mock_payload = {
+            "data": [
+                {
+                    "title": "GDG Hyderabad - Flutter Forward Extended",
+                    "slug": "gdg-flutter-forward",
+                    "description": "<p>Deep dive into Flutter mobile development at T-Hub Phase 2.</p>",
+                    "start_date": "2026-03-10",
+                    "venue": {"name": "T-Hub Phase 2", "city": "Hyderabad"},
+                    "community": {"name": "GDG Hyderabad"}
+                }
+            ]
+        }
+        mock_fetch.return_value = json.dumps(mock_payload).encode("utf-8")
+        items = collectors.fetch_commudle_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "GDG Hyderabad - Flutter Forward Extended")
+        self.assertEqual(items[0]["url"], "https://www.commudle.com/events/gdg-flutter-forward")
+        self.assertIn("T-Hub Phase 2", items[0]["location"])
+        self.assertEqual(items[0]["source"], "Commudle (GDG Hyderabad)")
+        self.assertEqual(items[0]["category"], "event")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_commudle_events_html_fallback(self, mock_fetch):
+        # 1st call (primary JSON API) returns None, 2nd call (fallback HTML) returns HTML
+        html_fallback = b"""<!DOCTYPE html>
+        <html><body>
+        <div class="event-card">
+            <a href="/events/hydpy-python-deep-dive">
+                <h3>HydPy Python Deep Dive</h3>
+            </a>
+        </div>
+        </body></html>"""
+        mock_fetch.side_effect = [None, html_fallback]
+        items = collectors.fetch_commudle_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "HydPy Python Deep Dive")
+        self.assertEqual(items[0]["url"], "https://www.commudle.com/events/hydpy-python-deep-dive")
+        self.assertEqual(items[0]["location"], "Hyderabad")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_luma_hyderabad_events_json(self, mock_fetch):
+        mock_payload = {
+            "events": [
+                {
+                    "name": "AI Engineers Hyderabad Meetup",
+                    "url_slug": "ai-engineers-hyd",
+                    "description": "Building LLM agents with LangChain.",
+                    "start_at": "2026-03-20",
+                    "geo_address_info": "IIIT Hyderabad, Gachibowli"
+                }
+            ]
+        }
+        mock_fetch.return_value = json.dumps(mock_payload).encode("utf-8")
+        items = collectors.fetch_luma_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "AI Engineers Hyderabad Meetup")
+        self.assertEqual(items[0]["url"], "https://lu.ma/ai-engineers-hyd")
+        self.assertIn("IIIT Hyderabad", items[0]["location"])
+        self.assertEqual(items[0]["source"], "Luma Hyderabad")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_luma_hyderabad_fallback_next_data(self, mock_fetch):
+        # Primary JSON returns empty, fallback HTML contains __NEXT_DATA__
+        next_json = {
+            "props": {
+                "pageProps": {
+                    "events": [
+                        {
+                            "name": "Founders & Builders Hyderabad",
+                            "url": "https://lu.ma/founders-hyd",
+                            "description": "Tech founders gathering in Hyderabad.",
+                            "location": "WeWork Kondapur, Hyderabad",
+                            "start_at": "2026-04-01"
+                        }
+                    ]
+                }
+            }
+        }
+        html_doc = f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(next_json)}</script></html>'.encode("utf-8")
+        mock_fetch.side_effect = [None, html_doc]
+        items = collectors.fetch_luma_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "Founders & Builders Hyderabad")
+        self.assertEqual(items[0]["url"], "https://lu.ma/founders-hyd")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_luma_hyderabad_events_json_ld_fallback(self, mock_fetch):
+        # Primary returns None, fallback HTML has JSON-LD
+        html_doc = b"""<html><head>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "GenAI Builders Meetup Hyderabad",
+            "url": "https://lu.ma/genai-hyd",
+            "description": "Hands-on generative AI session in Hyderabad",
+            "startDate": "2026-03-25",
+            "location": {"name": "T-Hub Phase 2, Hyderabad"}
+        }
+        </script>
+        </head><body></body></html>"""
+        mock_fetch.side_effect = [None, html_doc]
+        items = collectors.fetch_luma_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "GenAI Builders Meetup Hyderabad")
+        self.assertEqual(items[0]["url"], "https://lu.ma/genai-hyd")
+        self.assertIn("T-Hub Phase 2", items[0]["location"])
+
+    @patch("collectors.fetch_data")
+    def test_fetch_luma_hyderabad_events_html_anchor_fallback(self, mock_fetch):
+        # Primary returns None, fallback HTML has anchor tags
+        html_doc = b"""<html><body>
+        <div class="events">
+            <a href="/hyd-founders-dinner">
+                <h2>Hyderabad Founders Dinner</h2>
+            </a>
+        </div>
+        </body></html>"""
+        mock_fetch.side_effect = [None, html_doc]
+        items = collectors.fetch_luma_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "Hyderabad Founders Dinner")
+        self.assertEqual(items[0]["url"], "https://lu.ma/hyd-founders-dinner")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_meetup_hyderabad_events_json_ld(self, mock_fetch):
+        html_ld = b"""<!DOCTYPE html><html><head>
+        <script type="application/ld+json">
+        {
+            "@type": "Event",
+            "name": "React Hyderabad Meetup #45",
+            "url": "https://www.meetup.com/react-hyderabad/events/123456/",
+            "description": "React Server Components and Next.js 15",
+            "startDate": "2026-03-14T10:00:00+05:30",
+            "location": {"name": "DevX, Hitec City"}
+        }
+        </script>
+        </head><body></body></html>"""
+        mock_fetch.return_value = html_ld
+        items = collectors.fetch_meetup_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "React Hyderabad Meetup #45")
+        self.assertEqual(items[0]["url"], "https://www.meetup.com/react-hyderabad/events/123456/")
+        self.assertIn("DevX", items[0]["location"])
+
+    @patch("collectors.fetch_data")
+    def test_fetch_meetup_hyderabad_events_json_ld_graph(self, mock_fetch):
+        # Modern CMS / Schema.org @graph structure
+        html_ld_graph = b"""<!DOCTYPE html><html><head>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "name": "Meetup"
+                },
+                {
+                    "@type": "Event",
+                    "name": "Hyderabad Machine Learning Study Group",
+                    "url": "https://www.meetup.com/hyd-ml/events/555/",
+                    "description": "Discussion on LLM reasoning and agent benchmarks.",
+                    "startDate": "2026-04-10T10:00:00+05:30",
+                    "location": {"name": "IIIT Hyderabad, Gachibowli"}
+                }
+            ]
+        }
+        </script>
+        </head><body></body></html>"""
+        mock_fetch.return_value = html_ld_graph
+        items = collectors.fetch_meetup_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "Hyderabad Machine Learning Study Group")
+        self.assertEqual(items[0]["url"], "https://www.meetup.com/hyd-ml/events/555/")
+        self.assertIn("IIIT Hyderabad", items[0]["location"])
+
+    @patch("collectors.fetch_data")
+    def test_fetch_meetup_hyderabad_events_rss(self, mock_fetch):
+        rss_bytes = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <title>Meetup Hyderabad Tech</title>
+                <item>
+                    <title>Machine Learning Developers Hyderabad</title>
+                    <link>https://www.meetup.com/mld-hyd/events/999/</link>
+                    <description>Discussing transformer models and fine-tuning.</description>
+                    <pubDate>Sun, 15 Mar 2026 10:00:00 GMT</pubDate>
+                </item>
+            </channel>
+        </rss>"""
+        mock_fetch.return_value = rss_bytes
+        items = collectors.fetch_meetup_hyderabad_events(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "Machine Learning Developers Hyderabad")
+        self.assertEqual(items[0]["url"], "https://www.meetup.com/mld-hyd/events/999/")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_unstop_hackathons(self, mock_fetch):
+        mock_unstop_data = {
+            "data": {
+                "data": [
+                    {
+                        "title": "National GenAI Hackathon 2026",
+                        "public_url": "https://unstop.com/hackathons/national-genai-2026",
+                        "details": "Build intelligent generative agents.",
+                        "start_date": "2026-03-01",
+                        "end_reg_date": "2026-02-28",
+                        "region": "Hyderabad / Pan-India",
+                        "organisation": {"name": "IIT / IIIT Consortium"}
+                    }
+                ]
+            }
+        }
+        mock_fetch.return_value = json.dumps(mock_unstop_data).encode("utf-8")
+        items = collectors.fetch_unstop_hackathons(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "National GenAI Hackathon 2026")
+        self.assertEqual(items[0]["category"], "hackathon")
+        self.assertEqual(items[0]["source"], "Unstop Hackathons")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_devpost_hyderabad_hackathons(self, mock_fetch):
+        html_devpost = b"""<!DOCTYPE html><html><body>
+        <div class="hackathons-container">
+            <a class="clearfix" href="https://iiit-hack.devpost.com/">
+                <h5>IIIT Hyderabad Megathon 2026</h5>
+            </a>
+        </div>
+        </body></html>"""
+        mock_fetch.return_value = html_devpost
+        items = collectors.fetch_devpost_hyderabad_hackathons(limit=5)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["title"], "IIIT Hyderabad Megathon 2026")
+        self.assertEqual(items[0]["url"], "https://iiit-hack.devpost.com/")
+        self.assertEqual(items[0]["category"], "hackathon")
+
+    @patch("collectors.fetch_data")
+    def test_fetch_hyderabad_venue_events(self, mock_fetch):
+        t_hub_html = b"""<!DOCTYPE html><html><body>
+        <h2>AI Acceleration Workshop at T-Hub Phase 2</h2>
+        <h2>DeepTech Mentorship Session</h2>
+        </body></html>"""
+        mock_fetch.side_effect = [t_hub_html, None, None, None, None]
+        items = collectors.fetch_hyderabad_venue_events(limit=5)
+        self.assertTrue(len(items) >= 1)
+        self.assertEqual(items[0]["title"], "AI Acceleration Workshop at T-Hub Phase 2")
+        self.assertEqual(items[0]["source"], "T-Hub Monitor")
+        self.assertIn("T-Hub Phase 2", items[0]["location"])
+
+    @patch("collectors.fetch_data")
+    def test_fetch_hyderabad_venue_events_wework_nanakramguda(self, mock_fetch):
+        wework_html = b"""<!DOCTYPE html><html><body>
+        <h2>Product Founders Meetup at WeWork Rajapushpa Summit</h2>
+        </body></html>"""
+        mock_fetch.side_effect = [None, None, None, None, wework_html]
+        items = collectors.fetch_hyderabad_venue_events(limit=5)
+        self.assertTrue(len(items) >= 1)
+        self.assertEqual(items[0]["title"], "Product Founders Meetup at WeWork Rajapushpa Summit")
+        self.assertEqual(items[0]["source"], "WeWork Nanakramguda Monitor")
+        self.assertIn("WeWork Nanakramguda", items[0]["location"])
+
+    @patch("collectors.fetch_hyderabad_venue_events")
+    @patch("collectors.fetch_devpost_hyderabad_hackathons")
+    @patch("collectors.fetch_unstop_hackathons")
+    @patch("collectors.fetch_meetup_hyderabad_events")
+    @patch("collectors.fetch_luma_hyderabad_events")
+    @patch("collectors.fetch_commudle_events")
+    def test_collect_hyderabad_items_resilience(
+        self, mock_commudle, mock_luma, mock_meetup, mock_unstop, mock_devpost, mock_venue
+    ):
+        mock_commudle.side_effect = RuntimeError("Commudle API outage")
+        mock_luma.return_value = [{"source": "Luma Hyderabad", "category": "event", "title": "Luma Event", "url": "https://lu.ma/1"}]
+        mock_meetup.return_value = [{"source": "Meetup Hyderabad", "category": "event", "title": "Meetup Event", "url": "https://meetup.com/1"}]
+        mock_unstop.return_value = []
+        mock_devpost.return_value = []
+        mock_venue.return_value = []
+
+        items = collectors.collect_hyderabad_items(limit_per_feed=5)
+        # Even with RuntimeError on Commudle, Luma and Meetup items collected safely
+        self.assertEqual(len(items), 2)
+        sources = [it["source"] for it in items]
+        self.assertIn("Luma Hyderabad", sources)
+        self.assertIn("Meetup Hyderabad", sources)
+
+
+class TestHyderabadPipelineIntegration(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = os.path.join(self.temp_dir.name, "hyd_pipeline_test.db")
+        self.md_path = os.path.join(self.temp_dir.name, "HYD_PENDING.md")
+        self.html_path = os.path.join(self.temp_dir.name, "hyd_feed.html")
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    @patch("collectors.collect_all_items")
+    def test_pipeline_filters_disallowed_cities_and_badges_hyderabad(self, mock_collect):
+        mock_collect.return_value = [
+            # 1. Valid Hyderabad in-person event -> should be retained and badged
+            {
+                "source": "Commudle (GDG Hyderabad)",
+                "category": "event",
+                "title": "GDG Hyderabad DevFest",
+                "url": "https://commudle.com/events/gdg-devfest",
+                "summary": "Full day in-person developer festival at T-Hub Phase 2.",
+                "deadline": "2026-03-15",
+                "location": "T-Hub Phase 2, Gachibowli",
+                "eligibility": "Developers across Hyderabad"
+            },
+            # 2. Disallowed offline city (Bangalore) -> should be discarded
+            {
+                "source": "Bangalore Feed",
+                "category": "event",
+                "title": "Bangalore React In-Person",
+                "url": "https://example.com/bangalore-react",
+                "summary": "In-person meetup at Koramangala Bangalore office.",
+                "deadline": "2026-03-20",
+                "location": "Bangalore",
+                "eligibility": "Bangalore engineers"
+            },
+            # 3. Disallowed city (Delhi) with online participation -> should be retained
+            {
+                "source": "Delhi Feed",
+                "category": "event",
+                "title": "Delhi Open Source Summit (Virtual Livestream)",
+                "url": "https://example.com/delhi-virtual",
+                "summary": "Join live on YouTube livestream across India.",
+                "deadline": "2026-03-22",
+                "location": "Delhi / Online Livestream",
+                "eligibility": "All developers"
+            }
+        ]
+
+        summary = pipeline.run_pipeline(
+            limit_per_feed=5,
+            export_only=False,
+            db_path=self.db_path,
+            markdown_path=self.md_path,
+            html_path=self.html_path,
+            include_hyderabad=True
+        )
+
+        self.assertEqual(summary["collected"], 3)
+        self.assertEqual(summary["new_pending"], 2)  # GDG Hyderabad + Delhi Virtual
+        self.assertEqual(summary["discarded_other_cities"], 1)  # Bangalore In-Person discarded
+
+        # Verify Markdown review file content
+        self.assertTrue(os.path.exists(self.md_path))
+        with open(self.md_path, "r", encoding="utf-8") as f:
+            md_content = f.read()
+
+        # GDG Hyderabad must have badge and venue
+        self.assertIn("[HYDERABAD - OFFLINE]", md_content)
+        self.assertIn("GDG Hyderabad DevFest", md_content)
+        self.assertIn("📍 Where: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)", md_content)
+        
+        # Bangalore in-person event must NOT be present
+        self.assertNotIn("Bangalore React In-Person", md_content)
+
+        # Delhi virtual event must have [ONLINE] badge
+        self.assertIn("Delhi Open Source Summit", md_content)
+        self.assertIn("[ONLINE]", md_content)
+
+    def test_disallowed_city_in_organizer_name_retained_for_hyderabad_event(self):
+        # Event organized by a company from Bangalore but held at T-Hub Hyderabad
+        item = {
+            "source": "Bangalore Tech Corp",
+            "category": "event",
+            "title": "Bangalore AI Labs Meetup in Hyderabad",
+            "url": "https://example.com/hyd-meetup",
+            "summary": "Bangalore AI Labs travels to Hyderabad for an in-person workshop at T-Hub Phase 2.",
+            "location": "T-Hub Phase 2, Hyderabad"
+        }
+        self.assertTrue(formatter.is_hyderabad_offline(item))
+        self.assertTrue(formatter.is_location_allowed(item))
+        badge = formatter.get_location_badge(item)
+        self.assertEqual(badge, "[HYDERABAD - OFFLINE]")
+        loc_str = formatter.format_location_string(item)
+        self.assertEqual(loc_str, "[HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)")
+
+    def test_no_duplicate_badge_in_draft_title(self):
+        # When item title already includes badge
+        item = {
+            "category": "hackathon",
+            "title": "AI Innovation Hackathon [HYDERABAD - OFFLINE]",
+            "url": "https://example.com/hack",
+            "summary": "In-person hackathon at IIIT Hyderabad.",
+            "location": "IIIT Hyderabad, Gachibowli",
+            "deadline": "2026-03-30"
+        }
+        draft = formatter.format_draft(item)
+        # Should not have duplicate badge: '[HYDERABAD - OFFLINE] [HYDERABAD - OFFLINE]'
+        self.assertEqual(draft.count("[HYDERABAD - OFFLINE] [HYDERABAD - OFFLINE]"), 0)
+        self.assertIn("📍 Where: [HYDERABAD - OFFLINE] Hyderabad (IIIT Hyderabad)", draft)
+
+    def test_hyderabad_formatters_resilient_to_none_and_types(self):
+        self.assertEqual(formatter.format_location_string(None), "[ONLINE] Online")
+        self.assertEqual(formatter.format_location_string({}), "[ONLINE] Online")
+        self.assertEqual(formatter.get_location_badge(None), "[ONLINE]")
+        self.assertEqual(formatter.get_location_badge({}), "[ONLINE]")
+        self.assertEqual(formatter.get_location_tag(None), "📍 Location: [ONLINE] Online")
+        self.assertEqual(formatter.get_location_tag({}), "📍 Location: [ONLINE] Online")
+
+        # Non-string fields in item
+        weird_item = {
+            "category": 123,
+            "title": 456,
+            "location": None,
+            "summary": ["nested"],
+            "url": None
+        }
+        self.assertFalse(formatter.is_hyderabad_offline(weird_item))
+        self.assertTrue(formatter.is_location_allowed(weird_item))
+        draft = formatter.format_draft(weird_item)
+        self.assertIn("[ONLINE]", draft)
+
+    @patch("collectors.fetch_data")
+    def test_hyderabad_collectors_error_handling(self, mock_fetch):
+        # When network returns None (simulating HTTP error / timeout)
+        mock_fetch.return_value = None
+        self.assertEqual(collectors.fetch_commudle_events(), [])
+        self.assertEqual(collectors.fetch_luma_hyderabad_events(), [])
+        self.assertEqual(collectors.fetch_meetup_hyderabad_events(), [])
+        self.assertEqual(collectors.fetch_unstop_hackathons(), [])
+        self.assertEqual(collectors.fetch_devpost_hyderabad_hackathons(), [])
+        self.assertEqual(collectors.fetch_hyderabad_venue_events(), [])
+
+        # When network returns corrupted/invalid JSON bytes
+        mock_fetch.return_value = b"{ invalid json raw bytes : [ }}"
+        self.assertEqual(collectors.fetch_commudle_events(), [])
+        self.assertEqual(collectors.fetch_luma_hyderabad_events(), [])
+        self.assertEqual(collectors.fetch_unstop_hackathons(), [])
+
+
 if __name__ == "__main__":
     unittest.main()
+
 
 

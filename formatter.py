@@ -24,7 +24,10 @@ CATEGORY_GROUP_MAP = {
 DISALLOWED_OTHER_CITIES = [
     "bangalore", "bengaluru", "delhi", "new delhi", "ncr", "mumbai", "pune",
     "chennai", "kolkata", "noida", "gurugram", "gurgaon", "ahmedabad",
-    "jaipur", "kochi", "cochin", "chandigarh", "indore"
+    "jaipur", "kochi", "cochin", "chandigarh", "indore", "mysore", "mysuru",
+    "nagpur", "bhopal", "trivandrum", "thiruvananthapuram", "coimbatore",
+    "visakhapatnam", "vizag", "vijayawada", "surat", "lucknow", "kanpur",
+    "patna", "bhubaneswar"
 ]
 
 def _safe_str(val: Any, default: str = "") -> str:
@@ -48,70 +51,80 @@ def clean_text(text: str, max_len: int = 140) -> str:
 def detect_hyderabad_venue(text: Any) -> Optional[str]:
     """
     Detects specific Hyderabad venues, tech parks, or hubs from text.
-    Returns formatted venue string or None if no specific venue recognized.
+    Returns formatted venue string (e.g. 'T-Hub Phase 2', 'IIIT Hyderabad')
+    or None if no specific venue recognized.
+    Uses regex word boundaries to prevent substrings like 'github' matching 'thub'.
     """
     if not text:
         return None
     s = str(text).lower()
     
-    # T-Hub variants
-    if "t-hub phase 2" in s or "thub phase 2" in s or "t-hub 2.0" in s or "thub 2.0" in s:
-        return "T-Hub Phase 2, Gachibowli"
-    if "t-hub" in s or "thub" in s:
-        if "gachibowli" in s or "phase 2" in s:
-            return "T-Hub Phase 2, Gachibowli"
+    # 1. T-Hub variants (Phase 2 prioritized) - word boundary prevents matching 'github'
+    if re.search(r'\b(?:t-hub|thub|t hub)[\s,]*(?:phase[\s-]*(?:2|ii)|2\.0)\b', s):
+        return "T-Hub Phase 2"
+    if re.search(r'\b(?:t-hub|thub|t hub)\b', s):
+        if re.search(r'\b(?:phase[\s-]*(?:2|ii)|2\.0)\b', s):
+            return "T-Hub Phase 2"
         return "T-Hub"
         
-    # IIIT Hyderabad variants
-    if "iiit" in s and ("hyderabad" in s or "hyd" in s or "cie" in s or "-h" in s or "iiith" in s):
-        if "cie" in s or "research park" in s:
-            return "IIIT Hyderabad (Research Park & CIE)"
-        return "IIIT Hyderabad, Gachibowli"
-    if "iiit-h" in s or "iiith" in s or "iiit hyderabad" in s:
-        if "cie" in s or "research park" in s:
-            return "IIIT Hyderabad (Research Park & CIE)"
-        return "IIIT Hyderabad, Gachibowli"
+    # 2. IIIT Hyderabad variants
+    if re.search(r'\b(?:international institute of information technology|iiit)\b', s) and (
+        "hyderabad" in s or "hyd" in s or "cie" in s or "-h" in s or "iiith" in s or "gachibowli" in s
+    ):
+        return "IIIT Hyderabad"
+    if re.search(r'\b(?:iiit-h|iiith|iiit hyderabad)\b', s):
+        return "IIIT Hyderabad"
         
-    # WeWork variants
-    if "wework" in s:
-        if "kondapur" in s:
-            return "WeWork, Kondapur"
-        if "nanakramguda" in s:
-            return "WeWork, Nanakramguda"
-        if "rajapushpa" in s or "krishe" in s:
-            return "WeWork, Kondapur"
-        return "WeWork, Hyderabad"
+    # 3. WeWork variants (Kondapur, Nanakramguda)
+    if re.search(r'\bwework\b', s):
+        if "kondapur" in s or "krishe" in s:
+            return "WeWork Kondapur"
+        if "nanakramguda" in s or "rajapushpa" in s:
+            return "WeWork Nanakramguda"
+        return "WeWork"
         
-    # Prominent tech companies & co-working hubs
-    if "devx" in s:
-        return "DevX, Hitec City"
-    if "people tech" in s:
-        return "People Tech, Hyderabad"
-    if "epam" in s:
-        return "EPAM, Hyderabad"
-    if "cbit" in s:
-        return "CBIT, Hyderabad"
+    # 4. Tech Parks, Hubs & Co-working
+    if re.search(r'\bdevx\b', s):
+        return "DevX"
+    if re.search(r'\bt-works\b', s):
+        return "T-Works"
+    if re.search(r'\bpeople tech\b', s):
+        return "People Tech"
+    if re.search(r'\bepam\b', s):
+        return "EPAM"
+    if re.search(r'\bcbit\b', s):
+        return "CBIT"
+    if re.search(r'\bhicc\b', s) or re.search(r'\bhyderabad international convention centre\b', s):
+        return "HICC"
+    if re.search(r'\bhitex\b', s):
+        return "HITEX"
+    if re.search(r'\bmindspace\b', s):
+        return "Mindspace Madhapur"
+    if re.search(r'\bknowledge city\b', s) or re.search(r'\bsalarpuria sattva\b', s):
+        return "Knowledge City"
+    if re.search(r'\bcyber towers\b', s):
+        return "Cyber Towers"
         
-    # Major tech hubs / clusters in Hyderabad
-    if "hitec city" in s or "hitech city" in s or "cyberabad" in s:
+    # 5. Major Hyderabad Tech Neighborhoods & Hubs
+    if re.search(r'\bhitec(?:h)?\s+city\b', s) or re.search(r'\bcyberabad\b', s):
         return "Hitec City"
-    if "financial district" in s:
-        return "Financial District, Nanakramguda"
-    if "nanakramguda" in s:
-        return "Nanakramguda"
-    if "gachibowli" in s:
+    if re.search(r'\bfinancial\s+district\b', s):
+        return "Financial District"
+    if re.search(r'\bgachibowli\b', s):
         return "Gachibowli"
-    if "kondapur" in s:
+    if re.search(r'\bkondapur\b', s):
         return "Kondapur"
-    if "madhapur" in s:
+    if re.search(r'\bmadhapur\b', s):
         return "Madhapur"
-    if "banjara hills" in s:
+    if re.search(r'\bnanakramguda\b', s):
+        return "Nanakramguda"
+    if re.search(r'\bbanjara\s+hills\b', s):
         return "Banjara Hills"
-    if "jubilee hills" in s:
+    if re.search(r'\bjubilee\s+hills\b', s):
         return "Jubilee Hills"
-    if "begumpet" in s:
+    if re.search(r'\bbegumpet\b', s):
         return "Begumpet"
-    if "secunderabad" in s:
+    if re.search(r'\bsecunderabad\b', s):
         return "Secunderabad"
         
     return None
@@ -128,23 +141,38 @@ def is_hyderabad_offline(item: Dict[str, Any]) -> bool:
     summary = _safe_str(item.get("summary") or item.get("sum"), "")
     combined = f"{location} {title} {summary}".lower()
     
-    is_explicit_online = any(term in location.lower() for term in ("online", "virtual", "zoom", "google meet", "youtube"))
+    is_explicit_online = any(term in location.lower() for term in ("online", "virtual", "zoom", "google meet", "youtube", "livestream"))
     has_hyd_mention = "hyderabad" in combined or bool(re.search(r'\bhyd\b', combined))
-    has_venue = detect_hyderabad_venue(combined) is not None
+    venue = detect_hyderabad_venue(combined)
+    has_venue = venue is not None
     
-    if has_hyd_mention or has_venue:
-        if is_explicit_online and not any(term in combined for term in ("in-person", "offline", "hybrid", "venue", "walk-in")) and not has_venue:
-            return False
-        return True
+    if not (has_hyd_mention or has_venue):
+        return False
         
-    return False
+    if is_explicit_online:
+        # If location is explicitly virtual, it is only considered Hyderabad offline if:
+        # 1. A physical venue is also identified (e.g., hybrid at T-Hub), OR
+        # 2. Location string itself confirms hybrid/in-person (e.g. "Online / In-Person"), OR
+        # 3. Explicit in-person attendance phrases appear (and NOT negated like "no in-person" or "no offline venue")
+        has_explicit_in_person = bool(
+            re.search(r'\b(?:hybrid|in-person|in person|walk-in)\b', location.lower()) or
+            (
+                re.search(r'\b(?:in-person|in person|attend in person|join in person|physical attendance|walk-in)\b', combined)
+                and not re.search(r'\b(?:no|without)\s+(?:in-person|physical|offline)\b', combined)
+            )
+        )
+        if not has_venue and not has_explicit_in_person:
+            return False
+
+    return True
 
 def is_location_allowed(item: Dict[str, Any]) -> bool:
     """
     Filters items based on location routing rules:
     - Retain Hyderabad in-person/offline opportunities.
     - Retain Online/Remote/National opportunities accessible from India/Hyderabad.
-    - Discard other cities (Bangalore, Delhi, etc.) unless remote/online or major national event.
+    - Discard opportunities explicitly located in other cities (Bangalore, Delhi, Mumbai, etc.)
+      unless they are online/remote or national events with remote participation.
     """
     if not isinstance(item, dict):
         return True
@@ -157,22 +185,29 @@ def is_location_allowed(item: Dict[str, Any]) -> bool:
     summary = _safe_str(item.get("summary") or item.get("sum"), "")
     combined = f"{location} {title} {summary}".lower()
     
-    # Check if remote / online / national participation is possible
+    # Check if remote / virtual / national participation is explicitly present
     remote_markers = (
-        "online", "remote", "virtual", "zoom", "meet", "webinar", "livestream",
+        "online", "remote", "virtual", "zoom", "google meet", "webinar", "livestream",
         "youtube", "global", "national", "pan-india", "pan india", "all india",
-        "across india", "india", "self-paced", "worldwide", "anywhere"
+        "across india", "self-paced", "worldwide", "anywhere", "hybrid"
     )
     is_accessible_online_or_national = any(m in combined for m in remote_markers)
-    if is_accessible_online_or_national:
-        return True
-        
+    
     # Check if explicitly in a disallowed other city
+    # Check in location field, in title, or in combined with location markers
+    has_disallowed_city = False
     for city in DISALLOWED_OTHER_CITIES:
-        if re.search(r'\b' + re.escape(city) + r'\b', combined):
-            return False
-            
-    # Default: allow if not explicitly tied to a disallowed offline city
+        pattern = r'\b' + re.escape(city) + r'\b'
+        if re.search(pattern, location.lower()) or re.search(pattern, title.lower()):
+            has_disallowed_city = True
+            break
+        if re.search(r'\b(?:in|at|offline|venue|chapter|campus|hub)\s+' + re.escape(city) + r'\b', combined):
+            has_disallowed_city = True
+            break
+
+    if has_disallowed_city:
+        return is_accessible_online_or_national
+
     return True
 
 def get_location_badge(item: Dict[str, Any]) -> str:
@@ -181,10 +216,14 @@ def get_location_badge(item: Dict[str, Any]) -> str:
 
 def format_location_string(item: Dict[str, Any]) -> str:
     """
-    Formats the location line including specific venue details for Hyderabad offline items.
+    Formats the location line including location badges and specific venue details.
+    Examples:
+      - [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)
+      - [HYDERABAD - OFFLINE] Hyderabad
+      - [ONLINE] Online
     """
     if not isinstance(item, dict):
-        return "Online"
+        return "[ONLINE] Online"
         
     if is_hyderabad_offline(item):
         location = _safe_str(item.get("location") or item.get("where"), "")
@@ -193,31 +232,28 @@ def format_location_string(item: Dict[str, Any]) -> str:
         combined = f"{location} {title} {summary}"
         venue = detect_hyderabad_venue(combined)
         if venue:
-            return f"Hyderabad ({venue})"
-        return "Hyderabad"
+            return f"[HYDERABAD - OFFLINE] Hyderabad ({venue})"
+        return "[HYDERABAD - OFFLINE] Hyderabad"
         
     loc = _safe_str(item.get("location") or item.get("where"), "Online")
-    return loc if loc else "Online"
+    if loc.lower() in ("online", "virtual", "remote", "zoom", "google meet", ""):
+        return "[ONLINE] Online"
+    if loc.startswith("[ONLINE]") or loc.startswith("[HYDERABAD"):
+        return loc
+    return f"[ONLINE] {loc}"
 
 def get_location_tag(item: Dict[str, Any]) -> str:
     """
     Returns prominent location tag for review cards (Telegram and Markdown).
     Examples:
-    '📍 Location: Hyderabad (T-Hub Phase 2, Gachibowli)'
-    '📍 Location: Hyderabad (T-Hub)'
-    '📍 Location: Online'
+    '📍 Location: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)'
+    '📍 Location: [ONLINE] Online'
     """
     if not isinstance(item, dict):
-        return "📍 Location: Online"
+        return "📍 Location: [ONLINE] Online"
         
-    if is_hyderabad_offline(item):
-        loc_str = format_location_string(item)
-        return f"📍 Location: {loc_str}"
-        
-    loc = _safe_str(item.get("location") or item.get("where"), "Online").lower()
-    if loc in ("remote", "wfh", "work from home"):
-        return "📍 Location: Remote"
-    return "📍 Location: Online"
+    loc_str = format_location_string(item)
+    return f"📍 Location: {loc_str}"
 
 def format_draft(item: Dict[str, Any]) -> str:
     """

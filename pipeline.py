@@ -104,12 +104,14 @@ def export_pending_markdown(
                 title = it.get("title", "Untitled")
                 source = it.get("source", "Web Feed")
                 url = it.get("url", "")
-                draft = it.get("draft_text", "")
+                draft = it.get("draft_text") or formatter.format_draft(it)
                 created_at = it.get("created_at", "")
+                loc_badge = formatter.get_location_badge(it)
                 loc_tag = formatter.get_location_tag(it)
+                loc_display = loc_tag.replace("📍 Location: ", "") if loc_tag.startswith("📍 Location: ") else loc_tag
                 
-                lines.append(f"### [#{item_id}] {title}")
-                lines.append(f"- **Location**: {loc_tag} | **Source**: {source} | **Created**: `{created_at}`")
+                lines.append(f"### [#{item_id}] {title} {loc_badge}")
+                lines.append(f"- **Location**: {loc_display} | **Source**: {source} | **Created**: `{created_at}`")
                 lines.append(f"- **Original Link**: [{url}]({url})")
                 lines.append(f"- **Quick Commands**: `python telegram_bot.py --approve {item_id}` | `python telegram_bot.py --reject {item_id}` | `python telegram_bot.py --edit {item_id}`")
                 lines.append("\n**Formatted Legion Draft (Ready to Copy):**")
@@ -123,12 +125,15 @@ def export_pending_markdown(
             other_items.sort(key=lambda x: (0 if formatter.is_hyderabad_offline(x) else 1))
             for it in other_items:
                 item_id = it.get("id")
+                loc_badge = formatter.get_location_badge(it)
                 loc_tag = formatter.get_location_tag(it)
-                lines.append(f"### [#{item_id}] {it.get('title')}")
-                lines.append(f"- **Location**: {loc_tag} | **Category**: {it.get('category')} | **Source**: {it.get('source')}")
+                loc_display = loc_tag.replace("📍 Location: ", "") if loc_tag.startswith("📍 Location: ") else loc_tag
+                other_draft = it.get("draft_text") or formatter.format_draft(it)
+                lines.append(f"### [#{item_id}] {it.get('title')} {loc_badge}")
+                lines.append(f"- **Location**: {loc_display} | **Category**: {it.get('category')} | **Source**: {it.get('source')}")
                 lines.append(f"- **Quick Commands**: `python telegram_bot.py --approve {item_id}` | `python telegram_bot.py --reject {item_id}` | `python telegram_bot.py --edit {item_id}`")
                 lines.append("```text")
-                lines.append(it.get("draft_text", ""))
+                lines.append(other_draft)
                 lines.append("```\n")
                 lines.append("---\n")
 
@@ -247,13 +252,20 @@ def export_feed_html(
         if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
             created_str = datetime.now().strftime("%Y-%m-%d")
             
+        raw_loc = it.get("location") or "Online"
+        if formatter.is_hyderabad_offline(it):
+            venue = formatter.detect_hyderabad_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
+            where_val = f"Hyderabad ({venue})" if venue else "Hyderabad"
+        else:
+            where_val = raw_loc
+            
         seed_list.append({
             "id": f"db_{it.get('id')}",
             "type": it.get("category", "news"),
             "title": it.get("title", ""),
             "sum": it.get("summary") or it.get("title", ""),
             "date": clean_date,
-            "where": it.get("location") or "Online",
+            "where": where_val,
             "src": it.get("source") or "Legion Automation",
             "link": u,
             "posted": created_str,

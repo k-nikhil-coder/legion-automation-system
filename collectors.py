@@ -769,73 +769,111 @@ def fetch_legion_feed_items(
 def fetch_commudle_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List[Dict[str, Any]]:
     """
     Collects offline tech meetups and events in Hyderabad from Commudle API.
-    Targets key local tech communities (GDG, HydPy, React, AWS, AI Community Hyderabad).
+    Targets key local tech communities (GDG Hyderabad, HydPy, React Hyderabad, AWS User Group Hyderabad, AI Community Hyderabad).
     """
     url = getattr(config, "COMMUDLE_HYDERABAD_URL", "https://api.commudle.com/api/v1/events?city=Hyderabad")
     data = fetch_data(url)
     items: List[Dict[str, Any]] = []
-    if not data:
-        return items
 
-    try:
-        parsed = json.loads(data.decode("utf-8", errors="ignore"))
-        raw_events = []
-        if isinstance(parsed, dict):
-            raw_events = parsed.get("data") or parsed.get("events") or []
-        elif isinstance(parsed, list):
-            raw_events = parsed
+    if data:
+        try:
+            parsed = json.loads(data.decode("utf-8", errors="ignore"))
+            raw_events = []
+            if isinstance(parsed, dict):
+                raw_events = parsed.get("data") or parsed.get("events") or parsed.get("result") or []
+            elif isinstance(parsed, list):
+                raw_events = parsed
 
-        for ev in raw_events:
-            if len(items) >= limit:
-                break
-            if not isinstance(ev, dict):
-                continue
+            for ev in raw_events:
+                if len(items) >= limit:
+                    break
+                if not isinstance(ev, dict):
+                    continue
 
-            title = str(ev.get("title") or ev.get("name") or "Community Meetup").strip()
-            raw_url = ev.get("url") or ev.get("event_url") or ""
-            slug = ev.get("slug") or ev.get("id") or ""
-            if raw_url and str(raw_url).startswith("http"):
-                event_url = str(raw_url).strip()
-            elif slug:
-                event_url = f"https://www.commudle.com/events/{slug}"
-            else:
-                continue
+                title = str(ev.get("title") or ev.get("name") or "Community Meetup").strip()
+                raw_url = ev.get("url") or ev.get("event_url") or ""
+                slug = ev.get("slug") or ev.get("id") or ""
+                if raw_url and str(raw_url).startswith("http"):
+                    event_url = str(raw_url).strip()
+                elif slug:
+                    event_url = f"https://www.commudle.com/events/{slug}"
+                else:
+                    continue
 
-            summary = strip_html_tags(str(ev.get("description") or ev.get("about") or ev.get("summary") or ""))
-            if not summary:
-                summary = f"Developer meetup and workshop hosted on Commudle: {title}."
+                summary = strip_html_tags(str(ev.get("description") or ev.get("about") or ev.get("summary") or ""))
+                if not summary:
+                    summary = f"Developer meetup and workshop hosted on Commudle: {title}."
 
-            date_val = str(ev.get("start_date") or ev.get("date") or ev.get("starts_at") or "").strip()
-            venue_obj = ev.get("venue")
-            venue_name = ""
-            if isinstance(venue_obj, dict):
-                venue_name = str(venue_obj.get("name") or venue_obj.get("address") or venue_obj.get("city") or "").strip()
-            elif isinstance(venue_obj, str):
-                venue_name = venue_obj.strip()
+                date_val = str(ev.get("start_date") or ev.get("date") or ev.get("starts_at") or "").strip()
+                venue_obj = ev.get("venue")
+                venue_name = ""
+                if isinstance(venue_obj, dict):
+                    venue_name = str(venue_obj.get("name") or venue_obj.get("address") or venue_obj.get("city") or "").strip()
+                elif isinstance(venue_obj, str):
+                    venue_name = venue_obj.strip()
 
-            comm_obj = ev.get("community")
-            comm_name = ""
-            if isinstance(comm_obj, dict):
-                comm_name = str(comm_obj.get("name") or "").strip()
-            elif isinstance(comm_obj, str):
-                comm_name = comm_obj.strip()
+                comm_obj = ev.get("community")
+                comm_name = ""
+                if isinstance(comm_obj, dict):
+                    comm_name = str(comm_obj.get("name") or "").strip()
+                elif isinstance(comm_obj, str):
+                    comm_name = comm_obj.strip()
 
-            loc = f"Hyderabad ({venue_name})" if venue_name and "hyderabad" not in venue_name.lower() else (venue_name or "Hyderabad")
-            source_label = f"Commudle ({comm_name})" if comm_name else "Commudle Hyderabad"
+                # Track key Hyderabad communities specifically
+                matched_comm = comm_name
+                combined_desc = f"{title} {comm_name} {summary}"
+                for target_comm in getattr(config, "HYDERABAD_COMMUNITIES", []):
+                    if target_comm.lower() in combined_desc.lower():
+                        matched_comm = target_comm
+                        break
 
-            items.append({
-                "source": source_label,
-                "category": "event",
-                "title": title,
-                "url": event_url,
-                "summary": summary,
-                "date_str": date_val,
-                "deadline": date_val or "RSVP on Commudle",
-                "location": loc,
-                "eligibility": "Open to developers and tech community",
-            })
-    except Exception as e:
-        logger.warning(f"Error parsing Commudle events: {e}")
+                loc = f"Hyderabad ({venue_name})" if venue_name and "hyderabad" not in venue_name.lower() else (venue_name or "Hyderabad")
+                source_label = f"Commudle ({matched_comm})" if matched_comm else "Commudle Hyderabad"
+
+                items.append({
+                    "source": source_label,
+                    "category": "event",
+                    "title": title,
+                    "url": event_url,
+                    "summary": summary,
+                    "date_str": date_val,
+                    "deadline": date_val or "RSVP on Commudle",
+                    "location": loc,
+                    "eligibility": "Open to developers and tech community",
+                })
+        except Exception as e:
+            logger.warning(f"Error parsing Commudle events: {e}")
+
+    # Fallback to HTML parsing if JSON API returns no items
+    if not items:
+        fallback_url = getattr(config, "COMMUDLE_FALLBACK_URL", config.FEEDS.get("commudle_hyderabad", {}).get("fallback"))
+        if fallback_url:
+            fallback_data = fetch_data(fallback_url)
+            if fallback_data:
+                try:
+                    html_text = fallback_data.decode("utf-8", errors="ignore")
+                    matches = re.findall(
+                        r'<a[^>]+href="([^"]*/events/[^"]+)"[^>]*>[\s\S]*?<h[2-5][^>]*>([^<]+)</h[2-5]>',
+                        html_text
+                    )
+                    for href, h_title in matches:
+                        if len(items) >= limit:
+                            break
+                        clean_title = " ".join(h_title.split())
+                        full_url = href if href.startswith("http") else f"https://www.commudle.com{href}"
+                        items.append({
+                            "source": "Commudle Hyderabad",
+                            "category": "event",
+                            "title": clean_title,
+                            "url": full_url,
+                            "summary": f"Community tech event in Hyderabad: {clean_title}.",
+                            "date_str": "",
+                            "deadline": "RSVP on Commudle",
+                            "location": "Hyderabad",
+                            "eligibility": "Developers and tech community",
+                        })
+                except Exception as e:
+                    logger.warning(f"Error parsing Commudle fallback HTML: {e}")
 
     logger.info(f"Collected {len(items)} items from Commudle Hyderabad")
     return items
@@ -903,7 +941,7 @@ def fetch_luma_hyderabad_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List[
         if fallback_data:
             try:
                 html_text = fallback_data.decode("utf-8", errors="ignore")
-                # Look for embedded Next.js JSON or schema.org
+                # 1. Look for embedded Next.js JSON __NEXT_DATA__
                 m = re.search(r'<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)</script>', html_text)
                 if m:
                     next_data = json.loads(m.group(1))
@@ -932,6 +970,69 @@ def fetch_luma_hyderabad_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List[
                                 "location": loc,
                                 "eligibility": "Open to all",
                             })
+
+                # 2. Look for JSON-LD in Luma page
+                if not items:
+                    json_ld_blocks = re.findall(r'<script type="application/ld\+json">([\s\S]*?)</script>', html_text)
+                    for block in json_ld_blocks:
+                        try:
+                            parsed_ld = json.loads(block)
+                            candidates = []
+                            if isinstance(parsed_ld, list):
+                                candidates = parsed_ld
+                            elif isinstance(parsed_ld, dict):
+                                if "@graph" in parsed_ld and isinstance(parsed_ld["@graph"], list):
+                                    candidates = parsed_ld["@graph"]
+                                else:
+                                    candidates = [parsed_ld]
+                            for c in candidates:
+                                if len(items) >= limit:
+                                    break
+                                if not isinstance(c, dict) or str(c.get("@type", "")).lower() != "event":
+                                    continue
+                                t_val = str(c.get("name") or "").strip()
+                                u_val = str(c.get("url") or "").strip()
+                                s_val = strip_html_tags(str(c.get("description") or ""))
+                                d_val = str(c.get("startDate") or "").strip()
+                                l_val = str(c.get("location", {}).get("name") if isinstance(c.get("location"), dict) else c.get("location") or "Hyderabad").strip()
+                                if "hyderabad" in (t_val + s_val + l_val).lower() and u_val:
+                                    items.append({
+                                        "source": "Luma Hyderabad",
+                                        "category": "event",
+                                        "title": t_val,
+                                        "url": u_val if u_val.startswith("http") else f"https://lu.ma/{u_val}",
+                                        "summary": s_val or f"Tech meetup in Hyderabad: {t_val}",
+                                        "date_str": d_val,
+                                        "deadline": d_val or "RSVP on Luma",
+                                        "location": l_val if "hyderabad" in l_val.lower() else f"Hyderabad ({l_val})",
+                                        "eligibility": "Tech builders and developers",
+                                    })
+                        except Exception:
+                            continue
+
+                # 3. HTML anchor tag regex scraper fallback
+                if not items:
+                    matches = re.findall(
+                        r'<a[^>]+href="([^"]*/[a-zA-Z0-9_\-]+)"[^>]*>[\s\S]*?<h[1-6][^>]*>([^<]+)</h[1-6]>',
+                        html_text
+                    )
+                    for href, h_title in matches:
+                        if len(items) >= limit:
+                            break
+                        clean_title = " ".join(h_title.split())
+                        if "hyderabad" in clean_title.lower() or "hyd" in clean_title.lower():
+                            full_url = href if href.startswith("http") else f"https://lu.ma{href}"
+                            items.append({
+                                "source": "Luma Hyderabad",
+                                "category": "event",
+                                "title": clean_title,
+                                "url": full_url,
+                                "summary": f"Community meetup in Hyderabad: {clean_title}.",
+                                "date_str": "",
+                                "deadline": "RSVP on Luma",
+                                "location": "Hyderabad",
+                                "eligibility": "Tech builders, founders, and engineers",
+                            })
             except Exception as e:
                 logger.warning(f"Error parsing Luma fallback HTML: {e}")
 
@@ -942,24 +1043,58 @@ def fetch_meetup_hyderabad_events(limit: int = config.MAX_ITEMS_PER_FEED) -> Lis
     """
     Collects upcoming technology, machine learning, and startup meetups in Hyderabad via Meetup.com.
     """
-    url = getattr(config, "MEETUP_HYDERABAD_URL", "https://www.meetup.com/find/?location=in--Hyderabad&source=EVENTS&categoryFilter=technology")
+    url = getattr(config, "MEETUP_HYDERABAD_URL", "https://www.meetup.com/find/?location=in--Hyderabad&radius=25&source=EVENTS&categoryFilter=technology")
     data = fetch_data(url)
     items: List[Dict[str, Any]] = []
     if not data:
         return items
 
     try:
+        # 0. Check for RSS / Atom XML feed
+        if b"<rss" in data or b"<feed" in data:
+            entries = parse_xml_feed(data)
+            for entry in entries[:limit]:
+                items.append({
+                    "source": "Meetup Hyderabad",
+                    "category": "event",
+                    "title": entry["title"],
+                    "url": entry["link"],
+                    "summary": entry["summary"] or f"Tech meetup in Hyderabad: {entry['title']}.",
+                    "date_str": entry.get("date_str", ""),
+                    "deadline": "RSVP on Meetup",
+                    "location": "Hyderabad",
+                    "eligibility": "Developers, learners, and technologists",
+                })
+            logger.info(f"Collected {len(items)} items from Meetup RSS/Atom feed")
+            return items
+
         content = data.decode("utf-8", errors="ignore")
-        # 1. Check for JSON-LD schema objects
+        # 1. Check for JSON-LD schema objects (supporting single objects, arrays, and @graph)
         json_ld_blocks = re.findall(r'<script type="application/ld\+json">([\s\S]*?)</script>', content)
         for block in json_ld_blocks:
             try:
                 parsed_ld = json.loads(block)
-                candidates = parsed_ld if isinstance(parsed_ld, list) else [parsed_ld]
+                candidates = []
+                if isinstance(parsed_ld, list):
+                    candidates = parsed_ld
+                elif isinstance(parsed_ld, dict):
+                    if "@graph" in parsed_ld and isinstance(parsed_ld["@graph"], list):
+                        candidates = parsed_ld["@graph"]
+                    else:
+                        candidates = [parsed_ld]
+
                 for c in candidates:
                     if len(items) >= limit:
                         break
-                    if not isinstance(c, dict) or c.get("@type") != "Event":
+                    if not isinstance(c, dict):
+                        continue
+                    c_type = c.get("@type")
+                    is_event = False
+                    if isinstance(c_type, str) and c_type.lower() in ("event", "http://schema.org/event", "https://schema.org/event"):
+                        is_event = True
+                    elif isinstance(c_type, list) and any(isinstance(t, str) and t.lower() == "event" for t in c_type):
+                        is_event = True
+                    if not is_event:
                         continue
 
                     title = str(c.get("name") or "Meetup Event").strip()
@@ -1014,6 +1149,27 @@ def fetch_meetup_hyderabad_events(limit: int = config.MAX_ITEMS_PER_FEED) -> Lis
                             "location": "Hyderabad",
                             "eligibility": "Tech enthusiasts and developers",
                         })
+
+        # 3. HTML regex scraper fallback
+        if not items:
+            matches = re.findall(
+                r'<a[^>]+href="([^"]*/events/\d+[^"]*)"[^>]*>[\s\S]*?<h[2-5][^>]*>([^<]+)</h[2-5]>',
+                content
+            )
+            for href, h_title in matches[:limit]:
+                clean_title = " ".join(h_title.split())
+                full_url = href if href.startswith("http") else f"https://www.meetup.com{href}"
+                items.append({
+                    "source": "Meetup Hyderabad",
+                    "category": "event",
+                    "title": clean_title,
+                    "url": full_url,
+                    "summary": f"Upcoming tech meetup in Hyderabad: {clean_title}.",
+                    "date_str": "",
+                    "deadline": "RSVP on Meetup",
+                    "location": "Hyderabad",
+                    "eligibility": "Developers and technologists",
+                })
     except Exception as e:
         logger.warning(f"Error parsing Meetup Hyderabad: {e}")
 
@@ -1138,12 +1294,14 @@ def fetch_devpost_hyderabad_hackathons(limit: int = config.MAX_ITEMS_PER_FEED) -
 
 def fetch_hyderabad_venue_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List[Dict[str, Any]]:
     """
-    Monitors key Hyderabad offline hubs (T-Hub Phase 2, IIIT Hyderabad CIE, DevX, WeWork).
+    Monitors key Hyderabad offline hubs (T-Hub Phase 2, IIIT Hyderabad CIE, DevX, WeWork Kondapur/Nanakramguda, Hitec City, Gachibowli).
     """
     venue_targets = [
         ("T-Hub", "https://t-hub.co/events/", "T-Hub Phase 2, Gachibowli"),
         ("IIIT Hyderabad", "https://cie.iiit.ac.in/events/", "IIIT Hyderabad, Gachibowli"),
         ("DevX", "https://www.devx.work/events/", "DevX, Hitec City"),
+        ("WeWork Kondapur", "https://wework.co.in/events/", "WeWork Kondapur, Hyderabad"),
+        ("WeWork Nanakramguda", "https://wework.co.in/locations/hyderabad/nanakramguda/", "WeWork Nanakramguda, Hyderabad"),
     ]
 
     items: List[Dict[str, Any]] = []
@@ -1156,12 +1314,15 @@ def fetch_hyderabad_venue_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List
         try:
             html_text = data.decode("utf-8", errors="ignore")
             # Parse headings or event links
-            headings = re.findall(r'<h[2-4][^>]*>([^<]{10,80})</h[2-4]>', html_text)
-            for h in headings:
+            matches = re.findall(r'<h[2-5][^>]*>([^<]{8,100})</h[2-5]>', html_text)
+            if not matches:
+                matches = re.findall(r'<a[^>]+href="[^"]*events?[^"]*"[^>]*>([^<]{8,100})</a>', html_text)
+
+            for h in matches:
                 if len(items) >= limit:
                     break
                 clean_h = strip_html_tags(h).strip()
-                if any(skip in clean_h.lower() for skip in ("subscribe", "newsletter", "contact", "about", "footer", "menu", "privacy")):
+                if any(skip in clean_h.lower() for skip in ("subscribe", "newsletter", "contact", "about", "footer", "menu", "privacy", "cookie", "login")):
                     continue
                 items.append({
                     "source": f"{hub_name} Monitor",
@@ -1204,7 +1365,7 @@ def collect_hyderabad_items(limit_per_feed: int = config.MAX_ITEMS_PER_FEED) -> 
 def collect_all_items(
     limit_per_feed: int = config.MAX_ITEMS_PER_FEED,
     include_legion_feed: bool = False,
-    include_hyderabad: bool = False
+    include_hyderabad: bool = True
 ) -> List[Dict[str, Any]]:
     """
     Executes all collector functions resiliently and returns a single combined list of items.

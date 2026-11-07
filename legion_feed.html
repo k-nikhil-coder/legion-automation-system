@@ -33,6 +33,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .badge{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:999px;color:#fff}
 .t-job{background:var(--job)}.t-hackathon{background:var(--hack)}.t-event{background:var(--event)}.t-course{background:var(--course)}.t-news{background:var(--news)}
 .badge-status{font-size:11px;padding:2px 6px;border-radius:6px;background:var(--chip);color:var(--mute)}
+.badge-hyd{background:#059669;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.03em}
+.badge-online{background:#0284c7;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.03em}
 .src{font-size:12px;color:var(--mute)}
 .card h2{font-size:17px;margin:2px 0 6px;line-height:1.3}
 .card p{margin:0 0 8px;color:var(--mute)}
@@ -98,7 +100,7 @@ var SEED = [
     "title": "Walk-in drive at Ksquare Group: Salesforce and Data Engineering",
     "sum": "Five roles: Salesforce Developer, Salesforce QE, Marketing Cloud Developer, Data Engineer (GCP), Data Engineer (AWS). 10:30 AM to 4:00 PM.",
     "date": "2026-11-14",
-    "where": "Nanakramguda, Hyderabad",
+    "where": "Hyderabad (Nanakramguda)",
     "src": "Community admin",
     "link": "https://legion.community/feed/s9",
     "posted": "2026-11-07",
@@ -1008,6 +1010,17 @@ function all(){return mine.concat(SEED).filter(function(p){
   var d=days(p.date);
   return d===null||d>=0;
 })}
+function isHyd(p) {
+  var w = (p.where || "").toLowerCase();
+  var t = (p.title || "").toLowerCase();
+  var s = (p.sum || "").toLowerCase();
+  var c = w + " " + t + " " + s;
+  if (w.indexOf("hyderabad - offline") >= 0 || w.indexOf("[hyderabad") >= 0) return true;
+  if (w.indexOf("online") >= 0 || w.indexOf("virtual") >= 0 || w.indexOf("remote") >= 0) {
+    if (w.indexOf("hyderabad") < 0 && c.indexOf("t-hub") < 0 && c.indexOf("iiit") < 0) return false;
+  }
+  return c.indexOf("hyderabad") >= 0 || c.indexOf("t-hub") >= 0 || c.indexOf("iiit") >= 0 || c.indexOf("hitec city") >= 0 || c.indexOf("gachibowli") >= 0 || c.indexOf("kondapur") >= 0 || c.indexOf("nanakramguda") >= 0 || c.indexOf("wework") >= 0 || c.indexOf("devx") >= 0;
+}
 function render(){
   var list=all().filter(function(p){
     if(tab==="saved"&&saved.indexOf(p.id)<0)return false;
@@ -1021,7 +1034,10 @@ function render(){
     var d=days(p.date),soon=d!==null&&d<=3&&d>=0;
     var tLabel=TYPE_LABELS[p.type]||p.type;
     var statusBadge=p.status?'<span class="badge-status">'+esc(p.status)+'</span>':"";
-    h+='<article class="card"><div class="top"><div><span class="badge t-'+p.type+'">'+tLabel+'</span> '+statusBadge+'</div><span class="src">'+esc(p.src)+' · posted '+fmt(p.posted)+'</span></div>'+
+    var locBadge = isHyd(p)
+      ? '<span class="badge badge-hyd">📍 HYDERABAD - OFFLINE</span>'
+      : '<span class="badge badge-online">🌐 ONLINE</span>';
+    h+='<article class="card"><div class="top"><div><span class="badge t-'+p.type+'">'+tLabel+'</span> '+locBadge+' '+statusBadge+'</div><span class="src">'+esc(p.src)+' · posted '+fmt(p.posted)+'</span></div>'+
     '<h2>'+esc(p.title)+'</h2><p>'+esc(p.sum)+'</p><div class="meta">'+
     (p.date?'<span class="'+(soon?"soon":"")+'">📅 '+fmt(p.date)+(d!==null&&soon?" · "+(d===0?"today":d+" day"+(d>1?"s":"")+" left"):"")+'</span>':"")+
     (p.where?'<span>📍 '+esc(p.where)+'</span>':"")+'</div><div class="acts">'+
@@ -1034,7 +1050,25 @@ function tabs(){document.getElementById("tabs").innerHTML=Object.keys(TYPES).map
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.className="toast on";setTimeout(function(){t.className="toast"},1600)}
 function wa(p){
   var em={job:"💼",hackathon:"⚡",event:"🗓️",course:"🎓",news:"💡"}[p.type]||"🚀";
-  return em+" *"+p.title+"*\n\n📌 "+p.sum+(p.date?"\n📅 "+fmt(p.date):"")+(p.where?"\n📍 "+p.where:"")+(p.link?"\n🔗 "+p.link:"")}
+  var badge = isHyd(p) ? "[HYDERABAD - OFFLINE]" : "[ONLINE]";
+  var badgeSuffix = (p.title && p.title.indexOf(badge) >= 0) ? "" : " " + badge;
+  var whereVal = p.where || "Online";
+  var whereLine = "";
+  if (isHyd(p)) {
+    if (whereVal.indexOf("[HYDERABAD") >= 0 || whereVal.indexOf("[ONLINE]") >= 0) {
+      whereLine = "\n📍 Where: " + whereVal;
+    } else {
+      whereLine = "\n📍 Where: [HYDERABAD - OFFLINE] " + (whereVal.indexOf("Hyderabad") >= 0 ? whereVal : "Hyderabad (" + whereVal + ")");
+    }
+  } else {
+    if (whereVal.indexOf("[HYDERABAD") >= 0 || whereVal.indexOf("[ONLINE]") >= 0) {
+      whereLine = "\n📍 Where: " + whereVal;
+    } else {
+      whereLine = "\n📍 Where: [ONLINE] " + (whereVal || "Online");
+    }
+  }
+  return em+" *"+p.title+"*"+badgeSuffix+"\n\n📌 "+p.sum+(p.date?"\n📅 "+fmt(p.date):"")+whereLine+(p.link?"\n🔗 "+p.link:"");
+}
 document.addEventListener("click",function(e){
   var t=e.target.closest("[data-t]");if(t){tab=t.dataset.t;tabs();render();return}
   var b=e.target.closest("[data-a]");if(!b)return;

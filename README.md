@@ -271,16 +271,75 @@ The pipeline is automated to run every 6 hours via an Antigravity Sidecar config
 
 ---
 
+## 📍 Hyderabad Local Feed Ecosystem Integration
+
+The Legion Automation System includes native integration with the **Hyderabad tech community & event ecosystem**, discovering local in-person opportunities while automatically routing and filtering global/virtual feeds.
+
+### 1. Platforms & Collectors
+- **Commudle Hyderabad**: Collects tech community events across Hyderabad, tracking key developer communities including:
+  - `GDG Hyderabad` (Google Developer Group)
+  - `HydPy` (Python User Group Hyderabad)
+  - `React Hyderabad`
+  - `AWS User Group Hyderabad`
+  - `AI Community Hyderabad`
+- **Luma Hyderabad**: Ingests tech & AI events from `api.lu.ma` discover feed and `luma.com/MeetUpsinIndia` community calendars with multi-tier fallbacks (JSON API, Next.js `__NEXT_DATA__`, Schema.org JSON-LD, and HTML scraping).
+- **Meetup.com Hyderabad**: Tracks tech, machine learning, software development, and startup meetups (`radius=25 miles`) via RSS/Atom feeds, Schema.org `@graph` JSON-LD schemas, Next.js Apollo state, and HTML regex parsing.
+- **Unstop & Devpost India/Hyderabad Hackathons**: Gathers student & professional developer competitions across Hyderabad, premier institutes (IIIT Hyderabad, CBIT), and national tracks.
+- **Hyderabad Hub Monitors**: Monitors local tech venues:
+  - `T-Hub Phase 2` (Gachibowli)
+  - `IIIT Hyderabad` (Center for Innovation & Entrepreneurship - CIE)
+  - `DevX` (Hitec City)
+  - `WeWork Kondapur` & `WeWork Nanakramguda`
+  - `T-Works`, `HICC`, `HITEX`, `Mindspace Madhapur`, `Knowledge City`, `Cyber Towers`
+
+### 2. Location Filtering, Prioritizing & Routing
+- **Local In-Person Events**: Offline Hyderabad events are detected via venue patterns or location terms, badged as `[HYDERABAD - OFFLINE]`, and prioritized to the top of review queues.
+- **Virtual / Online Events**: Virtual webinars, remote jobs, and worldwide hackathons are marked as `[ONLINE]`. Online events mentioning venue discussions in text are safeguarded from false-positive offline classification.
+- **Other-City Discard Rule**: Opportunities explicitly located in other offline cities (e.g. Bangalore, Mumbai, Delhi, Pune, Chennai, Gurugram, Kolkata, Ahmedabad) in title or location are automatically discarded unless they explicitly offer online/remote participation or are national competitions.
+
+### 3. House Style Badges & Venue Formatting
+Formatted drafts and approval cards display clear location tags:
+- **Offline Venue Example**:
+  ```text
+  🗓️ GDG Hyderabad DevFest [HYDERABAD - OFFLINE]
+
+  📌 What: Full day in-person developer festival at T-Hub Phase 2.
+  📅 Date / Deadline: 2026-03-15
+  📍 Where: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)
+  🎯 Who: Developers across Hyderabad
+  🔗 https://commudle.com/events/gdg-devfest
+  ```
+- **Virtual Event Example**:
+  ```text
+  ⚡ Global AI Hackathon [ONLINE]
+
+  📌 What: Worldwide AI agent sprint.
+  📅 Date / Deadline: 2026-03-20
+  📍 Where: [ONLINE] Online
+  🎯 Who: Open to all
+  🔗 https://devpost.com/hackathons/global-ai
+  ```
+- **Telegram Cards & CLI Review**: Prominently display `🛡️ [Legion Review #ID] [HYDERABAD - OFFLINE]` and `📍 Location: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)`.
+- **Interactive Feed Web App (`legion_feed.html`)**: Renders dedicated green `[📍 HYDERABAD - OFFLINE]` and blue `[🌐 ONLINE]` badges on each card with 1-tap WhatsApp formatting and duplicate badge prevention.
+
+---
+
 ## 🧪 Testing & Verification
 
 Run the test suite using Python's standard `unittest` framework:
 ```bash
 python -m unittest discover tests -v
+# or using pytest
+python -m pytest
 ```
 Tests cover:
 - SQLite schema, indexing, unique constraints, and status updates.
 - House-style draft formatting and WhatsApp category mapping.
 - XML/Atom feed parsing, HTML stripping, and error resilience.
+- Hyderabad event platform collectors (Commudle, Luma, Meetup, Unstop, Devpost, Venue monitors).
+- Hyderabad venue detection (T-Hub Phase 2, IIIT Hyderabad, DevX, WeWork, Gachibowli, Hitec City, Kondapur, etc.).
+- Location routing & other-city discard rules (Bangalore, Delhi, Mumbai, etc. discarded unless virtual/remote).
+- Badging logic (`[HYDERABAD - OFFLINE]`, `[ONLINE]`) across drafts, review markdown, web app, and Telegram cards.
 - Pipeline execution, deduplication filtering, and markdown generation.
 - Telegram client API request framing and callback handling.
 - Sidecar configuration schema and permission validation.

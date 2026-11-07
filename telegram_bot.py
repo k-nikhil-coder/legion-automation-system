@@ -183,13 +183,14 @@ def format_telegram_card(item: Dict[str, Any]) -> str:
     item_id = item.get("id")
     category = item.get("category", "news")
     target_wa = formatter.get_whatsapp_target_group(category)
-    draft = item.get("draft_text", "")
+    draft = item.get("draft_text") or formatter.format_draft(item)
     source = item.get("source", "Feed")
     url = item.get("url", "")
+    loc_badge = formatter.get_location_badge(item)
     loc_tag = formatter.get_location_tag(item)
     
     msg = (
-        f"🛡️ [Legion Review #{item_id}]\n"
+        f"🛡️ [Legion Review #{item_id}] {loc_badge}\n"
         f"📂 Category: {category.upper()}\n"
         f"{loc_tag}\n"
         f"🎯 Target WhatsApp Group: {target_wa}\n"
@@ -427,13 +428,16 @@ def run_cli_interactive_review(db_path: str = config.DB_PATH):
         item_id = it["id"]
         category = it.get("category", "news")
         target_wa = formatter.get_whatsapp_target_group(category)
+        loc_badge = formatter.get_location_badge(it)
         loc_tag = formatter.get_location_tag(it)
         
         print("=" * 65)
-        print(f"Item #{item_id} | Category: {category.upper()} | Target: {target_wa}")
-        print(f"{loc_tag} | Source: {it.get('source')} | Title: {it.get('title')}")
+        print(f"Item #{item_id} | Category: {category.upper()} | {loc_badge}")
+        print(f"{loc_tag} | Target: {target_wa}")
+        print(f"Source: {it.get('source')} | Title: {it.get('title')}")
         print("-" * 65)
-        print(it.get("draft_text", ""))
+        cli_draft = it.get("draft_text") or formatter.format_draft(it)
+        print(cli_draft)
         print("-" * 65)
         
         while True:
