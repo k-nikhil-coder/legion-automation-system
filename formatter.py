@@ -37,8 +37,8 @@ def _safe_str(val: Any, default: str = "") -> str:
     s = str(val).strip()
     return s if s else default
 
-def clean_text(text: str, max_len: int = 140) -> str:
-    """Cleans up text, strips newlines, and truncates if necessary."""
+def clean_text(text: str, max_len: int = 220) -> str:
+    """Cleans up text, strips newlines, and truncates if necessary (max 220 chars)."""
     if not text:
         return ""
     clean = " ".join(str(text).replace("\n", " ").replace("\r", " ").split())
@@ -180,18 +180,41 @@ def is_location_allowed(item: Dict[str, Any]) -> bool:
     if is_hyderabad_offline(item):
         return True
         
+def is_online_accessible(item: Optional[Dict[str, Any]]) -> bool:
+    """Checks if opportunity indicates online, remote, or virtual accessibility."""
+    if not isinstance(item, dict):
+        return False
     location = _safe_str(item.get("location") or item.get("where"), "")
     title = _safe_str(item.get("title"), "")
     summary = _safe_str(item.get("summary") or item.get("sum"), "")
     combined = f"{location} {title} {summary}".lower()
-    
-    # Check if remote / virtual / national participation is explicitly present
     remote_markers = (
         "online", "remote", "virtual", "zoom", "google meet", "webinar", "livestream",
         "youtube", "global", "national", "pan-india", "pan india", "all india",
         "across india", "self-paced", "worldwide", "anywhere", "hybrid"
     )
-    is_accessible_online_or_national = any(m in combined for m in remote_markers)
+    return any(m in combined for m in remote_markers)
+
+def is_location_allowed(item: Dict[str, Any]) -> bool:
+    """
+    Filters items based on location routing rules:
+    - Retain Hyderabad in-person/offline opportunities.
+    - Retain Online/Remote/National opportunities accessible from India/Hyderabad.
+    - Discard opportunities explicitly located in other cities (Bangalore, Delhi, Mumbai, etc.)
+      unless they are online/remote or national events with remote participation.
+    """
+    if not isinstance(item, dict):
+        return True
+        
+    if is_hyderabad_offline(item):
+        return True
+        
+    location = _safe_str(item.get("location") or item.get("where"), "")
+    title = _safe_str(item.get("title"), "")
+    summary = _safe_str(item.get("summary") or item.get("sum"), "")
+    combined = f"{location} {title} {summary}".lower()
+    
+    is_accessible_online_or_national = is_online_accessible(item)
     
     # Check if explicitly in a disallowed other city
     # Check in location field, in title, or in combined with location markers
@@ -210,22 +233,40 @@ def is_location_allowed(item: Dict[str, Any]) -> bool:
 
     return True
 
-def get_location_badge(item: Dict[str, Any]) -> str:
-    """Returns '[HYDERABAD - OFFLINE]' for Hyderabad offline items, '[ONLINE]' otherwise."""
-    return "[HYDERABAD - OFFLINE]" if is_hyderabad_offline(item) else "[ONLINE]"
+def get_location_badge(item: Optional[Dict[str, Any]]) -> str:
+    """
+    Returns the badge set by quality_gate: ONLINE, HYDERABAD - OFFLINE, or none ("").
+    When 'badge' is set by quality_gate, never defaults to [ONLINE].
+    """
+    if item is None:
+        return "[ONLINE]"
+    if not isinstance(item, dict):
+        return ""
+    if not item:
+        return "[ONLINE]"
+    if "badge" in item:
+        b = item.get("badge")
+        if not b or str(b).lower() in ("none", ""):
+            return ""
+        b_str = str(b).strip().upper()
+        if b_str in ("HYDERABAD - OFFLINE", "[HYDERABAD - OFFLINE]"):
+            return "[HYDERABAD - OFFLINE]"
+        if b_str in ("ONLINE", "[ONLINE]"):
+            return "[ONLINE]"
+        return ""
+    if is_hyderabad_offline(item):
+        return "[HYDERABAD - OFFLINE]"
+    return "[ONLINE]"
 
-def format_location_string(item: Dict[str, Any]) -> str:
+def format_location_string(item: Optional[Dict[str, Any]]) -> str:
     """
     Formats the location line including location badges and specific venue details.
-    Examples:
-      - [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)
-      - [HYDERABAD - OFFLINE] Hyderabad
-      - [ONLINE] Online
     """
     if not isinstance(item, dict):
         return "[ONLINE] Online"
         
-    if is_hyderabad_offline(item):
+    badge = get_location_badge(item)
+    if badge == "[HYDERABAD - OFFLINE]" or is_hyderabad_offline(item):
         location = _safe_str(item.get("location") or item.get("where"), "")
         title = _safe_str(item.get("title"), "")
         summary = _safe_str(item.get("summary") or item.get("sum"), "")
@@ -235,12 +276,15 @@ def format_location_string(item: Dict[str, Any]) -> str:
             return f"[HYDERABAD - OFFLINE] Hyderabad ({venue})"
         return "[HYDERABAD - OFFLINE] Hyderabad"
         
-    loc = _safe_str(item.get("location") or item.get("where"), "Online")
-    if loc.lower() in ("online", "virtual", "remote", "zoom", "google meet", ""):
-        return "[ONLINE] Online"
-    if loc.startswith("[ONLINE]") or loc.startswith("[HYDERABAD"):
-        return loc
-    return f"[ONLINE] {loc}"
+    loc = _safe_str(item.get("location") or item.get("where"), "")
+    if badge == "[ONLINE]":
+        if not loc or loc.lower() in ("online", "virtual", "remote", "zoom", "google meet"):
+            return "[ONLINE] Online"
+        if loc.startswith("[ONLINE]"):
+            return loc
+        return f"[ONLINE] {loc}"
+        
+    return loc if loc else "Unspecified"
 
 def get_location_tag(item: Dict[str, Any]) -> str:
     """
@@ -301,7 +345,7 @@ def format_draft(item: Dict[str, Any]) -> str:
             icon = "💡"
             
         default_summary = f"New update from {_safe_str(item.get('source'), 'feed')}"
-        summary = clean_text(_safe_str(item.get("summary"), default_summary), 160)
+        summary = clean_text(_safe_str(item.get("summary"), default_summary), 220)
         date_deadline = _safe_str(item.get("deadline") or item.get("date_str"), "Check website")
         location = format_location_string(item)
         eligibility = _safe_str(item.get("eligibility"), "Open to all")

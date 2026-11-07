@@ -16,6 +16,7 @@ import formatter
 import collectors
 import pipeline
 import telegram_bot
+import quality_gate
 
 class TestDatabase(unittest.TestCase):
     def setUp(self):
@@ -1568,6 +1569,105 @@ class TestHyderabadPipelineIntegration(unittest.TestCase):
         self.assertEqual(collectors.fetch_commudle_events(), [])
         self.assertEqual(collectors.fetch_luma_hyderabad_events(), [])
         self.assertEqual(collectors.fetch_unstop_hackathons(), [])
+
+
+class TestQualityGateRegression(unittest.TestCase):
+    """Regression tests verifying quality_gate decisions on specified fixtures (Task 8)."""
+
+    def test_rust_article_rejected(self):
+        item = {
+            "title": "Rust Events Nov-Dec 2026: Structured Format Needed for Easier Analysis",
+            "summary": "Introduction " * 300,
+            "link": "https://dev.to/x",
+            "source": "Dev Events & Workshops"
+        }
+        decision, reason, _ = quality_gate.gate(item)
+        self.assertEqual(decision, "reject")
+        self.assertIn("article", reason)
+
+    def test_dubai_7s_rejected(self):
+        item = {
+            "title": "Emirates Dubai 7s 2026: Dates, Tickets, Lineup and the Weekend",
+            "summary": "Rugby sevens tournament with concerts and tickets.",
+            "link": "https://dev.to/y"
+        }
+        decision, reason, _ = quality_gate.gate(item)
+        self.assertEqual(decision, "reject")
+        self.assertIn("off-topic", reason)
+
+    def test_dubai_shopping_festival_rejected(self):
+        item = {
+            "title": "Dubai Shopping Festival 2026-27: 45 Days of Sales, Raffles",
+            "summary": "Discounts and raffles.",
+            "link": "https://dev.to/z"
+        }
+        decision, reason, _ = quality_gate.gate(item)
+        self.assertEqual(decision, "reject")
+        self.assertIn("off-topic", reason)
+
+    def test_offline_bangalore_meetup_rejected(self):
+        item = {
+            "title": "AI Meetup in Bangalore",
+            "summary": "In-person at Indiranagar, Bangalore.",
+            "link": "https://meetup.com/x"
+        }
+        decision, reason, _ = quality_gate.gate(item)
+        self.assertEqual(decision, "reject")
+        self.assertIn("offline in other city", reason)
+
+    def test_hackglobal_accepted(self):
+        item = {
+            "title": "HackGlobal by Polaris School of Technology",
+            "summary": "A global online hackathon with builders from five countries.",
+            "link": "https://hackculture.io"
+        }
+        decision, reason, clean = quality_gate.gate(item)
+        self.assertEqual(decision, "accept")
+        self.assertEqual(reason, "ok")
+        self.assertEqual(clean.get("badge"), "ONLINE")
+        self.assertLessEqual(len(clean.get("summary", "")), 220)
+
+    def test_ksquare_walkin_accepted(self):
+        item = {
+            "title": "Walk-in drive at Ksquare Group: Salesforce and Data Engineering",
+            "summary": "Five roles. Venue: Nanakramguda, Hyderabad.",
+            "link": "https://linkedin.com/x"
+        }
+        decision, reason, clean = quality_gate.gate(item)
+        self.assertEqual(decision, "accept")
+        self.assertEqual(reason, "ok")
+        self.assertEqual(clean.get("badge"), "HYDERABAD - OFFLINE")
+        self.assertLessEqual(len(clean.get("summary", "")), 220)
+
+    def test_formatter_respects_gate_badges(self):
+        # When gate sets badge to ONLINE, HYDERABAD - OFFLINE, or None
+        self.assertEqual(formatter.get_location_badge({"badge": "ONLINE"}), "[ONLINE]")
+        self.assertEqual(formatter.get_location_badge({"badge": "HYDERABAD - OFFLINE"}), "[HYDERABAD - OFFLINE]")
+        self.assertEqual(formatter.get_location_badge({"badge": None}), "")
+        self.assertEqual(formatter.get_location_badge({"badge": ""}), "")
+
+        # When badge is None, draft must NOT default to [ONLINE]
+        item = {
+            "title": "Special Tech Workshop",
+            "summary": "Hands-on session with cloud tools.",
+            "badge": None,
+            "category": "event",
+            "url": "https://example.com/special"
+        }
+        draft = formatter.format_draft(item)
+        self.assertNotIn("[ONLINE]", draft)
+
+    def test_devpost_subdomain_trusted_in_gate(self):
+        item = {
+            "title": "PayPal AI Hackathon",
+            "summary": "Online developer hackathon on Devpost. Themes: Machine Learning/AI.",
+            "location": "Online",
+            "link": "https://paypalaihackathon.devpost.com"
+        }
+        decision, reason, clean = quality_gate.gate(item)
+        self.assertEqual(decision, "accept")
+        self.assertEqual(reason, "ok")
+        self.assertEqual(clean.get("badge"), "ONLINE")
 
 
 if __name__ == "__main__":

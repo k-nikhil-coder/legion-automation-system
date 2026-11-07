@@ -88,12 +88,6 @@ FEEDS: Dict[str, Dict[str, Any]] = {
         "category": "job",
         "source": "RemoteOK"
     },
-    "events": {
-        "primary": "https://dev.to/feed/tag/events",
-        "fallback": "",
-        "category": "event",
-        "source": "Dev Events & Workshops"
-    },
     "legion_feed": {
         "primary": LEGION_FEED_HTML_PATH,
         "fallback": "",

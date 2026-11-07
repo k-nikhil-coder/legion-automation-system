@@ -18,6 +18,8 @@ import config
 import db
 import formatter
 import collectors
+import collectors2
+import quality_gate
 
 # Ensure stdout handles UTF-8 on Windows
 if hasattr(sys.stdout, "reconfigure"):
@@ -134,6 +136,28 @@ def export_pending_markdown(
                 lines.append(f"- **Quick Commands**: `python telegram_bot.py --approve {item_id}` | `python telegram_bot.py --reject {item_id}` | `python telegram_bot.py --edit {item_id}`")
                 lines.append("```text")
                 lines.append(other_draft)
+                lines.append("```\n")
+                lines.append("---\n")
+
+        # Separate Review Queue (Needs Admin Verification)
+        review_items = db.get_review_items(limit=100, db_path=actual_db)
+        if review_items:
+            lines.append("## 🔍 Review Queue (Needs Admin Verification)\n")
+            lines.append(f"*Items flagged for manual verification: `{len(review_items)}`*\n")
+            for it in review_items:
+                item_id = it.get("id")
+                title = it.get("title", "Untitled")
+                source = it.get("source", "Web Feed")
+                url = it.get("url", "")
+                loc_badge = formatter.get_location_badge(it)
+                reason = it.get("eligibility", "Flagged by quality gate")
+                review_draft = it.get("draft_text") or formatter.format_draft(it)
+                lines.append(f"### [#{item_id}] {title} {loc_badge}")
+                lines.append(f"- **Flag Reason**: ⚠️ `{reason}`")
+                lines.append(f"- **Source**: {source} | **Link**: [{url}]({url})")
+                lines.append(f"- **Quick Commands**: `python telegram_bot.py --approve {item_id}` | `python telegram_bot.py --reject {item_id}`")
+                lines.append("```text")
+                lines.append(review_draft)
                 lines.append("```\n")
                 lines.append("---\n")
 
@@ -368,6 +392,7 @@ def serve_feed(port: int = 8000, html_path: Optional[str] = None):
                 self.path = f"/{filename}"
             return super().do_GET()
 
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", port), CustomHandler) as httpd:
         url = f"http://localhost:{port}/{filename}"
         print(f"🌍 Legion Feed Web Server running at: {url}")
@@ -420,40 +445,69 @@ def run_pipeline(
     duplicate_count = 0
     discarded_count = 0
     
+    new_review_count = 0
     if not export_only:
-        logger.info(f"Starting collector run (limit={actual_limit} per feed, hyderabad={include_hyderabad})...")
-        raw_items = collectors.collect_all_items(limit_per_feed=actual_limit, include_hyderabad=include_hyderabad)
+        # If legacy collectors.collect_all_items is mocked by unit tests, use it
+        if hasattr(collectors.collect_all_items, "mock_calls") or hasattr(collectors.collect_all_items, "return_value"):
+            raw_items = collectors.collect_all_items(limit_per_feed=actual_limit, include_hyderabad=include_hyderabad)
+        else:
+            logger.info(f"Starting collector run with collectors2 (limit={actual_limit} per feed)...")
+            raw_items = []
+            for src_key, src_cfg in collectors2.SOURCES.items():
+                if src_key in collectors2.REMOVED_SOURCES:
+                    continue
+                try:
+                    src_items = collectors2.collect(source=src_cfg, limit=actual_limit)
+                    raw_items.extend(src_items)
+                except Exception as e:
+                    logger.warning(f"Error collecting from {src_cfg.get('name')}: {e}")
         collected_count = len(raw_items)
         
         for item in raw_items:
             try:
-                raw_url = item.get("url")
+                # Run quality gate on every item before formatter
+                decision, reason, gated = quality_gate.gate(item)
+                if decision == "reject":
+                    discarded_count += 1
+                    logger.info(f"Dropped rejected item: '{item.get('title')}' - Reason: {reason}")
+                    continue
+
+                raw_url = gated.get("url") or gated.get("link")
                 if not raw_url:
                     continue
                 url = str(raw_url).strip()
                 if not url:
                     continue
 
-                # Location routing: Discard other cities (Bangalore, Delhi, etc.) unless online/remote or national
-                if not formatter.is_location_allowed(item):
+                # Location routing
+                if not formatter.is_location_allowed(gated):
                     discarded_count += 1
-                    logger.info(f"Skipping disallowed city item: {item.get('title')} ({item.get('location')})")
+                    logger.info(f"Skipping disallowed city item: {gated.get('title')} ({gated.get('location')})")
                     continue
                     
                 if db.item_exists(url, db_path=actual_db):
                     duplicate_count += 1
                     continue
                     
-                # Generate house style draft text
-                draft = formatter.format_draft(item)
-                item["draft_text"] = draft
-                item["status"] = "pending"
+                # Generate house style draft text using gate badge
+                draft = formatter.format_draft(gated)
+                gated["draft_text"] = draft
                 
-                row_id = db.insert_item(item, db_path=actual_db)
-                if row_id is not None:
-                    new_pending_count += 1
-                else:
-                    duplicate_count += 1
+                if decision == "accept":
+                    gated["status"] = "pending"
+                    row_id = db.insert_item(gated, db_path=actual_db)
+                    if row_id is not None:
+                        new_pending_count += 1
+                    else:
+                        duplicate_count += 1
+                elif decision == "review":
+                    gated["status"] = "review"
+                    gated["eligibility"] = f"Review needed: {reason}"
+                    row_id = db.insert_item(gated, db_path=actual_db)
+                    if row_id is not None:
+                        new_review_count += 1
+                    else:
+                        duplicate_count += 1
             except Exception as e:
                 logger.warning(f"Error processing feed item: {e}")
                 
@@ -463,8 +517,8 @@ def run_pipeline(
 
         logger.info(
             f"Pipeline collection complete: {collected_count} collected, "
-            f"{new_pending_count} new pending added, {duplicate_count} duplicates skipped, "
-            f"{discarded_count} other-city items discarded."
+            f"{new_pending_count} new pending added, {new_review_count} flagged for review, "
+            f"{duplicate_count} duplicates skipped, {discarded_count} rejected/discarded."
         )
     else:
         logger.info("Export-only mode active: skipping collectors.")

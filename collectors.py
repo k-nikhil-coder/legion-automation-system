@@ -486,35 +486,9 @@ def fetch_remoteok_jobs(limit: int = config.MAX_ITEMS_PER_FEED) -> List[Dict[str
     return items
 
 def fetch_tech_events(limit: int = config.MAX_ITEMS_PER_FEED) -> List[Dict[str, Any]]:
-    """
-    Collects upcoming tech events, conferences, and workshops from Dev.to events feed.
-    """
-    feed_cfg = config.FEEDS.get("events", {})
-    url = feed_cfg.get("primary", "https://dev.to/feed/tag/events")
-    
-    data = fetch_data(url)
-    entries = parse_xml_feed(data) if data else []
-    items = []
-    
-    for entry in entries[:limit]:
-        title = entry["title"]
-        url_link = entry["link"]
-        summary = entry["summary"] or "Tech workshop and community event."
-        
-        items.append({
-            "source": "Dev Events & Workshops",
-            "category": "event",
-            "title": title,
-            "url": url_link,
-            "summary": summary,
-            "date_str": entry.get("date_str", ""),
-            "deadline": "See event details",
-            "location": "Online / Global",
-            "eligibility": "Developers, students, and tech enthusiasts",
-        })
-        
-    logger.info(f"Collected {len(items)} event items from Dev Events")
-    return items
+    """Removed old Dev Events & Workshops collector."""
+    return []
+
 
 CURATED_SEED_ITEMS: List[Dict[str, str]] = [
     {
@@ -1378,7 +1352,6 @@ def collect_all_items(
         ("Courses & Learning", fetch_reddit_courses),
         ("WeWorkRemotely Jobs", fetch_weworkremotely_jobs),
         ("RemoteOK Jobs", fetch_remoteok_jobs),
-        ("Tech Events", fetch_tech_events),
     ]
     if include_hyderabad:
         collectors.extend([

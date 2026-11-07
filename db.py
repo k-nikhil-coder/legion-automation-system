@@ -92,9 +92,14 @@ def init_db(db_path: str = DB_PATH):
                     eligibility TEXT,
                     draft_text TEXT,
                     status TEXT DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    badge TEXT
                 );
             """)
+            try:
+                cursor.execute("ALTER TABLE items ADD COLUMN badge TEXT;")
+            except Exception:
+                pass
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_url ON items(url);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_status ON items(status);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_category ON items(category);")
@@ -127,8 +132,8 @@ def insert_item(item: Dict[str, Any], db_path: str = DB_PATH) -> Optional[int]:
                 cursor.execute("""
                     INSERT INTO items (
                         source, category, title, url, summary, 
-                        date_str, deadline, location, eligibility, draft_text, status
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        date_str, deadline, location, eligibility, draft_text, status, badge
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     item.get("source", "Unknown"),
                     item.get("category", "news"),
@@ -140,7 +145,8 @@ def insert_item(item: Dict[str, Any], db_path: str = DB_PATH) -> Optional[int]:
                     item.get("location", "Online"),
                     item.get("eligibility", "Open to all"),
                     item.get("draft_text", ""),
-                    item.get("status", "pending")
+                    item.get("status", "pending"),
+                    item.get("badge")
                 ))
                 return cursor.lastrowid
             except sqlite3.IntegrityError:
@@ -161,6 +167,18 @@ def get_pending_items(limit: int = 50, db_path: str = DB_PATH) -> List[Dict[str,
         cursor.execute("""
             SELECT * FROM items 
             WHERE status = 'pending' 
+            ORDER BY created_at DESC 
+            LIMIT ?
+        """, (limit,))
+        return [dict(row) for row in cursor.fetchall()]
+
+def get_review_items(limit: int = 50, db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Retrieves items flagged for manual review with reason."""
+    with get_db_connection(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM items 
+            WHERE status = 'review' 
             ORDER BY created_at DESC 
             LIMIT ?
         """, (limit,))
