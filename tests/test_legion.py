@@ -2205,6 +2205,40 @@ function tabs(){} function render(){}
         self.assertIsInstance(items, list)
         self.assertTrue(any(it.get("title") == "Resilient AI Workshop" for it in items))
 
+    def test_export_posts_json_truncates_long_summaries(self):
+        """Verifies that export_posts_json caps summaries to <= 180 chars to avoid UI stretching."""
+        long_text = "This is a very long opportunity description for an engineering role. " * 10
+        db.insert_item({
+            "source": "Test Feed",
+            "category": "job",
+            "title": "Staff AI Engineer",
+            "url": "https://test.example/long-summary-job",
+            "summary": long_text,
+            "status": "pending"
+        }, self.db_path)
+        
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        item = [p for p in posts if p["link"] == "https://test.example/long-summary-job"][0]
+        self.assertLessEqual(len(item["sum"]), 180)
+        self.assertTrue(item["sum"].endswith("..."))
+
+    def test_export_posts_json_strips_spam_tokens(self):
+        """Verifies that verification tokens like **BENEVOLENT** are stripped from export."""
+        raw_text = "Exciting AI annotation work. Please mention the word **BENEVOLENT** and tag #RMTM2LjIzMi4yMjcuMjAy when applying."
+        db.insert_item({
+            "source": "RemoteOK",
+            "category": "job",
+            "title": "AI Content Specialist",
+            "url": "https://test.example/spam-token-job",
+            "summary": raw_text,
+            "status": "pending"
+        }, self.db_path)
+        
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        item = [p for p in posts if p["link"] == "https://test.example/spam-token-job"][0]
+        self.assertNotIn("**BENEVOLENT**", item["sum"])
+        self.assertNotIn("#RMTM2LjIzMi4yMjcuMjAy", item["sum"])
+
 
 
 

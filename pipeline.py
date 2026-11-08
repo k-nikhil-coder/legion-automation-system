@@ -313,7 +313,7 @@ def export_feed_html(
                 "id": orig.get("url", "").split("/")[-1] or f"s{len(seed_list)+1}",
                 "type": orig.get("category", "news"),
                 "title": orig.get("title", ""),
-                "sum": orig.get("summary", ""),
+                "sum": formatter.clean_text(orig.get("summary") or orig.get("title", ""), 180),
                 "date": clean_d,
                 "where": orig.get("location", "Online"),
                 "src": orig.get("source", "Community"),
@@ -434,11 +434,17 @@ def export_posts_json(
             where_val = raw_loc
             badge_val = it.get("badge") or ("HYDERABAD - OFFLINE" if "hyderabad" in raw_loc.lower() and "online" not in raw_loc.lower() else "ONLINE")
 
+        raw_summary = str(it.get("summary") or it.get("title", "")).strip()
+        # Clean out any verification spam tags like **BENEVOLENT** or long hex strings
+        raw_summary = re.sub(r'\*\*.*?\*\*', '', raw_summary)
+        raw_summary = re.sub(r'#[A-Za-z0-9_-]{8,}', '', raw_summary).strip()
+        clean_summary = formatter.clean_text(raw_summary, 180)
+
         posts_list.append({
             "id": f"db_{it.get('id')}",
             "type": it.get("category", "news"),
             "title": it.get("title", ""),
-            "sum": it.get("summary") or it.get("title", ""),
+            "sum": clean_summary,
             "date": clean_date,
             "where": where_val,
             "badge": badge_val,
