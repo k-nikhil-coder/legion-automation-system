@@ -781,35 +781,38 @@ def collect(source: Optional[Any] = None, limit: int = 10) -> List[Dict[str, Any
         cat = cfg.get("category", "news")
         headers = cfg.get("headers")
 
-        raw, err = fetch_raw(url, headers=headers)
-        if not raw:
-            continue
-
-        if stype == "xml":
-            items = parse_xml_feed(raw, name, cat, limit=limit)
-        elif stype == "ical":
-            items = parse_ical(raw.decode("utf-8", errors="ignore"), name, limit=limit)
-        elif stype == "devpost_api":
-            items = parse_devpost_api(raw, limit=limit)
-        elif stype == "remoteok_api":
-            items = parse_remoteok_api(raw, limit=limit)
-        elif stype == "bevy_api":
-            items = parse_bevy_api(raw, name, limit=limit)
-        elif stype == "luma":
-            items = parse_luma(raw.decode("utf-8", errors="ignore"), name, limit=limit)
-        elif stype == "hn_api":
-            items = parse_hn_api(raw, limit=limit)
-        elif stype == "devto_api":
-            items = parse_devto_api(raw, limit=limit)
-        else:
-            items = []
-
-        today = datetime.now().strftime("%Y-%m-%d")
-        for it in items:
-            it_date = it.get("date") or ""
-            if it_date and it_date < today:
+        try:
+            raw, err = fetch_raw(url, headers=headers)
+            if not raw:
                 continue
-            collected.append(it)
+
+            if stype == "xml":
+                items = parse_xml_feed(raw, name, cat, limit=limit)
+            elif stype == "ical":
+                items = parse_ical(raw.decode("utf-8", errors="ignore"), name, limit=limit)
+            elif stype == "devpost_api":
+                items = parse_devpost_api(raw, limit=limit)
+            elif stype == "remoteok_api":
+                items = parse_remoteok_api(raw, limit=limit)
+            elif stype == "bevy_api":
+                items = parse_bevy_api(raw, name, limit=limit)
+            elif stype == "luma":
+                items = parse_luma(raw.decode("utf-8", errors="ignore"), name, limit=limit)
+            elif stype == "hn_api":
+                items = parse_hn_api(raw, limit=limit)
+            elif stype == "devto_api":
+                items = parse_devto_api(raw, limit=limit)
+            else:
+                items = []
+
+            today = datetime.now().strftime("%Y-%m-%d")
+            for it in items:
+                it_date = it.get("date") or ""
+                if it_date and it_date < today:
+                    continue
+                collected.append(it)
+        except Exception as e:
+            logger.warning(f"Error collecting from {name}: {e}")
     return collected
 
 

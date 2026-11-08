@@ -23,6 +23,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn:hover{filter:brightness(.96)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-refresh{display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .15s}
+.spin{display:inline-block;animation:rot 1s linear infinite}
+@keyframes rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin-bottom:10px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
 .tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:13px}
@@ -48,7 +52,7 @@ dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);co
 dialog::backdrop{background:rgba(0,0,0,.5)}
 label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
 dialog input,dialog select,dialog textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9999}
 .toast.on{opacity:1}
 </style>
 </head>
@@ -56,7 +60,7 @@ dialog input,dialog select,dialog textarea{width:100%;padding:8px 10px;border:1p
 <div class="wrap">
 <header>
   <div><h1>🌍 Legion Feed</h1><span class="live"><span class="dot"></span><span id="upd"></span></span></div>
-  <div style="display:flex;gap:6px"><button class="btn" id="theme" title="Toggle theme">◐</button><button class="btn pri" id="add">+ Add post</button></div>
+  <div style="display:flex;gap:6px"><button class="btn btn-refresh" id="refresh-btn" title="Refresh feed from 34 sources">🔄 Update Feed</button><button class="btn" id="theme" title="Toggle theme">◐</button><button class="btn pri" id="add">+ Add post</button></div>
 </header>
 <input class="search" id="q" type="search" placeholder="Search posts…">
 <div class="tabs" id="tabs"></div>
@@ -1114,6 +1118,7 @@ function days(d){
   return Math.round((dt-td)/864e5);
 }
 function all(){return mine.concat(SEED).filter(function(p){
+  if(p.status === "rejected") return false;
   if(!p.date)return true;
   var d=days(p.date);
   return d===null||d>=0;
@@ -1155,7 +1160,7 @@ function render(){
     (p.id.charAt(0)==="m"?'<button class="btn" data-a="del" data-id="'+p.id+'">Delete</button>':"")+'</div></article>'});
   document.getElementById("feed").innerHTML=h||'<div class="empty">No posts match.</div>'}
 function tabs(){document.getElementById("tabs").innerHTML=Object.keys(TYPES).map(function(k){return'<button class="tab" data-t="'+k+'" aria-pressed="'+(k===tab)+'">'+TYPES[k]+'</button>'}).join("")}
-function toast(m){var t=document.getElementById("toast");t.textContent=m;t.className="toast on";setTimeout(function(){t.className="toast"},1600)}
+function toast(m,dur){var t=document.getElementById("toast");t.textContent=m;t.className="toast on";setTimeout(function(){t.className="toast"},dur||(m.length>25?3200:1800))}
 function wa(p){
   var em={job:"💼",hackathon:"⚡",event:"🗓️",course:"🎓",news:"💡"}[p.type]||"🚀";
   var badge = "";
@@ -1212,21 +1217,83 @@ document.getElementById("theme").onclick=function(){
   var r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
   r.dataset.theme=dark?"light":"dark"};
 document.getElementById("upd").textContent="Updated "+fmt(TODAY);
-function loadFeed(){
-  fetch("posts.json")
+function loadFeed(isRefresh){
+  return fetch("posts.json?t=" + Date.now(), {cache: "no-store"})
     .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})
     .then(function(data){
       if(Array.isArray(data)&&data.length>0){
         SEED=data;
       }
       tabs();render();
+      document.getElementById("upd").textContent="Updated "+fmt(TODAY);
+      return all().length;
     })
     .catch(function(e){
       // Fallback to built-in sample data
       tabs();render();
+      return all().length;
     });
 }
 loadFeed();
+
+var refreshBtn = document.getElementById("refresh-btn");
+if(refreshBtn){
+  refreshBtn.onclick = function(){
+    if(refreshBtn.disabled) return;
+    if(window.location.protocol === "file:"){
+      toast("⚠️ Offline file mode. Run: python pipeline.py --serve 8000");
+      return;
+    }
+    refreshBtn.disabled = true;
+    var originalHtml = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<span class="spin">⏳</span> Updating...';
+
+    fetch("/api/refresh", {method: "POST"})
+      .then(function(r){
+        if(!r.ok && (r.status === 405 || r.status === 404)){
+          return fetch("/api/refresh");
+        }
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function(res){
+        return loadFeed(true).then(function(count){
+          var avail = (res && typeof res.total_items === "number") ? res.total_items : count;
+          var newCount = (res && typeof res.new_pending === "number") ? res.new_pending : 0;
+          var newMsg = newCount > 0 ? " (" + newCount + " new)" : "";
+          toast("✅ Feed updated! " + avail + " opportunities available" + newMsg);
+        });
+      })
+      .catch(function(err){
+        console.warn("Update feed error:", err);
+        toast("❌ Update failed: " + (err.message || "Network error"));
+      })
+      .finally(function(){
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = originalHtml;
+      });
+  };
+}
+
+// Background auto-polling (every 3 minutes) if running in server mode
+if(window.location.protocol !== "file:"){
+  setInterval(function(){
+    fetch("posts.json?t=" + Date.now(), {cache: "no-store"})
+      .then(function(r){return r.ok ? r.json() : null})
+      .then(function(data){
+        if(Array.isArray(data) && data.length > 0){
+          var prevSerialized = JSON.stringify(SEED);
+          var newSerialized = JSON.stringify(data);
+          if(prevSerialized !== newSerialized){
+            SEED = data;
+            render();
+            document.getElementById("upd").textContent="Updated "+fmt(TODAY);
+          }
+        }
+      })
+      .catch(function(){});
+  }, 180000);
+}
 </script>
 </body>
 </html>

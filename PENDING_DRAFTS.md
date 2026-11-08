@@ -1,6 +1,6 @@
 # 🛡️ Legion Community - Pending Content Review Queue
 
-> **Generated at**: `2026-11-07 23:38:22`  
+> **Generated at**: `2026-11-08 12:42:01`  
 > **Database Stats**: ⏳ Pending: `73` | ✅ Approved: `0` | ❌ Rejected: `1` | 🚀 Posted: `1`
 
 ## 📌 Workflow Guide
@@ -13,8 +13,8 @@
 ## 🏆 Hackathons
 *Target WhatsApp Group: `🏆 Hackathons`* | *Pending: 16*
 
-### [#92] Kiroween 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 18:08:22`
+### [#92] Kiroween 2026 
+- **Location**: Online | **Source**: Devpost | **Created**: `2026-11-07 18:08:22`
 - **Original Link**: [https://kiroween.devpost.com/](https://kiroween.devpost.com/)
 - **Quick Commands**: `python telegram_bot.py --approve 92` | `python telegram_bot.py --reject 92` | `python telegram_bot.py --edit 92`
 
@@ -31,8 +31,8 @@
 
 ---
 
-### [#75] How Do You Stop an AI Agent from Publishing Claims Your Repo Cannot Support? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Dev.to API | **Created**: `2026-11-07 17:42:11`
+### [#75] How Do You Stop an AI Agent from Publishing Claims Your Repo Cannot Support? 
+- **Location**: Online | **Source**: Dev.to API | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://dev.to/waynevivek/how-do-you-stop-an-ai-agent-from-publishing-claims-your-repo-cannot-support-of](https://dev.to/waynevivek/how-do-you-stop-an-ai-agent-from-publishing-claims-your-repo-cannot-support-of)
 - **Quick Commands**: `python telegram_bot.py --approve 75` | `python telegram_bot.py --reject 75` | `python telegram_bot.py --edit 75`
 
@@ -49,8 +49,8 @@
 
 ---
 
-### [#65] HackGlobal by Polaris School of Technology [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: HackCulture | **Created**: `2026-11-07 09:52:47`
+### [#65] HackGlobal by Polaris School of Technology 
+- **Location**: Online | **Source**: HackCulture | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://hackculture.io](https://hackculture.io)
 - **Quick Commands**: `python telegram_bot.py --approve 65` | `python telegram_bot.py --reject 65` | `python telegram_bot.py --edit 65`
 
@@ -67,8 +67,8 @@
 
 ---
 
-### [#66] Gemma 4 Developer Agent Paper Track [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Kaggle | **Created**: `2026-11-07 09:52:47`
+### [#66] Gemma 4 Developer Agent Paper Track 
+- **Location**: Online | **Source**: Kaggle | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://www.kaggle.com/competitions/gemma-4-developer-agent-paper](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper)
 - **Quick Commands**: `python telegram_bot.py --approve 66` | `python telegram_bot.py --reject 66` | `python telegram_bot.py --edit 66`
 
@@ -85,8 +85,8 @@
 
 ---
 
-### [#67] Codegeist 2026: Build with context [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
+### [#67] Codegeist 2026: Build with context 
+- **Location**: Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://codegeist2026.devpost.com](https://codegeist2026.devpost.com)
 - **Quick Commands**: `python telegram_bot.py --approve 67` | `python telegram_bot.py --reject 67` | `python telegram_bot.py --edit 67`
 
@@ -103,8 +103,8 @@
 
 ---
 
-### [#68] Meta VR Start Developer Competition 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
+### [#68] Meta VR Start Developer Competition 2026 
+- **Location**: Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://devpost.com](https://devpost.com)
 - **Quick Commands**: `python telegram_bot.py --approve 68` | `python telegram_bot.py --reject 68` | `python telegram_bot.py --edit 68`
 
@@ -121,8 +121,8 @@
 
 ---
 
-### [#69] AWS MSP AI Hackathon [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
+### [#69] AWS MSP AI Hackathon 
+- **Location**: Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://share.google/YUIvbsyKn93aeDHFG](https://share.google/YUIvbsyKn93aeDHFG)
 - **Quick Commands**: `python telegram_bot.py --approve 69` | `python telegram_bot.py --reject 69` | `python telegram_bot.py --edit 69`
 
@@ -139,8 +139,8 @@
 
 ---
 
-### [#70] HackStack: India’s Online Innovation Sprint [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Luma | **Created**: `2026-11-07 09:52:47`
+### [#70] HackStack: India’s Online Innovation Sprint 
+- **Location**: Online | **Source**: Luma | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://luma.com](https://luma.com)
 - **Quick Commands**: `python telegram_bot.py --approve 70` | `python telegram_bot.py --reject 70` | `python telegram_bot.py --edit 70`
 
@@ -157,8 +157,8 @@
 
 ---
 
-### [#22] My money had no memory, so I built an agent that does [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#22] My money had no memory, so I built an agent that does 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/bigmanmarsh/my-money-had-no-memory-so-i-built-an-agent-that-does-3bnp](https://dev.to/bigmanmarsh/my-money-had-no-memory-so-i-built-an-agent-that-does-3bnp)
 - **Quick Commands**: `python telegram_bot.py --approve 22` | `python telegram_bot.py --reject 22` | `python telegram_bot.py --edit 22`
 
@@ -175,8 +175,8 @@
 
 ---
 
-### [#23] Baton: Who Keeps the Promise When the Shift Ends? [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#23] Baton: Who Keeps the Promise When the Shift Ends? 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/neweraxx/baton-who-keeps-the-promise-when-the-shift-ends-55d5](https://dev.to/neweraxx/baton-who-keeps-the-promise-when-the-shift-ends-55d5)
 - **Quick Commands**: `python telegram_bot.py --approve 23` | `python telegram_bot.py --reject 23` | `python telegram_bot.py --edit 23`
 
@@ -193,8 +193,8 @@
 
 ---
 
-### [#24] LifePilot: Building a Personal Life Manager Inside a Chat Room [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#24] LifePilot: Building a Personal Life Manager Inside a Chat Room 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/sushil_ghimire/lifepilot-building-a-personal-life-manager-inside-a-chat-room-b99](https://dev.to/sushil_ghimire/lifepilot-building-a-personal-life-manager-inside-a-chat-room-b99)
 - **Quick Commands**: `python telegram_bot.py --approve 24` | `python telegram_bot.py --reject 24` | `python telegram_bot.py --edit 24`
 
@@ -211,8 +211,8 @@
 
 ---
 
-### [#25] How I Put Three AI Agents in a Discord Channel with Switch (and What Broke on Windows) [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#25] How I Put Three AI Agents in a Discord Channel with Switch (and What Broke on Windows) 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/jatinlabs/how-i-put-three-ai-agents-in-a-discord-channel-with-switch-and-what-broke-on-windows-2946](https://dev.to/jatinlabs/how-i-put-three-ai-agents-in-a-discord-channel-with-switch-and-what-broke-on-windows-2946)
 - **Quick Commands**: `python telegram_bot.py --approve 25` | `python telegram_bot.py --reject 25` | `python telegram_bot.py --edit 25`
 
@@ -229,8 +229,8 @@
 
 ---
 
-### [#26] What a hackathon teaches you that a course doesn't [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#26] What a hackathon teaches you that a course doesn't 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/suraj_nandan/what-a-hackathon-teaches-you-that-a-course-doesnt-436f](https://dev.to/suraj_nandan/what-a-hackathon-teaches-you-that-a-course-doesnt-436f)
 - **Quick Commands**: `python telegram_bot.py --approve 26` | `python telegram_bot.py --reject 26` | `python telegram_bot.py --edit 26`
 
@@ -247,8 +247,8 @@
 
 ---
 
-### [#27] I made two free AI models review each other's code in one Switch room. [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
+### [#27] I made two free AI models review each other's code in one Switch room. 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://dev.to/zoymusk/i-made-two-free-ai-models-review-each-others-code-in-one-switch-room-3fk5](https://dev.to/zoymusk/i-made-two-free-ai-models-review-each-others-code-in-one-switch-room-3fk5)
 - **Quick Commands**: `python telegram_bot.py --approve 27` | `python telegram_bot.py --reject 27` | `python telegram_bot.py --edit 27`
 
@@ -265,8 +265,8 @@
 
 ---
 
-### [#21] A reader asked for three scores. I found a hidden denominator. [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:13:43`
+### [#21] A reader asked for three scores. I found a hidden denominator. 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 09:13:43`
 - **Original Link**: [https://dev.to/blucca/a-reader-asked-for-three-scores-i-found-a-hidden-denominator-lj5](https://dev.to/blucca/a-reader-asked-for-three-scores-i-found-a-hidden-denominator-lj5)
 - **Quick Commands**: `python telegram_bot.py --approve 21` | `python telegram_bot.py --reject 21` | `python telegram_bot.py --edit 21`
 
@@ -283,8 +283,8 @@
 
 ---
 
-### [#15] I put my clients in the same Discord channel as my AI agents (and Switch stopped them from sneaking in free work) [ONLINE]
-- **Location**: [ONLINE] Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 08:48:53`
+### [#15] I put my clients in the same Discord channel as my AI agents (and Switch stopped them from sneaking in free work) 
+- **Location**: Online / Global | **Source**: Dev.to Hackathons | **Created**: `2026-11-07 08:48:53`
 - **Original Link**: [https://dev.to/suyashatlantis/i-put-my-clients-in-the-same-discord-channel-as-my-ai-agents-and-switch-stopped-them-from-sneaking-16af](https://dev.to/suyashatlantis/i-put-my-clients-in-the-same-discord-channel-as-my-ai-agents-and-switch-stopped-them-from-sneaking-16af)
 - **Quick Commands**: `python telegram_bot.py --approve 15` | `python telegram_bot.py --reject 15` | `python telegram_bot.py --edit 15`
 
@@ -304,7 +304,7 @@
 ## 💼 Jobs & Internships
 *Target WhatsApp Group: `💼 Jobs & Internships`* | *Pending: 24*
 
-### [#72] Walk-in drive at Ksquare Group: Salesforce and Data Engineering [HYDERABAD - OFFLINE]
+### [#72] Walk-in drive at Ksquare Group: Salesforce and Data Engineering 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad (Nanakramguda) | **Source**: Community admin | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://legion.community/feed/s9](https://legion.community/feed/s9)
 - **Quick Commands**: `python telegram_bot.py --approve 72` | `python telegram_bot.py --reject 72` | `python telegram_bot.py --edit 72`
@@ -321,7 +321,7 @@
 
 ---
 
-### [#73] Software Engineer (C#, .NET, WPF) at Medtronic [HYDERABAD - OFFLINE]
+### [#73] Software Engineer (C#, .NET, WPF) at Medtronic 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: LinkedIn | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://lnkd.in/p/dG8pVZs7](https://lnkd.in/p/dG8pVZs7)
 - **Quick Commands**: `python telegram_bot.py --approve 73` | `python telegram_bot.py --reject 73` | `python telegram_bot.py --edit 73`
@@ -338,8 +338,8 @@
 
 ---
 
-### [#77] Junior Market Analyst at MEYA HOLDINGS [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 17:42:11`
+### [#77] Junior Market Analyst at MEYA HOLDINGS 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-junior-market-analyst-meya-holdings-1137700](https://remoteok.com/remote-jobs/remote-junior-market-analyst-meya-holdings-1137700)
 - **Quick Commands**: `python telegram_bot.py --approve 77` | `python telegram_bot.py --reject 77` | `python telegram_bot.py --edit 77`
 
@@ -355,8 +355,8 @@
 
 ---
 
-### [#43] Customer Value Architect III at Mixpanel [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#43] Customer Value Architect III at Mixpanel 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/mixpanel-customer-value-architect-iii](https://weworkremotely.com/remote-jobs/mixpanel-customer-value-architect-iii)
 - **Quick Commands**: `python telegram_bot.py --approve 43` | `python telegram_bot.py --reject 43` | `python telegram_bot.py --edit 43`
 
@@ -372,8 +372,8 @@
 
 ---
 
-### [#44] Head of Technology at Sanctuary Computer [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#44] Head of Technology at Sanctuary Computer 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/sanctuary-computer-head-of-technology](https://weworkremotely.com/remote-jobs/sanctuary-computer-head-of-technology)
 - **Quick Commands**: `python telegram_bot.py --approve 44` | `python telegram_bot.py --reject 44` | `python telegram_bot.py --edit 44`
 
@@ -389,8 +389,8 @@
 
 ---
 
-### [#45] Staff Software Engineer at Samsara [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#45] Staff Software Engineer at Samsara 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/samsara-staff-software-engineer](https://weworkremotely.com/remote-jobs/samsara-staff-software-engineer)
 - **Quick Commands**: `python telegram_bot.py --approve 45` | `python telegram_bot.py --reject 45` | `python telegram_bot.py --edit 45`
 
@@ -406,8 +406,8 @@
 
 ---
 
-### [#46] Director, Marketing Operations at Maven Clinic [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#46] Director, Marketing Operations at Maven Clinic 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/maven-clinic-director-marketing-operations](https://weworkremotely.com/remote-jobs/maven-clinic-director-marketing-operations)
 - **Quick Commands**: `python telegram_bot.py --approve 46` | `python telegram_bot.py --reject 46` | `python telegram_bot.py --edit 46`
 
@@ -423,8 +423,8 @@
 
 ---
 
-### [#47] Global Alliance Lead, Capgemini at Fivetran [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#47] Global Alliance Lead, Capgemini at Fivetran 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/fivetran-global-alliance-lead-capgemini](https://weworkremotely.com/remote-jobs/fivetran-global-alliance-lead-capgemini)
 - **Quick Commands**: `python telegram_bot.py --approve 47` | `python telegram_bot.py --reject 47` | `python telegram_bot.py --edit 47`
 
@@ -440,8 +440,8 @@
 
 ---
 
-### [#48] Software Engineer, AI Coding Tasks (Contract) at Askable [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#48] Software Engineer, AI Coding Tasks (Contract) at Askable 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/askable-software-engineer-ai-coding-tasks-contract](https://weworkremotely.com/remote-jobs/askable-software-engineer-ai-coding-tasks-contract)
 - **Quick Commands**: `python telegram_bot.py --approve 48` | `python telegram_bot.py --reject 48` | `python telegram_bot.py --edit 48`
 
@@ -457,8 +457,8 @@
 
 ---
 
-### [#49] Engineering Manager at Medify [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
+### [#49] Engineering Manager at Medify 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/medify-engineering-manager](https://weworkremotely.com/remote-jobs/medify-engineering-manager)
 - **Quick Commands**: `python telegram_bot.py --approve 49` | `python telegram_bot.py --reject 49` | `python telegram_bot.py --edit 49`
 
@@ -474,8 +474,8 @@
 
 ---
 
-### [#50] Agile Program Manager at Toptal [ONLINE]
-- **Location**: [ONLINE] Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#50] Agile Program Manager at Toptal 
+- **Location**: Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-agile-program-manager-toptal-1137692](https://remoteok.com/remote-jobs/remote-agile-program-manager-toptal-1137692)
 - **Quick Commands**: `python telegram_bot.py --approve 50` | `python telegram_bot.py --reject 50` | `python telegram_bot.py --edit 50`
 
@@ -491,8 +491,8 @@
 
 ---
 
-### [#51] Feltsense AI Engineer at Silver.dev [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#51] Feltsense AI Engineer at Silver.dev 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-feltsense-ai-engineer-silver-dev-1137691](https://remoteok.com/remote-jobs/remote-feltsense-ai-engineer-silver-dev-1137691)
 - **Quick Commands**: `python telegram_bot.py --approve 51` | `python telegram_bot.py --reject 51` | `python telegram_bot.py --edit 51`
 
@@ -508,8 +508,8 @@
 
 ---
 
-### [#52] Operations Expert with Python for AI Supply Chain Task Design at Toptal [ONLINE]
-- **Location**: [ONLINE] Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#52] Operations Expert with Python for AI Supply Chain Task Design at Toptal 
+- **Location**: Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-operations-expert-with-python-for-ai-supply-chain-task-design-toptal-1137690](https://remoteok.com/remote-jobs/remote-operations-expert-with-python-for-ai-supply-chain-task-design-toptal-1137690)
 - **Quick Commands**: `python telegram_bot.py --approve 52` | `python telegram_bot.py --reject 52` | `python telegram_bot.py --edit 52`
 
@@ -525,8 +525,8 @@
 
 ---
 
-### [#53] ML Inference Engineer â Terminal-Bench Task Designer (vLLM / SGLang / TensorRT-LLM) at Toptal [ONLINE]
-- **Location**: [ONLINE] Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#53] ML Inference Engineer â Terminal-Bench Task Designer (vLLM / SGLang / TensorRT-LLM) at Toptal 
+- **Location**: Anywhere in the World | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-ml-inference-engineer-terminal-bench-task-designer-vllm-sglang-tensorrt-llm-toptal-1137689](https://remoteok.com/remote-jobs/remote-ml-inference-engineer-terminal-bench-task-designer-vllm-sglang-tensorrt-llm-toptal-1137689)
 - **Quick Commands**: `python telegram_bot.py --approve 53` | `python telegram_bot.py --reject 53` | `python telegram_bot.py --edit 53`
 
@@ -542,8 +542,8 @@
 
 ---
 
-### [#54] Senior Vue Developer at Lemon.io [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#54] Senior Vue Developer at Lemon.io 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-senior-vue-developer-lemon-io-1137688](https://remoteok.com/remote-jobs/remote-senior-vue-developer-lemon-io-1137688)
 - **Quick Commands**: `python telegram_bot.py --approve 54` | `python telegram_bot.py --reject 54` | `python telegram_bot.py --edit 54`
 
@@ -559,8 +559,8 @@
 
 ---
 
-### [#55] Senior Staff Infrastructure & Security Engineer at CivilGrid [ONLINE]
-- **Location**: [ONLINE] Boston | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#55] Senior Staff Infrastructure & Security Engineer at CivilGrid 
+- **Location**: Boston | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-senior-staff-infrastructure-security-engineer-civilgrid-1137687](https://remoteok.com/remote-jobs/remote-senior-staff-infrastructure-security-engineer-civilgrid-1137687)
 - **Quick Commands**: `python telegram_bot.py --approve 55` | `python telegram_bot.py --reject 55` | `python telegram_bot.py --edit 55`
 
@@ -576,8 +576,8 @@
 
 ---
 
-### [#56] AI Content Reviewer Video Annotation at iMerit [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#56] AI Content Reviewer Video Annotation at iMerit 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-ai-content-reviewer-video-annotation-imerit-1137686](https://remoteok.com/remote-jobs/remote-ai-content-reviewer-video-annotation-imerit-1137686)
 - **Quick Commands**: `python telegram_bot.py --approve 56` | `python telegram_bot.py --reject 56` | `python telegram_bot.py --edit 56`
 
@@ -593,8 +593,8 @@
 
 ---
 
-### [#57] Software Engineer at Claims [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
+### [#57] Software Engineer at Claims 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://remoteok.com/remote-jobs/remote-software-engineer-claims-1137685](https://remoteok.com/remote-jobs/remote-software-engineer-claims-1137685)
 - **Quick Commands**: `python telegram_bot.py --approve 57` | `python telegram_bot.py --reject 57` | `python telegram_bot.py --edit 57`
 
@@ -610,8 +610,8 @@
 
 ---
 
-### [#18] Customer Value Architect III at Mixpanel [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:48:53`
+### [#18] Customer Value Architect III at Mixpanel 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:48:53`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/mixpanel-customer-value-architect-iii-1](https://weworkremotely.com/remote-jobs/mixpanel-customer-value-architect-iii-1)
 - **Quick Commands**: `python telegram_bot.py --approve 18` | `python telegram_bot.py --reject 18` | `python telegram_bot.py --edit 18`
 
@@ -627,8 +627,8 @@
 
 ---
 
-### [#19] Senior Full Stack Engineer People Products at Thumbtack [ONLINE]
-- **Location**: [ONLINE] Toronto | **Source**: RemoteOK | **Created**: `2026-11-07 08:48:53`
+### [#19] Senior Full Stack Engineer People Products at Thumbtack 
+- **Location**: Toronto | **Source**: RemoteOK | **Created**: `2026-11-07 08:48:53`
 - **Original Link**: [https://remoteOK.com/remote-jobs/remote-senior-full-stack-engineer-people-products-thumbtack-1137693](https://remoteOK.com/remote-jobs/remote-senior-full-stack-engineer-people-products-thumbtack-1137693)
 - **Quick Commands**: `python telegram_bot.py --approve 19` | `python telegram_bot.py --reject 19` | `python telegram_bot.py --edit 19`
 
@@ -644,8 +644,8 @@
 
 ---
 
-### [#7] Staff Software Engineer - Connectivity at Dremio [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:44:03`
+### [#7] Staff Software Engineer - Connectivity at Dremio 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/dremio-staff-software-engineer-connectivity](https://weworkremotely.com/remote-jobs/dremio-staff-software-engineer-connectivity)
 - **Quick Commands**: `python telegram_bot.py --approve 7` | `python telegram_bot.py --reject 7` | `python telegram_bot.py --edit 7`
 
@@ -661,8 +661,8 @@
 
 ---
 
-### [#8] Senior Java Developer at Twikey [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:44:03`
+### [#8] Senior Java Developer at Twikey 
+- **Location**: Remote | **Source**: WeWorkRemotely | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://weworkremotely.com/remote-jobs/twikey-senior-java-developer](https://weworkremotely.com/remote-jobs/twikey-senior-java-developer)
 - **Quick Commands**: `python telegram_bot.py --approve 8` | `python telegram_bot.py --reject 8` | `python telegram_bot.py --edit 8`
 
@@ -678,8 +678,8 @@
 
 ---
 
-### [#9] Registered Nurse at Caringhand Home Health Solutions, Inc. [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 08:44:03`
+### [#9] Registered Nurse at Caringhand Home Health Solutions, Inc. 
+- **Location**: Remote | **Source**: RemoteOK | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://remoteOK.com/remote-jobs/remote-registered-nurse-caringhand-home-health-solutions-inc-1137695](https://remoteOK.com/remote-jobs/remote-registered-nurse-caringhand-home-health-solutions-inc-1137695)
 - **Quick Commands**: `python telegram_bot.py --approve 9` | `python telegram_bot.py --reject 9` | `python telegram_bot.py --edit 9`
 
@@ -695,8 +695,8 @@
 
 ---
 
-### [#10] Accountant at Serve Robotics [ONLINE]
-- **Location**: [ONLINE] los angeles | **Source**: RemoteOK | **Created**: `2026-11-07 08:44:03`
+### [#10] Accountant at Serve Robotics 
+- **Location**: los angeles | **Source**: RemoteOK | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://remoteOK.com/remote-jobs/remote-accountant-serve-robotics-1137694](https://remoteOK.com/remote-jobs/remote-accountant-serve-robotics-1137694)
 - **Quick Commands**: `python telegram_bot.py --approve 10` | `python telegram_bot.py --reject 10` | `python telegram_bot.py --edit 10`
 
@@ -715,7 +715,7 @@
 ## 📅 Events & Workshops
 *Target WhatsApp Group: `📅 Events & Workshops`* | *Pending: 4*
 
-### [#82] DevFest Hyderabad 2026 [HYDERABAD - OFFLINE]
+### [#82] DevFest Hyderabad 2026 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: GDG Hyderabad | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-devfest-hyderabad-2026](https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-devfest-hyderabad-2026)
 - **Quick Commands**: `python telegram_bot.py --approve 82` | `python telegram_bot.py --reject 82` | `python telegram_bot.py --edit 82`
@@ -733,7 +733,7 @@
 
 ---
 
-### [#83] Google DeepMind Hyderabad Hackathon [HYDERABAD - OFFLINE]
+### [#83] Google DeepMind Hyderabad Hackathon 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: GDG Hyderabad | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-google-deepmind-hyderabad-hackathon](https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-google-deepmind-hyderabad-hackathon)
 - **Quick Commands**: `python telegram_bot.py --approve 83` | `python telegram_bot.py --reject 83` | `python telegram_bot.py --edit 83`
@@ -751,7 +751,7 @@
 
 ---
 
-### [#84] React Hyderabad Community Calendar [HYDERABAD - OFFLINE]
+### [#84] React Hyderabad Community Calendar 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: React Hyderabad | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://lu.ma/reacthyderabad](https://lu.ma/reacthyderabad)
 - **Quick Commands**: `python telegram_bot.py --approve 84` | `python telegram_bot.py --reject 84` | `python telegram_bot.py --edit 84`
@@ -769,7 +769,7 @@
 
 ---
 
-### [#85] Agentversity AI Hackathon: Build the Agentic Future [HYDERABAD - OFFLINE]
+### [#85] Agentversity AI Hackathon: Build the Agentic Future 
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AI Community Hyderabad | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/317316035](https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/317316035)
 - **Quick Commands**: `python telegram_bot.py --approve 85` | `python telegram_bot.py --reject 85` | `python telegram_bot.py --edit 85`
@@ -790,8 +790,8 @@
 ## 📚 Courses & Resources
 *Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 16*
 
-### [#87] GPT Image 2.6: The Best Image Generation Model Just Got an Upgrade! [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-07 17:42:11`
+### [#87] GPT Image 2.6: The Best Image Generation Model Just Got an Upgrade! 
+- **Location**: Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://www.analyticsvidhya.com/blog/2026/11/gpt-image-2-6-review](https://www.analyticsvidhya.com/blog/2026/11/gpt-image-2-6-review)
 - **Quick Commands**: `python telegram_bot.py --approve 87` | `python telegram_bot.py --reject 87` | `python telegram_bot.py --edit 87`
 
@@ -808,8 +808,8 @@
 
 ---
 
-### [#88] 7 Best AI Agent Collaboration Platforms in 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-07 17:42:11`
+### [#88] 7 Best AI Agent Collaboration Platforms in 2026 
+- **Location**: Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://www.analyticsvidhya.com/blog/2026/11/best-ai-agent-collaboration-platforms](https://www.analyticsvidhya.com/blog/2026/11/best-ai-agent-collaboration-platforms)
 - **Quick Commands**: `python telegram_bot.py --approve 88` | `python telegram_bot.py --reject 88` | `python telegram_bot.py --edit 88`
 
@@ -826,8 +826,8 @@
 
 ---
 
-### [#71] DataCamp Free Access Week [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: DataCamp | **Created**: `2026-11-07 09:52:47`
+### [#71] DataCamp Free Access Week 
+- **Location**: Online | **Source**: DataCamp | **Created**: `2026-11-07 09:52:47`
 - **Original Link**: [https://www.datacamp.com](https://www.datacamp.com)
 - **Quick Commands**: `python telegram_bot.py --approve 71` | `python telegram_bot.py --reject 71` | `python telegram_bot.py --edit 71`
 
@@ -844,8 +844,8 @@
 
 ---
 
-### [#35] Undergrads in ML / medical AI / neuroscience around the world: let's get to know each other [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#35] Undergrads in ML / medical AI / neuroscience around the world: let's get to know each other 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpx2u7/undergrads_in_ml_medical_ai_neuroscience_around](https://www.reddit.com/r/learnmachinelearning/comments/1xpx2u7/undergrads_in_ml_medical_ai_neuroscience_around)
 - **Quick Commands**: `python telegram_bot.py --approve 35` | `python telegram_bot.py --reject 35` | `python telegram_bot.py --edit 35`
 
@@ -862,8 +862,8 @@
 
 ---
 
-### [#36] Math for AI & ML video series for Linear Algebra [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#36] Math for AI & ML video series for Linear Algebra 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpv96l/math_for_ai_ml_video_series_for_linear_algebra](https://www.reddit.com/r/learnmachinelearning/comments/1xpv96l/math_for_ai_ml_video_series_for_linear_algebra)
 - **Quick Commands**: `python telegram_bot.py --approve 36` | `python telegram_bot.py --reject 36` | `python telegram_bot.py --edit 36`
 
@@ -880,8 +880,8 @@
 
 ---
 
-### [#37] How are other AIML students planning their learning journey? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#37] How are other AIML students planning their learning journey? 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpxgqd/how_are_other_aiml_students_planning_their](https://www.reddit.com/r/learnmachinelearning/comments/1xpxgqd/how_are_other_aiml_students_planning_their)
 - **Quick Commands**: `python telegram_bot.py --approve 37` | `python telegram_bot.py --reject 37` | `python telegram_bot.py --edit 37`
 
@@ -898,8 +898,8 @@
 
 ---
 
-### [#38] Desktop Quantization workspace for Large Language Models: Load local Safetensors or Huggingface, Step-by-Step guided Conversions to GGUF, MLX, and ONNX, and Visualize Model Changes and quick publishing to huggingface with full model card. [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#38] Desktop Quantization workspace for Large Language Models: Load local Safetensors or Huggingface, Step-by-Step guided Conversions to GGUF, MLX, and ONNX, and Visualize Model Changes and quick publishing to huggingface with full model card. 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpvpte/desktop_quantization_workspace_for_large_language](https://www.reddit.com/r/learnmachinelearning/comments/1xpvpte/desktop_quantization_workspace_for_large_language)
 - **Quick Commands**: `python telegram_bot.py --approve 38` | `python telegram_bot.py --reject 38` | `python telegram_bot.py --edit 38`
 
@@ -916,8 +916,8 @@
 
 ---
 
-### [#39] Learning Machine Learning, for kids! [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#39] Learning Machine Learning, for kids! 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpsgx9/learning_machine_learning_for_kids](https://www.reddit.com/r/learnmachinelearning/comments/1xpsgx9/learning_machine_learning_for_kids)
 - **Quick Commands**: `python telegram_bot.py --approve 39` | `python telegram_bot.py --reject 39` | `python telegram_bot.py --edit 39`
 
@@ -934,8 +934,8 @@
 
 ---
 
-### [#40] Local RNN style VLA model project [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#40] Local RNN style VLA model project 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xq23zi/local_rnn_style_vla_model_project](https://www.reddit.com/r/learnmachinelearning/comments/1xq23zi/local_rnn_style_vla_model_project)
 - **Quick Commands**: `python telegram_bot.py --approve 40` | `python telegram_bot.py --reject 40` | `python telegram_bot.py --edit 40`
 
@@ -952,8 +952,8 @@
 
 ---
 
-### [#41] I keep hitting a wall with my extraction pipeline [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#41] I keep hitting a wall with my extraction pipeline 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xq20sq/i_keep_hitting_a_wall_with_my_extraction_pipeline](https://www.reddit.com/r/learnmachinelearning/comments/1xq20sq/i_keep_hitting_a_wall_with_my_extraction_pipeline)
 - **Quick Commands**: `python telegram_bot.py --approve 41` | `python telegram_bot.py --reject 41` | `python telegram_bot.py --edit 41`
 
@@ -970,8 +970,8 @@
 
 ---
 
-### [#42] ML JOB SITUATION IN INDIA? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
+### [#42] ML JOB SITUATION IN INDIA? 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xq0g3q/ml_job_situation_in_india](https://www.reddit.com/r/learnmachinelearning/comments/1xq0g3q/ml_job_situation_in_india)
 - **Quick Commands**: `python telegram_bot.py --approve 42` | `python telegram_bot.py --reject 42` | `python telegram_bot.py --edit 42`
 
@@ -988,8 +988,8 @@
 
 ---
 
-### [#17] How to Use shadcn/ui in React Native Applications [Full Handbook] [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:48:53`
+### [#17] How to Use shadcn/ui in React Native Applications [Full Handbook] 
+- **Location**: Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:48:53`
 - **Original Link**: [https://www.freecodecamp.org/news/how-to-use-shadcn-ui-in-react-native-applications-full-handbook/](https://www.freecodecamp.org/news/how-to-use-shadcn-ui-in-react-native-applications-full-handbook/)
 - **Quick Commands**: `python telegram_bot.py --approve 17` | `python telegram_bot.py --reject 17` | `python telegram_bot.py --edit 17`
 
@@ -1006,8 +1006,8 @@
 
 ---
 
-### [#13] Want to share your learning journey, but don't want to spam Reddit? Join us on #share-your-progress on our Official /r/LML Discord [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 08:44:12`
+### [#13] Want to share your learning journey, but don't want to spam Reddit? Join us on #share-your-progress on our Official /r/LML Discord 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 08:44:12`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1or86t4/want_to_share_your_learning_journey_but_dont_want/](https://www.reddit.com/r/learnmachinelearning/comments/1or86t4/want_to_share_your_learning_journey_but_dont_want/)
 - **Quick Commands**: `python telegram_bot.py --approve 13` | `python telegram_bot.py --reject 13` | `python telegram_bot.py --edit 13`
 
@@ -1024,8 +1024,8 @@
 
 ---
 
-### [#14] 💼 Resume/Career Day [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 08:44:12`
+### [#14] 💼 Resume/Career Day 
+- **Location**: Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 08:44:12`
 - **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xphzdb/resumecareer_day/](https://www.reddit.com/r/learnmachinelearning/comments/1xphzdb/resumecareer_day/)
 - **Quick Commands**: `python telegram_bot.py --approve 14` | `python telegram_bot.py --reject 14` | `python telegram_bot.py --edit 14`
 
@@ -1042,8 +1042,8 @@
 
 ---
 
-### [#5] How to Build a PDF Storyboard Generator Using JavaScript [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
+### [#5] How to Build a PDF Storyboard Generator Using JavaScript 
+- **Location**: Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://www.freecodecamp.org/news/build-pdf-storyboard-generator-javascript/](https://www.freecodecamp.org/news/build-pdf-storyboard-generator-javascript/)
 - **Quick Commands**: `python telegram_bot.py --approve 5` | `python telegram_bot.py --reject 5` | `python telegram_bot.py --edit 5`
 
@@ -1060,8 +1060,8 @@
 
 ---
 
-### [#6] Godot 4 Roguelike Course – Build a Complete Top-Down Action Game [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
+### [#6] Godot 4 Roguelike Course – Build a Complete Top-Down Action Game 
+- **Location**: Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://www.freecodecamp.org/news/godot-4-roguelike-course-build-a-complete-top-down-action-game/](https://www.freecodecamp.org/news/godot-4-roguelike-course-build-a-complete-top-down-action-game/)
 - **Quick Commands**: `python telegram_bot.py --approve 6` | `python telegram_bot.py --reject 6` | `python telegram_bot.py --edit 6`
 
@@ -1081,8 +1081,8 @@
 ## 🌐 Tech Updates & News
 *Target WhatsApp Group: `🌐 Tech Updates & NEWS`* | *Pending: 13*
 
-### [#74] Dev News Digest: 7 Nov 2026, 18:00 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-07 17:42:11`
+### [#74] Dev News Digest: 7 Nov 2026, 18:00 
+- **Location**: Online | **Source**: Dev.to News RSS | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://dev.to/magnus_ferm/dev-news-digest-7-nov-2026-1800-3079](https://dev.to/magnus_ferm/dev-news-digest-7-nov-2026-1800-3079)
 - **Quick Commands**: `python telegram_bot.py --approve 74` | `python telegram_bot.py --reject 74` | `python telegram_bot.py --edit 74`
 
@@ -1099,8 +1099,8 @@
 
 ---
 
-### [#86] How are you dealing with all the negative side effects of AI on the web? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Lobste.rs RSS | **Created**: `2026-11-07 17:42:11`
+### [#86] How are you dealing with all the negative side effects of AI on the web? 
+- **Location**: Online | **Source**: Lobste.rs RSS | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://lobste.rs/s/ipplhe/how_are_you_dealing_with_all_negative_side](https://lobste.rs/s/ipplhe/how_are_you_dealing_with_all_negative_side)
 - **Quick Commands**: `python telegram_bot.py --approve 86` | `python telegram_bot.py --reject 86` | `python telegram_bot.py --edit 86`
 
@@ -1117,8 +1117,8 @@
 
 ---
 
-### [#89] Welcome to life in the chip age [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-07 17:42:11`
+### [#89] Welcome to life in the chip age 
+- **Location**: Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-07 17:42:11`
 - **Original Link**: [https://stackoverflow.blog/2026/11/06/welcome-to-life-in-the-chip-age](https://stackoverflow.blog/2026/11/06/welcome-to-life-in-the-chip-age)
 - **Quick Commands**: `python telegram_bot.py --approve 89` | `python telegram_bot.py --reject 89` | `python telegram_bot.py --edit 89`
 
@@ -1135,8 +1135,8 @@
 
 ---
 
-### [#28] The Components of Agent Memory [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#28] The Components of Agent Memory 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.anthropic.com/research/components-of-agent-memory](https://www.anthropic.com/research/components-of-agent-memory)
 - **Quick Commands**: `python telegram_bot.py --approve 28` | `python telegram_bot.py --reject 28` | `python telegram_bot.py --edit 28`
 
@@ -1153,8 +1153,8 @@
 
 ---
 
-### [#29] A Jev that can ask Opus for help gives Opus accuracy at 4x lower cost [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#29] A Jev that can ask Opus for help gives Opus accuracy at 4x lower cost 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://hightouch.com/blog/llm-judges-identity-resolution](https://hightouch.com/blog/llm-judges-identity-resolution)
 - **Quick Commands**: `python telegram_bot.py --approve 29` | `python telegram_bot.py --reject 29` | `python telegram_bot.py --edit 29`
 
@@ -1171,8 +1171,8 @@
 
 ---
 
-### [#30] Tesla to wind down Cybertruck production [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#30] Tesla to wind down Cybertruck production 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.nbcnews.com/tech/tech-news/tesla-wind-cybertruck-production-years-poor-sales-markets-rcna607817](https://www.nbcnews.com/tech/tech-news/tesla-wind-cybertruck-production-years-poor-sales-markets-rcna607817)
 - **Quick Commands**: `python telegram_bot.py --approve 30` | `python telegram_bot.py --reject 30` | `python telegram_bot.py --edit 30`
 
@@ -1189,8 +1189,8 @@
 
 ---
 
-### [#31] PostgreSQL Internals [pdf] [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#31] PostgreSQL Internals [pdf] 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://edu.postgrespro.com/postgresql_internals-14_en.pdf](https://edu.postgrespro.com/postgresql_internals-14_en.pdf)
 - **Quick Commands**: `python telegram_bot.py --approve 31` | `python telegram_bot.py --reject 31` | `python telegram_bot.py --edit 31`
 
@@ -1207,8 +1207,8 @@
 
 ---
 
-### [#32] RealPage rent-pricing case wraps with nearly $360M to renters [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#32] RealPage rent-pricing case wraps with nearly $360M to renters 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.multifamilydive.com/news/realpage-rent-pricing-case-360m-renters/873553](https://www.multifamilydive.com/news/realpage-rent-pricing-case-360m-renters/873553)
 - **Quick Commands**: `python telegram_bot.py --approve 32` | `python telegram_bot.py --reject 32` | `python telegram_bot.py --edit 32`
 
@@ -1225,8 +1225,8 @@
 
 ---
 
-### [#33] US FAA says it will phase out floppy disks from air traffic control by 2028 [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#33] US FAA says it will phase out floppy disks from air traffic control by 2028 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://www.reuters.com/world/us/us-faa-says-it-will-phase-out-floppy-disks-air-traffic-control-by-2028-2026-11-05](https://www.reuters.com/world/us/us-faa-says-it-will-phase-out-floppy-disks-air-traffic-control-by-2028-2026-11-05)
 - **Quick Commands**: `python telegram_bot.py --approve 33` | `python telegram_bot.py --reject 33` | `python telegram_bot.py --edit 33`
 
@@ -1243,8 +1243,8 @@
 
 ---
 
-### [#34] Firecracker VM Escape: PwnEscape Part 2 [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
+### [#34] Firecracker VM Escape: PwnEscape Part 2 
+- **Location**: Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
 - **Original Link**: [https://pwn.ai/blog/firecracker-escape](https://pwn.ai/blog/firecracker-escape)
 - **Quick Commands**: `python telegram_bot.py --approve 34` | `python telegram_bot.py --reject 34` | `python telegram_bot.py --edit 34`
 
@@ -1261,8 +1261,8 @@
 
 ---
 
-### [#16] Asahi Linux Progress Linux 7.3 [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News | **Created**: `2026-11-07 08:48:53`
+### [#16] Asahi Linux Progress Linux 7.3 
+- **Location**: Global | **Source**: Hacker News | **Created**: `2026-11-07 08:48:53`
 - **Original Link**: [https://asahilinux.org/2026/11/progress-report-7-3/](https://asahilinux.org/2026/11/progress-report-7-3/)
 - **Quick Commands**: `python telegram_bot.py --approve 16` | `python telegram_bot.py --reject 16` | `python telegram_bot.py --edit 16`
 
@@ -1279,8 +1279,8 @@
 
 ---
 
-### [#3] Libghostty 1.0 [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News | **Created**: `2026-11-07 08:44:03`
+### [#3] Libghostty 1.0 
+- **Location**: Global | **Source**: Hacker News | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://mitchellh.com/writing/libghostty-1-0](https://mitchellh.com/writing/libghostty-1-0)
 - **Quick Commands**: `python telegram_bot.py --approve 3` | `python telegram_bot.py --reject 3` | `python telegram_bot.py --edit 3`
 
@@ -1297,8 +1297,8 @@
 
 ---
 
-### [#4] A barbarian tribe's mythic origin story is true, ancient DNA reveals [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News | **Created**: `2026-11-07 08:44:03`
+### [#4] A barbarian tribe's mythic origin story is true, ancient DNA reveals 
+- **Location**: Global | **Source**: Hacker News | **Created**: `2026-11-07 08:44:03`
 - **Original Link**: [https://www.science.org/content/article/barbarian-tribe-s-mythic-origin-story-true-ancient-dna-reveals](https://www.science.org/content/article/barbarian-tribe-s-mythic-origin-story-true-ancient-dna-reveals)
 - **Quick Commands**: `python telegram_bot.py --approve 4` | `python telegram_bot.py --reject 4` | `python telegram_bot.py --edit 4`
 
@@ -1319,7 +1319,7 @@
 
 *Items flagged for manual verification: `7`*
 
-### [#90] Pulse Flow: AI agents inside a hospital's Telegram groups, built on Switch [ONLINE]
+### [#90] Pulse Flow: AI agents inside a hospital's Telegram groups, built on Switch 
 - **Flag Reason**: ⚠️ `Review needed: location not stated`
 - **Source**: Dev.to API | **Link**: [https://dev.to/anupama003/pulse-flow-ai-agents-inside-a-hospitals-telegram-groups-built-on-switch-2311](https://dev.to/anupama003/pulse-flow-ai-agents-inside-a-hospitals-telegram-groups-built-on-switch-2311)
 - **Quick Commands**: `python telegram_bot.py --approve 90` | `python telegram_bot.py --reject 90`
@@ -1335,7 +1335,7 @@
 
 ---
 
-### [#91] Night shift without the night: AI agents that keep a SOC's watch, built on Switch [ONLINE]
+### [#91] Night shift without the night: AI agents that keep a SOC's watch, built on Switch 
 - **Flag Reason**: ⚠️ `Review needed: location not stated`
 - **Source**: Dev.to API | **Link**: [https://dev.to/manoj1698/night-shift-without-the-night-ai-agents-that-keep-a-socs-watch-built-on-switch-go](https://dev.to/manoj1698/night-shift-without-the-night-ai-agents-that-keep-a-socs-watch-built-on-switch-go)
 - **Quick Commands**: `python telegram_bot.py --approve 91` | `python telegram_bot.py --reject 91`
@@ -1351,7 +1351,7 @@
 
 ---
 
-### [#76] PayPal AI Hackathon [ONLINE]
+### [#76] PayPal AI Hackathon 
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: paypalaihackathon.devpost.com`
 - **Source**: Devpost | **Link**: [https://paypalaihackathon.devpost.com/](https://paypalaihackathon.devpost.com/)
 - **Quick Commands**: `python telegram_bot.py --approve 76` | `python telegram_bot.py --reject 76`
@@ -1367,7 +1367,7 @@
 
 ---
 
-### [#78] Beyond code generation: A developer’s guide to agentic engineering [ONLINE]
+### [#78] Beyond code generation: A developer’s guide to agentic engineering 
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: github.blog`
 - **Source**: GitHub Blog RSS | **Link**: [https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering](https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering)
 - **Quick Commands**: `python telegram_bot.py --approve 78` | `python telegram_bot.py --reject 78`
@@ -1383,7 +1383,7 @@
 
 ---
 
-### [#79] Inside GitHub’s new Git storage architecture [ONLINE]
+### [#79] Inside GitHub’s new Git storage architecture 
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: github.blog`
 - **Source**: GitHub Blog RSS | **Link**: [https://github.blog/engineering/architecture-optimization/inside-githubs-new-git-storage-architecture](https://github.blog/engineering/architecture-optimization/inside-githubs-new-git-storage-architecture)
 - **Quick Commands**: `python telegram_bot.py --approve 79` | `python telegram_bot.py --reject 79`
@@ -1399,7 +1399,7 @@
 
 ---
 
-### [#80] Copilot code review: API management and review overview updates [ONLINE]
+### [#80] Copilot code review: API management and review overview updates 
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: github.blog`
 - **Source**: GitHub Changelog RSS | **Link**: [https://github.blog/changelog/2026-11-06-copilot-code-review-api-management-and-review-overview-updates](https://github.blog/changelog/2026-11-06-copilot-code-review-api-management-and-review-overview-updates)
 - **Quick Commands**: `python telegram_bot.py --approve 80` | `python telegram_bot.py --reject 80`
@@ -1415,7 +1415,7 @@
 
 ---
 
-### [#81] Copilot impact dashboard adds chat and VS Code agent usage [ONLINE]
+### [#81] Copilot impact dashboard adds chat and VS Code agent usage 
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: github.blog`
 - **Source**: GitHub Changelog RSS | **Link**: [https://github.blog/changelog/2026-11-06-copilot-impact-dashboard-adds-chat-and-vs-code-agent-usage](https://github.blog/changelog/2026-11-06-copilot-impact-dashboard-adds-chat-and-vs-code-agent-usage)
 - **Quick Commands**: `python telegram_bot.py --approve 81` | `python telegram_bot.py --reject 81`

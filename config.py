@@ -41,6 +41,8 @@ load_env()
 DB_PATH = os.environ.get("DB_PATH", os.path.join(BASE_DIR, "legion.db"))
 PENDING_DRAFTS_PATH = os.environ.get("PENDING_DRAFTS_PATH", os.path.join(BASE_DIR, "PENDING_DRAFTS.md"))
 LEGION_FEED_HTML_PATH = os.environ.get("LEGION_FEED_HTML_PATH", os.path.join(BASE_DIR, "legion_feed.html"))
+POSTS_JSON_PATH = os.environ.get("POSTS_JSON_PATH", os.path.join(BASE_DIR, "posts.json"))
+AUTO_UPDATE_INTERVAL_MINUTES = int(os.environ.get("AUTO_UPDATE_INTERVAL_MINUTES", "30"))
 
 
 # Telegram Bot Settings

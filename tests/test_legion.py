@@ -5,15 +5,25 @@ Tests db, formatter, collectors, pipeline, telegram_bot, and sidecar configurati
 
 import json
 import os
+import sys
 import sqlite3
+import socketserver
 import tempfile
+import threading
+import time
 import unittest
+import urllib.error
+import urllib.request
 from unittest.mock import MagicMock, patch
+
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import config
 import db
 import formatter
 import collectors
+import collectors2
 import pipeline
 import telegram_bot
 import quality_gate
@@ -1668,6 +1678,534 @@ class TestQualityGateRegression(unittest.TestCase):
         self.assertEqual(decision, "accept")
         self.assertEqual(reason, "ok")
         self.assertEqual(clean.get("badge"), "ONLINE")
+
+
+class TestFeedRefreshAndAutoUpdate(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = os.path.join(self.temp_dir.name, "test_feed.db")
+        self.md_path = os.path.join(self.temp_dir.name, "PENDING_DRAFTS_TEST.md")
+        self.html_path = os.path.join(self.temp_dir.name, "legion_feed.html")
+        self.posts_path = os.path.join(self.temp_dir.name, "posts.json")
+        db.init_db(self.db_path)
+
+        # Create a dummy base html template in temp dir
+        with open(self.html_path, "w", encoding="utf-8") as f:
+            f.write("""<!DOCTYPE html><html><body>
+<div id="tabs"></div><div id="feed"></div><div id="count"></div>
+<script>
+var TYPES={all:"All"};var TYPE_LABELS={news:"News"};
+var SEED = [];
+var TODAY = "2026-11-08";
+function tabs(){} function render(){}
+</script></body></html>""")
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_export_posts_json_schema_and_dedup(self):
+        # Insert test items in DB
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Global AI Challenge",
+            "url": "https://devpost.com/hackathons/global-ai-challenge",
+            "summary": "Online AI Hackathon with $25k prize",
+            "deadline": "2026-12-01",
+            "location": "Online",
+            "badge": "ONLINE",
+            "status": "pending"
+        }, self.db_path)
+
+        db.insert_item({
+            "source": "Meetup",
+            "category": "event",
+            "title": "T-Hub Hyderabad AI Meetup",
+            "url": "https://meetup.com/events/thub-ai",
+            "summary": "In-person meetup at T-Hub",
+            "deadline": "2026-11-20",
+            "location": "Hyderabad",
+            "badge": "HYDERABAD - OFFLINE",
+            "status": "pending"
+        }, self.db_path)
+
+        # Rejected item should be excluded from posts.json
+        rej_id = db.insert_item({
+            "source": "Junk",
+            "category": "news",
+            "title": "Spam Casino Post",
+            "url": "https://example.com/spam",
+            "summary": "Spam",
+            "status": "pending"
+        }, self.db_path)
+        db.update_item_status(rej_id, "rejected", self.db_path)
+
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        self.assertTrue(os.path.exists(self.posts_path))
+        self.assertGreaterEqual(len(posts), 2)
+
+        # Verify schema
+        found_ai = False
+        found_thub = False
+        for p in posts:
+            self.assertIn("id", p)
+            self.assertIn("type", p)
+            self.assertIn("title", p)
+            self.assertIn("sum", p)
+            self.assertIn("date", p)
+            self.assertIn("where", p)
+            self.assertIn("badge", p)
+            self.assertIn("src", p)
+            self.assertIn("link", p)
+            self.assertIn("posted", p)
+            self.assertIn("status", p)
+            self.assertNotEqual(p.get("status"), "rejected")
+
+            if "Global AI Challenge" in p["title"]:
+                found_ai = True
+                self.assertEqual(p["badge"], "ONLINE")
+                self.assertEqual(p["date"], "2026-12-01")
+            if "T-Hub" in p["title"]:
+                found_thub = True
+                self.assertEqual(p["badge"], "HYDERABAD - OFFLINE")
+
+        self.assertTrue(found_ai)
+        self.assertTrue(found_thub)
+
+    @patch("collectors2.collect")
+    def test_refresh_feed_function(self, mock_collect):
+        mock_collect.return_value = [
+            {
+                "source": "Devpost",
+                "category": "hackathon",
+                "title": "PayPal AI Hackathon",
+                "url": "https://paypalaihackathon.devpost.com",
+                "link": "https://paypalaihackathon.devpost.com",
+                "summary": "Online developer hackathon on Devpost. Machine Learning/AI.",
+                "deadline": "2026-11-30",
+                "location": "Online"
+            }
+        ]
+
+        res = pipeline.refresh_feed(
+            db_path=self.db_path,
+            posts_path=self.posts_path,
+            markdown_path=self.md_path,
+            html_path=self.html_path,
+            limit_per_feed=2
+        )
+
+        self.assertEqual(res["status"], "ok")
+        self.assertEqual(res["new_pending"], 1)
+        self.assertGreaterEqual(res["total_items"], 1)
+        self.assertIn("timestamp", res)
+        self.assertEqual(res["message"], "Feed refreshed successfully")
+
+        # Check that posts.json, PENDING_DRAFTS_TEST.md, and legion_feed.html are created/updated
+        self.assertTrue(os.path.exists(self.posts_path))
+        self.assertTrue(os.path.exists(self.md_path))
+        self.assertTrue(os.path.exists(self.html_path))
+
+    @patch("collectors2.collect")
+    def test_http_refresh_endpoint_get_and_post(self, mock_collect):
+        mock_collect.return_value = [
+            {
+                "source": "Devpost",
+                "category": "hackathon",
+                "title": "Meta VR Start Developer Competition",
+                "url": "https://meta-vr-2026.devpost.com",
+                "link": "https://meta-vr-2026.devpost.com",
+                "summary": "Online developer hackathon on Devpost. AR/VR Machine Learning.",
+                "deadline": "2026-12-15",
+                "location": "Online"
+            }
+        ]
+
+        outer_dir = self.temp_dir.name
+
+        # Start a test HTTP server on ephemeral port (port 0)
+        class TestHandler(pipeline.FeedHTTPRequestHandler):
+            server_filename = "legion_feed.html"
+            db_path = self.db_path
+            posts_path = self.posts_path
+            markdown_path = self.md_path
+            html_path = self.html_path
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=outer_dir, **kwargs)
+
+        server = socketserver.TCPServer(("127.0.0.1", 0), TestHandler)
+        port = server.server_address[1]
+        server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+        server_thread.start()
+
+        base_url = f"http://127.0.0.1:{port}"
+
+        try:
+            # 1. Test POST /api/refresh
+            req = urllib.request.Request(f"{base_url}/api/refresh", method="POST")
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                self.assertEqual(resp.headers.get("Content-Type"), "application/json; charset=utf-8")
+                self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "*")
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(data["status"], "ok")
+                self.assertEqual(data["new_pending"], 1)
+
+            # 2. Test GET /api/refresh
+            req_get = urllib.request.Request(f"{base_url}/api/refresh", method="GET")
+            with urllib.request.urlopen(req_get, timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "*")
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(data["status"], "ok")
+                # Second run, same item -> 0 new pending
+                self.assertEqual(data["new_pending"], 0)
+
+            # 3. Test OPTIONS /api/refresh (CORS preflight)
+            req_opt = urllib.request.Request(f"{base_url}/api/refresh", method="OPTIONS")
+            with urllib.request.urlopen(req_opt, timeout=5) as resp:
+                self.assertEqual(resp.status, 204)
+                self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "*")
+                self.assertIn("POST", resp.headers.get("Access-Control-Allow-Methods", ""))
+
+            # 4. Test GET /posts.json
+            with urllib.request.urlopen(f"{base_url}/posts.json", timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                posts_data = json.loads(resp.read().decode("utf-8"))
+                self.assertIsInstance(posts_data, list)
+                self.assertGreaterEqual(len(posts_data), 1)
+
+            # 5. Test 404 for unknown POST
+            req_404 = urllib.request.Request(f"{base_url}/api/nonexistent", method="POST")
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(req_404, timeout=5)
+            self.assertEqual(ctx.exception.code, 404)
+
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    @patch("pipeline.refresh_feed")
+    def test_start_auto_updater(self, mock_refresh):
+        stop_event = threading.Event()
+        # Pass a very short interval: 0.001 minutes = 0.06 seconds
+        thread, event = pipeline.start_auto_updater(
+            interval_minutes=0.001,
+            stop_event=stop_event,
+            db_path=self.db_path,
+            posts_path=self.posts_path,
+            markdown_path=self.md_path,
+            html_path=self.html_path
+        )
+        self.assertTrue(thread.is_alive())
+        self.assertTrue(thread.daemon)
+
+        # Wait a moment for worker to run at least once
+        time.sleep(0.15)
+        self.assertGreaterEqual(mock_refresh.call_count, 1)
+
+        # Signal stop and join
+        event.set()
+        thread.join(timeout=1.0)
+        self.assertFalse(thread.is_alive())
+
+    def test_legion_feed_html_ui_elements(self):
+        feed_html_path = config.LEGION_FEED_HTML_PATH
+        self.assertTrue(os.path.exists(feed_html_path))
+        with open(feed_html_path, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        # Update button exists
+        self.assertIn('id="refresh-btn"', html)
+        self.assertIn('Update Feed', html)
+        # Offline mode handling
+        self.assertIn('window.location.protocol === "file:"', html)
+        self.assertIn('Offline file mode', html)
+        # Fetch /api/refresh endpoint
+        self.assertIn('/api/refresh', html)
+        # Cache-busting posts.json fetch
+        self.assertIn('posts.json?t=', html)
+        # Auto-poll interval
+        self.assertIn('setInterval', html)
+
+    def test_export_posts_json_empty_db(self):
+        empty_posts = os.path.join(self.temp_dir.name, "empty_posts.json")
+        empty_db = os.path.join(self.temp_dir.name, "empty.db")
+        db.init_db(empty_db)
+        posts = pipeline.export_posts_json(db_path=empty_db, output_path=empty_posts)
+        self.assertTrue(os.path.exists(empty_posts))
+        self.assertIsInstance(posts, list)
+
+    @patch("collectors2.collect")
+    def test_quality_gate_filters_during_refresh(self, mock_collect):
+        # 1 valid, 1 junk (casino), 1 other city offline (Bangalore)
+        mock_collect.return_value = [
+            {
+                "source": "Devpost",
+                "category": "hackathon",
+                "title": "Legion Python Agent Hackathon",
+                "url": "https://devpost.com/hackathons/legion-agent-hack",
+                "link": "https://devpost.com/hackathons/legion-agent-hack",
+                "summary": "Build agentic Python applications.",
+                "deadline": "2026-12-10",
+                "location": "Online"
+            },
+            {
+                "source": "Web",
+                "category": "news",
+                "title": "Grand Casino Free Spins Bonus",
+                "url": "https://casino-online.example/bonus",
+                "link": "https://casino-online.example/bonus",
+                "summary": "Betting and gambling casino vouchers.",
+                "location": "Online"
+            },
+            {
+                "source": "Meetup",
+                "category": "event",
+                "title": "Bangalore Python In-Person Meetup",
+                "url": "https://meetup.com/events/bangalore-py",
+                "link": "https://meetup.com/events/bangalore-py",
+                "summary": "In-person at Indiranagar, Bangalore.",
+                "location": "Bangalore"
+            }
+        ]
+
+        res = pipeline.refresh_feed(
+            db_path=self.db_path,
+            posts_path=self.posts_path,
+            markdown_path=self.md_path,
+            html_path=self.html_path,
+            limit_per_feed=5
+        )
+
+        self.assertEqual(res["status"], "ok")
+        # Only the valid tech online hackathon should be accepted
+        self.assertEqual(res["new_pending"], 1)
+
+        with open(self.posts_path, "r", encoding="utf-8") as f:
+            posts = json.load(f)
+
+        urls = [p.get("link") for p in posts]
+        self.assertIn("https://devpost.com/hackathons/legion-agent-hack", urls)
+        self.assertNotIn("https://casino-online.example/bonus", urls)
+        self.assertNotIn("https://meetup.com/events/bangalore-py", urls)
+
+    @patch("collectors2.collect")
+    def test_concurrent_refresh_lock(self, mock_collect):
+        # Verify multiple threads calling refresh_feed concurrently run safely
+        mock_collect.return_value = [
+            {
+                "source": "Devpost",
+                "category": "hackathon",
+                "title": "Concurrent Hackathon",
+                "url": "https://concurrent.devpost.com",
+                "link": "https://concurrent.devpost.com",
+                "summary": "Machine learning hackathon.",
+                "location": "Online"
+            }
+        ]
+
+        errors = []
+        def call_refresh():
+            try:
+                res = pipeline.refresh_feed(
+                    db_path=self.db_path,
+                    posts_path=self.posts_path,
+                    markdown_path=self.md_path,
+                    html_path=self.html_path
+                )
+                if res["status"] != "ok":
+                    errors.append(res)
+            except Exception as e:
+                errors.append(str(e))
+
+        threads = [threading.Thread(target=call_refresh) for _ in range(3)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        self.assertEqual(errors, [])
+        self.assertTrue(os.path.exists(self.posts_path))
+
+    @patch("pipeline.refresh_feed")
+    def test_http_refresh_server_error_500(self, mock_refresh):
+        mock_refresh.side_effect = RuntimeError("Simulated collector crash")
+        outer_dir = self.temp_dir.name
+
+        class ErrorHandler(pipeline.FeedHTTPRequestHandler):
+            server_filename = "legion_feed.html"
+            db_path = self.db_path
+            posts_path = self.posts_path
+            markdown_path = self.md_path
+            html_path = self.html_path
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=outer_dir, **kwargs)
+
+        server = socketserver.TCPServer(("127.0.0.1", 0), ErrorHandler)
+        port = server.server_address[1]
+        server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+        server_thread.start()
+
+        base_url = f"http://127.0.0.1:{port}"
+        try:
+            req = urllib.request.Request(f"{base_url}/api/refresh", method="POST")
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(req, timeout=5)
+            self.assertEqual(ctx.exception.code, 500)
+            err_body = json.loads(ctx.exception.read().decode("utf-8"))
+            self.assertEqual(err_body["status"], "error")
+            self.assertIn("Simulated collector crash", err_body["message"])
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    def test_export_posts_json_purges_rejected_items_even_if_in_previous_posts_json(self):
+        # 1. Insert an item as pending
+        row_id = db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Crypto Hackathon",
+            "url": "https://devpost.com/hackathons/crypto-hack",
+            "summary": "Cryptocurrency coding challenge",
+            "status": "pending"
+        }, self.db_path)
+
+        # 2. Export to posts.json (item is present)
+        posts_1 = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        self.assertTrue(any(p["link"] == "https://devpost.com/hackathons/crypto-hack" for p in posts_1))
+
+        # 3. Mark the item as rejected in SQLite DB
+        db.update_item_status(row_id, "rejected", self.db_path)
+
+        # 4. Export again to the existing posts.json file
+        posts_2 = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+
+        # 5. Verify the rejected item was strictly purged from posts.json
+        self.assertFalse(any(p["link"] == "https://devpost.com/hackathons/crypto-hack" for p in posts_2))
+        self.assertFalse(any(p.get("status") == "rejected" for p in posts_2))
+
+    def test_http_posts_json_no_cache_headers(self):
+        # Insert test item and export posts.json
+        db.insert_item({
+            "source": "Test",
+            "category": "news",
+            "title": "Cache Control Test",
+            "url": "https://test.example/cache-test",
+            "summary": "Verifying Cache-Control headers",
+            "status": "pending"
+        }, self.db_path)
+        pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+
+        outer_dir = self.temp_dir.name
+        class CacheHandler(pipeline.FeedHTTPRequestHandler):
+            server_filename = "legion_feed.html"
+            db_path = self.db_path
+            posts_path = self.posts_path
+            markdown_path = self.md_path
+            html_path = self.html_path
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=outer_dir, **kwargs)
+
+        server = socketserver.TCPServer(("127.0.0.1", 0), CacheHandler)
+        port = server.server_address[1]
+        server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+        server_thread.start()
+
+        base_url = f"http://127.0.0.1:{port}"
+        try:
+            req = urllib.request.Request(f"{base_url}/posts.json")
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                cache_header = resp.headers.get("Cache-Control", "")
+                self.assertIn("no-cache", cache_header)
+                self.assertIn("no-store", cache_header)
+                self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "*")
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertTrue(any(p["link"] == "https://test.example/cache-test" for p in data))
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    @patch("collectors2.collect")
+    def test_http_refresh_with_post_body_payload(self, mock_collect):
+        mock_collect.return_value = [
+            {
+                "source": "Devpost",
+                "category": "hackathon",
+                "title": "Body Payload Hack",
+                "url": "https://devpost.com/hackathons/body-payload-hack",
+                "link": "https://devpost.com/hackathons/body-payload-hack",
+                "summary": "Hackathon tested with POST body",
+                "location": "Online"
+            }
+        ]
+        outer_dir = self.temp_dir.name
+
+        class BodyHandler(pipeline.FeedHTTPRequestHandler):
+            server_filename = "legion_feed.html"
+            db_path = self.db_path
+            posts_path = self.posts_path
+            markdown_path = self.md_path
+            html_path = self.html_path
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=outer_dir, **kwargs)
+
+        server = socketserver.TCPServer(("127.0.0.1", 0), BodyHandler)
+        port = server.server_address[1]
+        server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+        server_thread.start()
+
+        base_url = f"http://127.0.0.1:{port}"
+        try:
+            payload = json.dumps({"force": True, "source": "all"}).encode("utf-8")
+            req = urllib.request.Request(
+                f"{base_url}/api/refresh",
+                data=payload,
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(data["status"], "ok")
+                self.assertGreaterEqual(data["total_items"], 1)
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    @patch("collectors2.fetch_raw")
+    def test_collectors2_collect_resilient_to_single_source_crash(self, mock_fetch):
+        # Source 1 raises an unexpected exception
+        # Source 2 returns valid XML feed
+        xml_content = b"""<?xml version="1.0" encoding="utf-8"?>
+        <rss version="2.0">
+            <channel>
+                <title>Test Feed</title>
+                <item>
+                    <title>Resilient AI Workshop</title>
+                    <link>https://example.com/resilient-ai</link>
+                    <description>Safe workshop summary</description>
+                </item>
+            </channel>
+        </rss>"""
+
+        def side_effect_fetch(url, headers=None, timeout=10):
+            if "hacker-news" in url:
+                raise RuntimeError("Unexpected socket catastrophe")
+            return xml_content, None
+
+        mock_fetch.side_effect = side_effect_fetch
+        items = collectors2.collect(limit=2)
+        # Verify collection completed successfully despite the crashed source
+        self.assertIsInstance(items, list)
+        self.assertTrue(any(it.get("title") == "Resilient AI Workshop" for it in items))
+
+
 
 
 if __name__ == "__main__":

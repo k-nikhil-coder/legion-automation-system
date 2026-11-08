@@ -5,13 +5,18 @@ and exports the updated PENDING_DRAFTS.md review digest.
 """
 
 import argparse
+import http.server
 import json
 import logging
 import os
 import re
+import socketserver
 import sys
+import threading
+import time
+import urllib.parse
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 
 import config
@@ -373,35 +378,399 @@ def open_feed_html(html_path: Optional[str] = None) -> bool:
     webbrowser.open(file_url)
     return True
 
-def serve_feed(port: int = 8000, html_path: Optional[str] = None):
-    """Starts a local HTTP server serving the Legion Feed dashboard."""
-    import http.server
-    import socketserver
+def export_posts_json(
+    db_path: Optional[str] = None,
+    output_path: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Exports active items from SQLite database to posts.json.
+    Deduplicates items by link and formats into standard post schema.
+    Preserves any curated seed items from previous posts.json or collectors.
+    Atomically writes to disk using a temporary file to avoid partial reads.
+    """
+    actual_db = db_path or config.DB_PATH
+    actual_out = output_path or getattr(config, "POSTS_JSON_PATH", "posts.json")
+
+    db_items: List[Dict[str, Any]] = []
+    rejected_urls: set = set()
+    try:
+        with db.get_db_connection(actual_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM items WHERE status != 'rejected' ORDER BY id DESC LIMIT 200")
+            rows = cursor.fetchall()
+            db_items = [dict(r) for r in rows]
+
+            cursor.execute("SELECT url FROM items WHERE status = 'rejected'")
+            for r in cursor.fetchall():
+                u = str(r["url"] or "").strip()
+                if u:
+                    rejected_urls.add(u)
+    except Exception as e:
+        logger.warning(f"Could not load items from DB for posts.json export: {e}")
+
+    posts_list: List[Dict[str, Any]] = []
+    seen_urls = set()
+
+    for it in db_items:
+        u = str(it.get("url") or "").strip()
+        if not u or u in seen_urls:
+            continue
+        seen_urls.add(u)
+
+        raw_date = it.get("deadline") or it.get("date_str") or ""
+        date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(raw_date))
+        clean_date = date_match.group(0) if date_match else ""
+
+        created_str = str(it.get("created_at") or "")[:10]
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
+            created_str = datetime.now().strftime("%Y-%m-%d")
+
+        raw_loc = it.get("location") or "Online"
+        if formatter.is_hyderabad_offline(it):
+            venue = formatter.detect_hyderabad_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
+            where_val = f"Hyderabad ({venue})" if venue else "Hyderabad"
+            badge_val = "HYDERABAD - OFFLINE"
+        else:
+            where_val = raw_loc
+            badge_val = it.get("badge") or ("HYDERABAD - OFFLINE" if "hyderabad" in raw_loc.lower() and "online" not in raw_loc.lower() else "ONLINE")
+
+        posts_list.append({
+            "id": f"db_{it.get('id')}",
+            "type": it.get("category", "news"),
+            "title": it.get("title", ""),
+            "sum": it.get("summary") or it.get("title", ""),
+            "date": clean_date,
+            "where": where_val,
+            "badge": badge_val,
+            "src": it.get("source") or "Legion Automation",
+            "link": u,
+            "posted": created_str,
+            "status": it.get("status", "pending")
+        })
+
+    # Preserve previous curated seed items only, never re-import rejected or deleted DB items
+    if os.path.exists(actual_out):
+        try:
+            with open(actual_out, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+                if isinstance(existing, list):
+                    for ex in existing:
+                        link_u = str(ex.get("link") or "").strip()
+                        if not link_u or link_u in seen_urls or link_u in rejected_urls:
+                            continue
+                        if ex.get("status") == "rejected":
+                            continue
+                        # Only preserve seed or community items, never stale DB records
+                        if ex.get("status") == "seed" or str(ex.get("id", "")).startswith("s"):
+                            seen_urls.add(link_u)
+                            posts_list.append(ex)
+        except Exception as e:
+            logger.debug(f"Could not load previous posts.json: {e}")
+
+    # Preserve CURATED_SEED_ITEMS if not rejected or seen
+    for seed_curated in getattr(collectors, "CURATED_SEED_ITEMS", []):
+        u = seed_curated.get("link", "").strip() or f"https://legion.community/feed/{seed_curated.get('id')}"
+        if u not in seen_urls and u not in rejected_urls:
+            seen_urls.add(u)
+            raw_d = seed_curated.get("date", "").strip()
+            posts_list.append({
+                "id": seed_curated.get("id"),
+                "type": seed_curated.get("type", "news"),
+                "title": seed_curated.get("title", ""),
+                "sum": seed_curated.get("sum", ""),
+                "date": raw_d,
+                "where": seed_curated.get("where", "Online"),
+                "badge": "HYDERABAD - OFFLINE" if "hyderabad" in str(seed_curated.get("where", "")).lower() else "ONLINE",
+                "src": seed_curated.get("src", "Community"),
+                "link": seed_curated.get("link", ""),
+                "posted": seed_curated.get("posted", datetime.now().strftime("%Y-%m-%d")),
+                "status": "seed"
+            })
+
+    out_dir = os.path.dirname(os.path.abspath(actual_out))
+    os.makedirs(out_dir, exist_ok=True)
+    tmp_file = os.path.join(out_dir, f".tmp_posts_{os.getpid()}_{int(time.time()*1000)}.json")
+    try:
+        with open(tmp_file, "w", encoding="utf-8") as f:
+            json.dump(posts_list, f, indent=2, ensure_ascii=False)
+        os.replace(tmp_file, actual_out)
+    finally:
+        if os.path.exists(tmp_file):
+            try:
+                os.remove(tmp_file)
+            except Exception:
+                pass
+
+    logger.info(f"Updated posts.json feed export ({len(posts_list)} items) at: {actual_out}")
+    return posts_list
+
+
+_refresh_lock = threading.Lock()
+
+
+def refresh_feed(
+    db_path: Optional[str] = None,
+    posts_path: Optional[str] = None,
+    markdown_path: Optional[str] = None,
+    html_path: Optional[str] = None,
+    limit_per_feed: Optional[int] = None
+) -> Dict[str, Any]:
+    """
+    Synchronously triggers a collection update cycle under thread lock:
+    - Runs collectors & quality gate filtering
+    - Updates SQLite DB
+    - Updates PENDING_DRAFTS.md
+    - Updates legion_feed.html
+    - Regenerates posts.json
+    Returns API response dictionary.
+    """
+    with _refresh_lock:
+        results = run_pipeline(
+            limit_per_feed=limit_per_feed,
+            db_path=db_path,
+            markdown_path=markdown_path,
+            html_path=html_path,
+            posts_path=posts_path,
+        )
+        actual_posts = posts_path or getattr(config, "POSTS_JSON_PATH", "posts.json")
+        total_items = 0
+        if os.path.exists(actual_posts):
+            try:
+                with open(actual_posts, "r", encoding="utf-8") as f:
+                    pdata = json.load(f)
+                    if isinstance(pdata, list):
+                        total_items = len(pdata)
+            except Exception:
+                pass
+        if total_items == 0:
+            stats = results.get("stats", {})
+            total_items = sum(stats.values()) if stats else results.get("total_pending", 0)
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return {
+            "status": "ok",
+            "total_items": total_items,
+            "new_pending": results.get("new_pending", 0),
+            "timestamp": now_str,
+            "message": "Feed refreshed successfully"
+        }
+
+
+class FeedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    """
+    HTTP request handler for Legion Feed.
+    Serves static files (HTML, JS, CSS, JSON), rewrites / and /feed to legion_feed.html,
+    and exposes /api/refresh for on-demand feed updates with CORS enabled.
+    """
+    server_filename: str = "legion_feed.html"
+    db_path: Optional[str] = None
+    posts_path: Optional[str] = None
+    markdown_path: Optional[str] = None
+    html_path: Optional[str] = None
+
+    def send_response(self, code: int, message: Optional[str] = None):
+        super().send_response(code, message)
+        self.send_header("Access-Control-Allow-Origin", "*")
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def _send_refresh_response(self):
+        try:
+            res = refresh_feed(
+                db_path=self.db_path,
+                posts_path=self.posts_path,
+                markdown_path=self.markdown_path,
+                html_path=self.html_path
+            )
+            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except Exception as e:
+            logger.error(f"Error executing /api/refresh: {e}", exc_info=True)
+            err_data = {
+                "status": "error",
+                "message": str(e),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            body = json.dumps(err_data, ensure_ascii=False).encode("utf-8")
+            self.send_response(500)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/refresh":
+            self._send_refresh_response()
+            return
+        if parsed.path == "/posts.json":
+            target_posts = self.posts_path or getattr(config, "POSTS_JSON_PATH", "posts.json")
+            if os.path.exists(target_posts):
+                try:
+                    with open(target_posts, "rb") as f:
+                        data = f.read()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.send_header("Content-Length", str(len(data)))
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
+                except Exception as e:
+                    logger.error(f"Error serving posts.json: {e}")
+        if self.path in ("/", "/index.html", "/feed"):
+            self.path = f"/{self.server_filename}"
+        return super().do_GET()
+
+    def do_POST(self):
+        content_len = int(self.headers.get("Content-Length", 0) or 0)
+        if content_len > 0:
+            try:
+                self.rfile.read(content_len)
+            except Exception:
+                pass
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/refresh":
+            self._send_refresh_response()
+            return
+        self.send_error(404, "Endpoint not found")
+
+
+def start_auto_updater(
+    interval_minutes: float = 30.0,
+    stop_event: Optional[threading.Event] = None,
+    db_path: Optional[str] = None,
+    posts_path: Optional[str] = None,
+    markdown_path: Optional[str] = None,
+    html_path: Optional[str] = None,
+    run_immediately: bool = False
+) -> Tuple[threading.Thread, threading.Event]:
+    """
+    Spawns a daemon thread that periodically refreshes the feed and updates posts.json.
+    Returns (thread, stop_event).
+    """
+    event = stop_event or threading.Event()
+    interval_seconds = max(0.05, float(interval_minutes) * 60.0)
+
+    def _worker():
+        logger.info(f"Background auto-updater started (interval={interval_minutes}m).")
+        if run_immediately and not event.is_set():
+            try:
+                logger.info("Auto-updater triggering immediate initial refresh...")
+                refresh_feed(
+                    db_path=db_path,
+                    posts_path=posts_path,
+                    markdown_path=markdown_path,
+                    html_path=html_path
+                )
+            except Exception as e:
+                logger.warning(f"Auto-updater initial refresh error: {e}")
+
+        while not event.is_set():
+            if event.wait(timeout=interval_seconds):
+                break
+            try:
+                logger.info("Auto-updater triggering periodic feed refresh...")
+                refresh_feed(
+                    db_path=db_path,
+                    posts_path=posts_path,
+                    markdown_path=markdown_path,
+                    html_path=html_path
+                )
+                logger.info("Auto-updater periodic feed refresh completed.")
+            except Exception as e:
+                logger.warning(f"Auto-updater periodic refresh error: {e}")
+        logger.info("Background auto-updater stopped.")
+
+    thread = threading.Thread(target=_worker, name="FeedAutoUpdater", daemon=True)
+    thread.start()
+    return thread, event
+
+
+def serve_feed(
+    port: int = 8000,
+    html_path: Optional[str] = None,
+    db_path: Optional[str] = None,
+    posts_path: Optional[str] = None,
+    markdown_path: Optional[str] = None,
+    auto_update_minutes: Optional[int] = None,
+    open_browser: bool = True
+):
+    """Starts a local HTTP server serving the Legion Feed dashboard and /api/refresh endpoint."""
     import webbrowser
 
-    actual_path = html_path or getattr(config, "LEGION_FEED_HTML_PATH", "legion_feed.html")
-    directory = os.path.dirname(os.path.abspath(actual_path))
-    filename = os.path.basename(actual_path)
+    actual_html = html_path or getattr(config, "LEGION_FEED_HTML_PATH", "legion_feed.html")
+    actual_db = db_path or config.DB_PATH
+    actual_posts = posts_path or getattr(config, "POSTS_JSON_PATH", "posts.json")
+    actual_markdown = markdown_path or config.PENDING_DRAFTS_PATH
+    directory = os.path.dirname(os.path.abspath(actual_html))
+    filename = os.path.basename(actual_html)
 
-    class CustomHandler(http.server.SimpleHTTPRequestHandler):
+    update_mins = (
+        auto_update_minutes 
+        if auto_update_minutes is not None 
+        else getattr(config, "AUTO_UPDATE_INTERVAL_MINUTES", 30)
+    )
+
+    class CustomHandler(FeedHTTPRequestHandler):
+        server_filename = filename
+        db_path = actual_db
+        posts_path = actual_posts
+        markdown_path = actual_markdown
+        html_path = actual_html
+
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=directory, **kwargs)
 
-        def do_GET(self):
-            if self.path in ("/", "/index.html", "/feed"):
-                self.path = f"/{filename}"
-            return super().do_GET()
+    # Initial export of posts.json if missing
+    if not os.path.exists(actual_posts):
+        try:
+            export_posts_json(db_path=actual_db, output_path=actual_posts)
+        except Exception as e:
+            logger.warning(f"Could not generate initial posts.json: {e}")
 
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", port), CustomHandler) as httpd:
+    updater_thread = None
+    stop_event = None
+    if update_mins > 0:
+        updater_thread, stop_event = start_auto_updater(
+            interval_minutes=update_mins,
+            db_path=actual_db,
+            posts_path=actual_posts,
+            markdown_path=actual_markdown,
+            html_path=actual_html
+        )
+
+    socketserver.ThreadingTCPServer.allow_reuse_address = True
+    with socketserver.ThreadingTCPServer(("", port), CustomHandler) as httpd:
         url = f"http://localhost:{port}/{filename}"
         print(f"🌍 Legion Feed Web Server running at: {url}")
+        print(f"🔄 API endpoint available at: http://localhost:{port}/api/refresh")
+        if update_mins > 0:
+            print(f"⏱️  Background auto-updater active: every {update_mins} minutes")
         print("Press Ctrl+C to stop.")
         try:
-            webbrowser.open(url)
+            if open_browser:
+                webbrowser.open(url)
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("\nShutting down Legion Feed Web Server...")
+        finally:
+            if stop_event:
+                stop_event.set()
+            if updater_thread:
+                updater_thread.join(timeout=2.0)
+
 
 def run_pipeline(
     limit_per_feed: Optional[int] = None,
@@ -409,8 +778,10 @@ def run_pipeline(
     db_path: Optional[str] = None,
     markdown_path: Optional[str] = None,
     html_path: Optional[str] = None,
+    posts_path: Optional[str] = None,
     import_feed: bool = False,
     export_html: bool = True,
+    export_posts: bool = True,
     include_hyderabad: bool = True
 ) -> Dict[str, Any]:
     """
@@ -423,6 +794,7 @@ def run_pipeline(
     6. Inserts new pending records.
     7. Updates PENDING_DRAFTS.md review digest prioritizing Hyderabad offline items.
     8. Updates legion_feed.html interactive dashboard if export_html=True.
+    9. Exports posts.json feed for web dashboard if export_posts=True.
     """
     actual_limit = limit_per_feed if limit_per_feed is not None else config.MAX_ITEMS_PER_FEED
     actual_db = db_path or config.DB_PATH
@@ -436,6 +808,13 @@ def run_pipeline(
     else:
         actual_html = getattr(config, "LEGION_FEED_HTML_PATH", None)
 
+    if posts_path is not None:
+        actual_posts = posts_path
+    elif markdown_path is not None and markdown_path != config.PENDING_DRAFTS_PATH:
+        # Keep posts file inside test directory when custom output path is passed
+        actual_posts = os.path.join(os.path.dirname(os.path.abspath(markdown_path)), "posts.json")
+    else:
+        actual_posts = getattr(config, "POSTS_JSON_PATH", "posts.json")
 
     logger.info("Initializing Legion database schema...")
     db.init_db(db_path=actual_db)
@@ -452,15 +831,11 @@ def run_pipeline(
             raw_items = collectors.collect_all_items(limit_per_feed=actual_limit, include_hyderabad=include_hyderabad)
         else:
             logger.info(f"Starting collector run with collectors2 (limit={actual_limit} per feed)...")
-            raw_items = []
-            for src_key, src_cfg in collectors2.SOURCES.items():
-                if src_key in collectors2.REMOVED_SOURCES:
-                    continue
-                try:
-                    src_items = collectors2.collect(source=src_cfg, limit=actual_limit)
-                    raw_items.extend(src_items)
-                except Exception as e:
-                    logger.warning(f"Error collecting from {src_cfg.get('name')}: {e}")
+            try:
+                raw_items = collectors2.collect(limit=actual_limit)
+            except Exception as e:
+                logger.warning(f"Error during collectors2.collect: {e}")
+                raw_items = []
         collected_count = len(raw_items)
         
         for item in raw_items:
@@ -532,6 +907,13 @@ def run_pipeline(
             export_feed_html(db_path=actual_db, output_path=actual_html)
         except Exception as e:
             logger.warning(f"Failed to refresh Legion Feed HTML: {e}")
+
+    # Refresh posts.json feed export
+    if export_posts and actual_posts:
+        try:
+            export_posts_json(db_path=actual_db, output_path=actual_posts)
+        except Exception as e:
+            logger.warning(f"Failed to refresh posts.json: {e}")
             
     stats = db.get_stats(db_path=actual_db)
     total_pending = stats.get("pending", 0)
@@ -553,6 +935,8 @@ def main():
     parser.add_argument("--db", type=str, default=config.DB_PATH, help="Path to SQLite DB")
     parser.add_argument("--out", type=str, default=config.PENDING_DRAFTS_PATH, help="Path to markdown output")
     parser.add_argument("--html-out", type=str, default=getattr(config, "LEGION_FEED_HTML_PATH", "legion_feed.html"), help="Path to HTML feed dashboard")
+    parser.add_argument("--posts-out", type=str, default=getattr(config, "POSTS_JSON_PATH", "posts.json"), help="Path to posts.json feed export")
+    parser.add_argument("--auto-update", type=int, default=getattr(config, "AUTO_UPDATE_INTERVAL_MINUTES", 30), help="Auto-update interval in minutes for background feed collector in serve mode (0 to disable)")
     parser.add_argument("--import-feed", type=str, nargs="?", const="default", help="Import curated items from Legion Feed HTML into database")
     parser.add_argument("--export-html", action="store_true", help="Export DB items to HTML feed dashboard")
     parser.add_argument("--serve", type=int, nargs="?", const=8000, help="Start local web server for Legion Feed dashboard (default port: 8000)")
@@ -560,7 +944,14 @@ def main():
     args = parser.parse_args()
     
     if args.serve is not None:
-        serve_feed(port=args.serve, html_path=args.html_out)
+        serve_feed(
+            port=args.serve,
+            html_path=args.html_out,
+            db_path=args.db,
+            posts_path=args.posts_out,
+            markdown_path=args.out,
+            auto_update_minutes=args.auto_update
+        )
         return
 
     if args.open:
@@ -573,11 +964,13 @@ def main():
         imported = import_legion_feed(html_path=feed_path, db_path=args.db)
         export_pending_markdown(db_path=args.db, output_path=args.out)
         export_feed_html(db_path=args.db, output_path=args.html_out)
+        export_posts_json(db_path=args.db, output_path=args.posts_out)
         print(f"✅ Imported {imported} opportunities from Legion Feed into {args.db}")
         return
 
     if args.export_html:
         export_feed_html(db_path=args.db, output_path=args.html_out)
+        export_posts_json(db_path=args.db, output_path=args.posts_out)
         print(f"✅ Updated Legion Feed HTML at: {args.html_out}")
         return
 
@@ -590,7 +983,8 @@ def main():
         export_only=args.export_only,
         db_path=args.db,
         markdown_path=args.out,
-        html_path=args.html_out
+        html_path=args.html_out,
+        posts_path=args.posts_out
     )
     
     print("\n--- Pipeline Execution Summary ---")
@@ -601,8 +995,10 @@ def main():
     print(f"Database Stats       : {results['stats']}")
     print(f"Review File Saved At : {args.out}")
     print(f"HTML Feed Saved At   : {args.html_out}")
+    print(f"Posts Feed Saved At  : {args.posts_out}")
     print("=" * 60)
 
 if __name__ == "__main__":
     main()
+
 
