@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  legion-feed:
+    build: .
+    container_name: legion_automation
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=Asia/Kolkata
+      - AUTO_UPDATE_INTERVAL_MINUTES=30
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - HTTP_TIMEOUT=12
+      - MAX_ITEMS_PER_FEED=10
+    volumes:
+      # Persist SQLite database and exported feeds across restarts
+      - ./legion.db:/app/legion.db
+      - ./posts.json:/app/posts.json
+      - ./PENDING_DRAFTS.md:/app/PENDING_DRAFTS.md
