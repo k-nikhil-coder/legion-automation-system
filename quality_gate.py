@@ -40,10 +40,27 @@ TRUSTED = {
     "share.google", "remoteok.com", "weworkremotely.com", "dev.to", "arxiv.org",
     "techcrunch.com", "lobste.rs", "stackoverflow.blog", "machinelearningmastery.com",
     "analyticsvidhya.com", "reddit.com", "community.dev", "gdg.community.dev",
-    "github.blog", "example.com",
+    "github.blog", "example.com", "devfolio.co", "fossunited.org", "greenhouse.io", "lever.co",
 }
+TRUSTED_DOMAINS = TRUSTED
 
-MAX_SUMMARY = 220
+MAX_SUMMARY_CHARS = 450
+MAX_SUMMARY = 450
+
+WORKSHOP_REGEX = re.compile(
+    r"\b(workshop|bootcamp|hands-on|live coding|masterclass|study jam|lab|webinar|training session)\b",
+    re.I
+)
+
+SENIOR_REJECT_REGEX = re.compile(
+    r"\b(senior|sr\.|staff|principal|lead|architect|manager|director|vp|head of|[5-9]\+\s*years|1[0-9]\+\s*years)\b",
+    re.I
+)
+
+EARLY_CAREER_REGEX = re.compile(
+    r"\b(intern|internship|fresher|sde-1|sde 1|sde i|graduate|trainee|apprentice|entry level|0-2 years|0-1 years|2025|2026|2027|2028)\b",
+    re.I
+)
 
 
 def _domain(url):
@@ -61,8 +78,15 @@ def _is_trusted(url):
 
 
 def _trim(text):
-    import enricher
-    return enricher.summarize(text, max_len=MAX_SUMMARY)
+    text = re.sub(r"\s+", " ", text or "").strip()
+    if len(text) <= MAX_SUMMARY_CHARS:
+        return text
+    cut = text[:MAX_SUMMARY_CHARS]
+    # Sentence-boundary truncation before 450 characters
+    last_boundary = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+    if last_boundary > 80:
+        return cut[:last_boundary + 1].strip()
+    return cut.rsplit(" ", 1)[0] + "…"
 
 
 def locate(text, city=None):
@@ -86,7 +110,13 @@ def gate(item):
     raw = item.get("summary", "")
     loc = item.get("location") or item.get("where") or ""
     city = item.get("city")
+    category = (item.get("category") or item.get("type") or "news").lower()
     head = f"{title} {loc} {raw[:400]}"
+
+    # Check for senior job rejection
+    if category in ("job", "jobs"):
+        if SENIOR_REJECT_REGEX.search(title):
+            return "reject", "senior_role_filtered", item
 
     if JUNK.search(title) or len(JUNK.findall(head)) >= 2:
         return "reject", "off-topic (not tech)", item
@@ -95,12 +125,64 @@ def gate(item):
     if ARTICLE.search(title) or len(raw) > 1500:
         return "reject", "article or listicle, not an opportunity", item
 
+    # Category routing: split events vs workshops
+    resolved_category = category
+    if category in ("event", "events", "workshop", "workshops"):
+        if WORKSHOP_REGEX.search(f"{title} {raw}"):
+            resolved_category = "workshops"
+        else:
+            resolved_category = "events"
+
+    # Experience level classification for jobs
+    experience_level = item.get("experience_level", "ALL")
+    if category in ("job", "jobs"):
+        if EARLY_CAREER_REGEX.search(f"{title} {raw}"):
+            experience_level = "FRESHER_INTERN"
+        else:
+            experience_level = "EARLY_MID"
+
     badge, why = locate(head, city=city)
     if badge is None and why.startswith("offline"):
         return "reject", why, item
 
     url = item.get("link") or item.get("url") or ""
-    clean = dict(item, summary=_trim(raw), badge=badge, link=url, url=url)
+    clean = dict(
+        item,
+        summary=_trim(raw),
+        badge=badge,
+        link=url,
+        url=url,
+        category=resolved_category,
+        type=resolved_category,
+        experience_level=experience_level
+    )
+
+    # Compute relevance_score (0 to 100)
+    score = 0
+    if badge == "HYDERABAD - OFFLINE":
+        score += 30
+    if experience_level == "FRESHER_INTERN" or clean.get("compensation"):
+        score += 25
+    
+    date_val = clean.get("deadline") or clean.get("event_start") or clean.get("date_str")
+    if date_val:
+        try:
+            import db
+            dt = db.parse_date_ist(date_val)
+            if dt:
+                import config
+                diff = (dt.date() - config.now_ist().date()).days
+                if 0 <= diff <= 7:
+                    score += 20
+        except Exception:
+            pass
+            
+    if _is_trusted(url):
+        score += 15
+    if clean.get("skill_tags"):
+        score += 10
+    clean["relevance_score"] = min(100, score)
+
     if badge is None:
         return "review", why, clean
     if not _is_trusted(url):

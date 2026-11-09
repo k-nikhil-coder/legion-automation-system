@@ -190,7 +190,10 @@ def is_online_accessible(item: Optional[Dict[str, Any]]) -> bool:
     location = _safe_str(item.get("location") or item.get("where"), "")
     title = _safe_str(item.get("title"), "")
     summary = _safe_str(item.get("summary") or item.get("sum"), "")
-    combined = f"{location} {title} {summary}".lower()
+    badge = _safe_str(item.get("badge"), "")
+    city = _safe_str(item.get("city"), "")
+    mode = _safe_str(item.get("mode"), "")
+    combined = f"{location} {title} {summary} {badge} {city} {mode}".lower()
     remote_markers = (
         "online", "remote", "virtual", "zoom", "google meet", "webinar", "livestream",
         "youtube", "global", "national", "pan-india", "pan india", "all india",
@@ -405,13 +408,45 @@ def format_draft(item: Dict[str, Any]) -> str:
         
     return draft
 
-def format_whatsapp(item: Dict[str, Any]) -> str:
+def summarize_with_ollama(item: Dict[str, Any], timeout: float = 4.0) -> Optional[str]:
     """
-    Standardized WhatsApp format:
-    Max 7 lines, under 400 chars total.
-    Includes a line ONLY if the field exists.
-    Jobs: Role at Company, stipend, experience, location, apply.
-    Adds '⏳ N days left' line when deadline is within 5 days.
+    Summarizes opportunity with local Ollama instance if USE_OLLAMA=1.
+    Falls back to None on timeout or connection error.
+    """
+    if str(config.USE_OLLAMA) != "1":
+        return None
+    raw = _safe_str(item.get("summary") or item.get("title"))
+    if not raw:
+        return None
+    import urllib.request
+    import json
+    prompt = f"Summarize this tech opportunity into 2-3 concise sentences for WhatsApp (no hype, no emojis, factual):\n\n{raw[:1000]}"
+    payload = json.dumps({
+        "model": "mistral",
+        "prompt": prompt,
+        "stream": False
+    }).encode("utf-8")
+    try:
+        req = urllib.request.Request(
+            "http://localhost:11434/api/generate",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            res = data.get("response", "").strip()
+            return clean_text(res, 450) if res else None
+    except Exception:
+        return None
+
+
+def format_whatsapp_draft(item: Dict[str, Any]) -> str:
+    """
+    Rich WhatsApp Format v3.0 (ASD-STE100):
+    8-to-12 line structured template targeting 400-700 characters.
+    Omits any line with empty/missing values.
+    Supports Hackathons (Template A), Jobs (Template B),
+    Workshops/Events (Template C), and Courses/News (Template D).
     """
     if not isinstance(item, dict):
         item = {}
@@ -422,130 +457,152 @@ def format_whatsapp(item: Dict[str, Any]) -> str:
     badge = get_location_badge(item)
     badge_str = f" {badge}" if badge and badge not in title else ""
 
-    # Calculate days left if deadline parseable
-    days_left = None
-    deadline_val = item.get("deadline") or item.get("event_start") or item.get("date_str")
-    if deadline_val:
-        dt_dl = db.parse_date_ist(deadline_val)
-        if dt_dl:
-            diff = (dt_dl - config.now_ist()).total_seconds() / 86400.0
-            if 0 <= diff <= 5:
-                days_left = max(0, int(round(diff)))
+    # Summary: Ollama if enabled, otherwise enricher.summarize / clean_text
+    summary = ""
+    ollama_sum = summarize_with_ollama(item)
+    if ollama_sum:
+        summary = ollama_sum
+    else:
+        raw_summary = _safe_str(item.get("summary") or item.get("title"))
+        if raw_summary:
+            import enricher
+            summary = enricher.summarize(raw_summary, max_len=config.SUMMARY_MAX)
+
+    # Common / Enriched attributes
+    eligibility = _safe_str(item.get("eligibility"))
+    skill_tags = _safe_str(item.get("skill_tags") or item.get("skills"))
+    compensation = _safe_str(item.get("compensation") or item.get("stipend") or item.get("salary"))
+    perks = _safe_str(item.get("perks"))
+    prizes_perks = compensation or perks or _safe_str(item.get("prize"))
+    date_val = _safe_str(item.get("deadline") or item.get("event_start") or item.get("date_str"))
+    raw_venue = _safe_str(item.get("venue"))
+    if not raw_venue and not is_online_accessible(item) and item.get("badge") != "ONLINE":
+        raw_venue = format_location_string(item)
+    if raw_venue and (raw_venue.lower() in ("online", "virtual", "[online] online", "[online]") or "online" in raw_venue.lower()):
+        raw_venue = ""
+    venue = raw_venue
 
     lines = []
 
-    if category == "job":
-        role = _safe_str(item.get("role") or title)
-        company = _safe_str(item.get("company"))
-        if company:
-            lines.append(f"💼 *{role} at {company}*{badge_str}")
+    if category in ("hackathon", "hackathons"):
+        # Template A: Hackathons
+        lines.append(f"⚡ *{title}*{badge_str}")
+        lines.append("")
+        if summary:
+            lines.append("📝 *Overview:*")
+            lines.append(summary)
+            lines.append("")
+        if eligibility:
+            lines.append(f"🎯 *Eligibility:* {eligibility}")
+        if skill_tags:
+            lines.append(f"🛠️ *Tracks / Tech:* {skill_tags}")
+        if prizes_perks:
+            lines.append(f"🏆 *Prizes & Perks:* {prizes_perks}")
+        if date_val:
+            lines.append(f"📅 *Date / Deadline:* {date_val}")
+        if venue:
+            lines.append(f"📍 *Venue:* {venue}")
+        if url:
+            lines.append("")
+            lines.append(f"🔗 *Register Here:* {url}")
+
+    elif category in ("job", "jobs"):
+        # Template B: Jobs
+        lines.append(f"💼 *{title}*{badge_str}")
+        lines.append("")
+        if summary:
+            lines.append("🏢 *Role Overview:*")
+            lines.append(summary)
+            lines.append("")
+        exp_lvl = _safe_str(item.get("experience_level"))
+        if exp_lvl == "FRESHER_INTERN":
+            exp_display = "Freshers & Interns (0-1 yrs)"
+        elif exp_lvl == "EARLY_MID":
+            exp_display = "Early to Mid Career (1-3 yrs)"
         else:
-            lines.append(f"💼 *{role}*{badge_str}")
+            exp_display = _safe_str(item.get("experience"), "Open to All")
 
-        raw_summary = _safe_str(item.get("summary"))
-        if raw_summary:
-            import enricher
-            clean_s = enricher.summarize(raw_summary, max_len=config.SUMMARY_MAX)
-            if clean_s:
-                lines.append(f"📌 {clean_s}")
-
-        stipend = _safe_str(item.get("stipend") or item.get("salary"))
-        if stipend:
-            lines.append(f"💰 Stipend: {stipend}")
-
-        experience = _safe_str(item.get("experience"))
-        if experience:
-            lines.append(f"🎓 Experience: {experience}")
-
-        location = _safe_str(item.get("location") or item.get("venue") or item.get("where"))
-        if location:
-            lines.append(f"📍 Location: {location}")
-
-        if days_left is not None:
-            if days_left == 0:
-                lines.append("⏳ Ends today")
-            elif days_left == 1:
-                lines.append("⏳ 1 day left")
-            else:
-                lines.append(f"⏳ {days_left} days left")
+        elig_str = f"{eligibility} | {exp_display}" if eligibility and eligibility != exp_display else (eligibility or exp_display)
+        if elig_str:
+            lines.append(f"🎓 *Eligibility / Exp:* {elig_str}")
+        if skill_tags:
+            lines.append(f"🛠️ *Tech Stack:* {skill_tags}")
+        if compensation:
+            lines.append(f"💰 *CTC / Stipend:* {compensation}")
+        
+        loc_date_parts = []
+        if venue:
+            loc_date_parts.append(f"📍 *Location:* {venue}")
+        elif not is_online_accessible(item) and item.get("location"):
+            loc_date_parts.append(f"📍 *Location:* {item.get('location')}")
+        if date_val:
+            loc_date_parts.append(f"📅 *Posted / Apply By:* {date_val}")
+        if loc_date_parts:
+            lines.append(" | ".join(loc_date_parts))
 
         if url:
-            lines.append(f"🔗 Apply: {url}")
+            lines.append("")
+            lines.append(f"🔗 *Apply Direct:* {url}")
+
+    elif category in ("workshop", "workshops", "event", "events"):
+        # Template C: Workshops & Events
+        icon = "🛠️" if category in ("workshop", "workshops") else "🗓️"
+        lines.append(f"{icon} *{title}*{badge_str}")
+        lines.append("")
+        if summary:
+            lines.append("📌 *What You Will Learn / Expect:*")
+            lines.append(summary)
+            lines.append("")
+        if eligibility:
+            lines.append(f"👥 *Who Should Attend:* {eligibility}")
+        if skill_tags:
+            lines.append(f"🛠️ *Topics Covered:* {skill_tags}")
+        if perks:
+            lines.append(f"🎁 *Highlights:* {perks}")
+        elif _safe_str(item.get("fee")):
+            lines.append(f"🎟️ *Fee:* {_safe_str(item.get('fee'))}")
+        if date_val:
+            lines.append(f"📅 *Date & Time:* {date_val}")
+        if venue:
+            lines.append(f"📍 *Venue:* {venue}")
+        if url:
+            lines.append("")
+            lines.append(f"🔗 *RSVP Link:* {url}")
 
     else:
-        icon_map = {
-            "hackathon": "⚡",
-            "event": "🗓️",
-            "course": "🎓",
-            "news": "💡"
-        }
-        icon = icon_map.get(category, "🚀")
+        # Template D: Courses & News
+        icon = "🎓" if category in ("course", "courses") else "💡"
         lines.append(f"{icon} *{title}*{badge_str}")
-
-        raw_summary = _safe_str(item.get("summary"))
-        if raw_summary:
-            import enricher
-            clean_s = enricher.summarize(raw_summary, max_len=config.SUMMARY_MAX)
-            if clean_s:
-                lines.append(f"📌 {clean_s}")
-
-        date_deadline = _safe_str(item.get("deadline") or item.get("event_start") or item.get("date_str"))
-        if date_deadline:
-            lines.append(f"📅 Date/Deadline: {date_deadline}")
-
-        if days_left is not None:
-            if days_left == 0:
-                lines.append("⏳ Ends today")
-            elif days_left == 1:
-                lines.append("⏳ 1 day left")
-            else:
-                lines.append(f"⏳ {days_left} days left")
-
-        venue = _safe_str(item.get("venue") or (item.get("location") if not is_online_accessible(item) else ""))
-        if venue and venue.lower() not in ("online", "virtual"):
-            lines.append(f"📍 Venue: {venue}")
-
-        details_parts = []
-        fee = _safe_str(item.get("fee"))
-        if fee:
-            details_parts.append(f"🎟️ Fee: {fee}")
-        prize = _safe_str(item.get("prize"))
-        if prize:
-            details_parts.append(f"🏆 Prize: {prize}")
-        eligibility = _safe_str(item.get("eligibility"))
-        if eligibility:
-            details_parts.append(f"👥 Eligibility: {eligibility}")
-
-        if details_parts:
-            lines.append(" | ".join(details_parts))
-
+        lines.append("")
+        if summary:
+            lines.append("📖 *Key Takeaways:*")
+            lines.append(summary)
+            lines.append("")
+        if skill_tags:
+            lines.append(f"🛠️ *Skills / Tags:* {skill_tags}")
+        access_info = perks or _safe_str(item.get("fee")) or "Free Access"
+        lines.append(f"🎁 *Access:* {access_info}")
         if url:
-            lines.append(f"🔗 Apply: {url}")
+            lines.append("")
+            lines.append(f"🔗 *Access Link:* {url}")
 
-    if len(lines) > 7:
-        lines = lines[:7]
+    # Remove consecutive empty lines and trailing/leading whitespace
+    cleaned_lines = []
+    prev_blank = False
+    for line in lines:
+        is_blank = not line.strip()
+        if is_blank and prev_blank:
+            continue
+        cleaned_lines.append(line)
+        prev_blank = is_blank
 
-    res = "\n".join(lines)
-    if len(res) >= 400:
-        excess = len(res) - 395
-        for i, l in enumerate(lines):
-            if l.startswith("📌 "):
-                new_len = len(l) - excess - 3
-                if new_len > 15:
-                    lines[i] = l[:new_len].rstrip() + "..."
-                else:
-                    lines.pop(i)
-                break
-        res = "\n".join(lines)
-        if len(res) >= 400:
-            excess = len(res) - 395
-            if len(lines) > 0 and len(lines[0]) > excess + 20:
-                lines[0] = lines[0][:len(lines[0]) - excess - 3].rstrip() + "...*"
-            res = "\n".join(lines)
-        if len(res) >= 400:
-            res = res[:396] + "..."
-
+    res = "\n".join(cleaned_lines).strip()
     return res
+
+
+def format_whatsapp(item: Dict[str, Any]) -> str:
+    """Alias for format_whatsapp_draft for backward compatibility."""
+    return format_whatsapp_draft(item)
 
 def get_whatsapp_target_group(category: str) -> str:
     """Returns the matching WhatsApp group name."""

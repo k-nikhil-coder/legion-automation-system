@@ -198,6 +198,74 @@ def compute_fingerprint(title: str, start_date: str = "", city: str = "") -> str
     norm_city = config.normalize_city(city) if city else ""
     return f"{clean_title}|{norm_date}|{norm_city}"
 
+def migrate_v3_schema(conn: sqlite3.Connection) -> None:
+    """
+    Executes ALTER TABLE ADD COLUMN for v3 schema expansion.
+    Safely adds sub_category, experience_level, compensation, skill_tags,
+    eligibility, perks, and relevance_score to opportunities and items tables.
+    """
+    cursor = conn.cursor()
+    # Ensure opportunities table exists as well
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS opportunities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source TEXT NOT NULL,
+            category TEXT NOT NULL,
+            title TEXT NOT NULL,
+            url TEXT UNIQUE NOT NULL,
+            summary TEXT,
+            date_str TEXT,
+            deadline TEXT,
+            location TEXT,
+            eligibility TEXT,
+            draft_text TEXT,
+            status TEXT DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            badge TEXT,
+            first_seen TIMESTAMP,
+            event_start TEXT,
+            event_end TEXT,
+            expires_at TIMESTAMP,
+            city TEXT,
+            mode TEXT,
+            fingerprint TEXT,
+            organizer TEXT,
+            venue TEXT,
+            fee TEXT,
+            prize TEXT,
+            apply_url TEXT,
+            company TEXT,
+            role TEXT,
+            stipend TEXT,
+            experience TEXT,
+            enriched_data TEXT,
+            sub_category TEXT DEFAULT '',
+            experience_level TEXT DEFAULT 'ALL',
+            compensation TEXT DEFAULT '',
+            skill_tags TEXT DEFAULT '',
+            perks TEXT DEFAULT '',
+            relevance_score INTEGER DEFAULT 0
+        );
+    """)
+
+    v3_cols = [
+        ("sub_category", "TEXT DEFAULT ''"),
+        ("experience_level", "TEXT DEFAULT 'ALL'"),
+        ("compensation", "TEXT DEFAULT ''"),
+        ("skill_tags", "TEXT DEFAULT ''"),
+        ("eligibility", "TEXT DEFAULT ''"),
+        ("perks", "TEXT DEFAULT ''"),
+        ("relevance_score", "INTEGER DEFAULT 0"),
+    ]
+
+    for table_name in ("opportunities", "items"):
+        for col_name, col_type in v3_cols:
+            try:
+                cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type};")
+            except sqlite3.OperationalError:
+                pass
+
+
 def init_db(db_path: str = DB_PATH):
     """Initializes the database schema and performs safe migrations for new columns."""
     with get_db_connection(db_path) as conn:
@@ -255,6 +323,9 @@ def init_db(db_path: str = DB_PATH):
                     except Exception:
                         pass
 
+            # Run v3 schema migration for opportunities and items
+            migrate_v3_schema(conn)
+
             # Source Health Tracking Table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS source_health (
@@ -270,6 +341,7 @@ def init_db(db_path: str = DB_PATH):
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_category ON items(category);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_fingerprint ON items(fingerprint);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_expires_at ON items(expires_at);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_relevance ON items(relevance_score);")
 
 def item_exists(url: str, db_path: str = DB_PATH) -> bool:
     """Checks if an item with the given URL (raw or normalized) has already been collected."""
@@ -346,12 +418,14 @@ def insert_item(item: Dict[str, Any], db_path: str = DB_PATH) -> Optional[int]:
                         source, category, title, url, summary, 
                         date_str, deadline, location, eligibility, draft_text, status, badge,
                         first_seen, event_start, event_end, expires_at, city, mode, fingerprint,
-                        organizer, venue, fee, prize, apply_url, company, role, stipend, experience, enriched_data
+                        organizer, venue, fee, prize, apply_url, company, role, stipend, experience, enriched_data,
+                        sub_category, experience_level, compensation, skill_tags, perks, relevance_score
                     ) VALUES (
                         ?, ?, ?, ?, ?, 
                         ?, ?, ?, ?, ?, ?, ?,
                         ?, ?, ?, ?, ?, ?, ?,
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                        ?, ?, ?, ?, ?, ?
                     )
                 """, (
                     item.get("source", "Unknown"),
@@ -382,11 +456,55 @@ def insert_item(item: Dict[str, Any], db_path: str = DB_PATH) -> Optional[int]:
                     item.get("role", ""),
                     item.get("stipend", ""),
                     item.get("experience", ""),
-                    item.get("enriched_data", "")
+                    item.get("enriched_data", ""),
+                    item.get("sub_category", ""),
+                    item.get("experience_level", "ALL"),
+                    item.get("compensation", ""),
+                    item.get("skill_tags", ""),
+                    item.get("perks", ""),
+                    int(item.get("relevance_score") or 0)
                 ))
-                return cursor.lastrowid
+                row_id = cursor.lastrowid
+                # Also keep opportunities table synchronized if present
+                try:
+                    cursor.execute("""
+                        INSERT OR IGNORE INTO opportunities (
+                            id, source, category, title, url, summary, date_str, deadline, location,
+                            eligibility, draft_text, status, badge, first_seen, event_start, event_end,
+                            expires_at, city, mode, fingerprint, organizer, venue, fee, prize, apply_url,
+                            company, role, stipend, experience, enriched_data, sub_category,
+                            experience_level, compensation, skill_tags, perks, relevance_score
+                        ) VALUES (
+                            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                        )
+                    """, (
+                        row_id,
+                        item.get("source", "Unknown"), item.get("category", "news"),
+                        item.get("title", "").strip(), norm_url, item.get("summary", ""),
+                        item.get("date_str", ""), item.get("deadline", "TBA / Open"),
+                        item.get("location", "Online"), item.get("eligibility", "Open to all"),
+                        item.get("draft_text", ""), status_val, item.get("badge"),
+                        first_seen_str, item.get("event_start", ""), item.get("event_end", ""),
+                        expires_at_str, city_val, mode_val, fp, item.get("organizer", ""),
+                        item.get("venue", ""), item.get("fee", ""), item.get("prize", ""),
+                        item.get("apply_url") or norm_url, item.get("company", ""),
+                        item.get("role", ""), item.get("stipend", ""), item.get("experience", ""),
+                        item.get("enriched_data", ""), item.get("sub_category", ""),
+                        item.get("experience_level", "ALL"), item.get("compensation", ""),
+                        item.get("skill_tags", ""), item.get("perks", ""),
+                        int(item.get("relevance_score") or 0)
+                    ))
+                except Exception:
+                    pass
+                return row_id
             except sqlite3.IntegrityError:
                 return None
+
+
+def insert_opportunity(item: Dict[str, Any], db_path: str = DB_PATH) -> Optional[int]:
+    """Alias for insert_item to fulfill ASD-STE100 specification."""
+    return insert_item(item, db_path=db_path)
 
 def get_item(item_id: int, db_path: str = DB_PATH) -> Optional[Dict[str, Any]]:
     """Retrieves a single item by ID."""
@@ -487,6 +605,12 @@ def update_item(item_id: int, item_data: Dict[str, Any], db_path: str = DB_PATH)
                     role = COALESCE(?, role),
                     stipend = COALESCE(?, stipend),
                     experience = COALESCE(?, experience),
+                    sub_category = COALESCE(?, sub_category),
+                    experience_level = COALESCE(?, experience_level),
+                    compensation = COALESCE(?, compensation),
+                    skill_tags = COALESCE(?, skill_tags),
+                    perks = COALESCE(?, perks),
+                    relevance_score = COALESCE(?, relevance_score),
                     expires_at = ?,
                     status = ?,
                     fingerprint = ?
@@ -508,6 +632,12 @@ def update_item(item_id: int, item_data: Dict[str, Any], db_path: str = DB_PATH)
                 item_data.get("role"),
                 item_data.get("stipend"),
                 item_data.get("experience"),
+                item_data.get("sub_category"),
+                item_data.get("experience_level"),
+                item_data.get("compensation"),
+                item_data.get("skill_tags"),
+                item_data.get("perks"),
+                item_data.get("relevance_score"),
                 expires_at_str,
                 status_val,
                 fp,

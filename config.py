@@ -38,10 +38,12 @@ def load_env(env_file: str = os.path.join(BASE_DIR, ".env")) -> None:
 load_env()
 
 # Expiry and Localization Constants
-SUMMARY_MAX = 220
+SUMMARY_MAX = 450
+MAX_SUMMARY_CHARS = 450
 TTL_DAYS = 7
 MAX_FUTURE_DAYS = 30
 PURGE_BODY_DAYS = 30
+USE_OLLAMA = int(os.environ.get("USE_OLLAMA", "0"))
 
 # Timezone (Asia/Kolkata - IST)
 try:

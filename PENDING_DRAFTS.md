@@ -1,7 +1,7 @@
 # 🛡️ Legion Community - Pending Content Review Queue
 
-> **Generated at**: `2026-11-09 13:43:21`  
-> **Database Stats**: ⏳ Pending: `109` | ✅ Approved: `0` | ❌ Rejected: `51` | 🚀 Posted: `0`
+> **Generated at**: `2026-11-09 14:46:19`  
+> **Database Stats**: ⏳ Pending: `126` | ✅ Approved: `0` | ❌ Rejected: `51` | 🚀 Posted: `0`
 
 ## 📌 Workflow Guide
 - **Option A (Telegram Bot)**: Run `python telegram_bot.py --push` to push unreviewed items to your Telegram chat with inline Approve / Reject / Done buttons.
@@ -464,7 +464,25 @@
 ---
 
 ## 📚 Courses & Resources
-*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 50*
+*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 51*
+
+### [#197] Confused whether I should go for laptop with dedicated gpu or igpu [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-09 08:40:04`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xrmhj5/confused_whether_i_should_go_for_laptop_with](https://www.reddit.com/r/learnmachinelearning/comments/1xrmhj5/confused_whether_i_should_go_for_laptop_with)
+- **Quick Commands**: `python telegram_bot.py --approve 197` | `python telegram_bot.py --reject 197` | `python telegram_bot.py --edit 197`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🎓 Confused whether I should go for laptop with dedicated gpu or igpu [ONLINE]
+
+📌 What: So, I am a first year student of BTech CSE. I am about to buy a laptop and I'm really confused that whether I should go for a laptop with dedicated gpu or igpu...
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to all
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xrmhj5/confused_whether_i_should_go_for_laptop_with/
+```
+
+---
 
 ### [#195] This sub deserves better than AI slop. And if you are a learner, you deserve better [ONLINE]
 - **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-09 08:08:48`
@@ -1981,9 +1999,267 @@
 
 ---
 
+## 📁 Other Updates
+
+### [#208] HYDERABAD FOSS Meetup Hyderabad 20 Jun 2026 03:00 PM OSI Digital Pvt Ltd [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Category**: events | **Source**: FOSS United Hyderabad
+- **Quick Commands**: `python telegram_bot.py --approve 208` | `python telegram_bot.py --reject 208` | `python telegram_bot.py --edit 208`
+```text
+🚀 HYDERABAD FOSS Meetup Hyderabad 20 Jun 2026 03:00 PM OSI Digital Pvt Ltd [HYDERABAD - OFFLINE]
+
+📌 What: Foss United community event for open-source developers: Hyderabad Foss Meetup Hyderabad 20 Jun 2026 03:00 PM Osi Digital Pvt Ltd
+📅 Date / Deadline: Check website
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: 2026 Batch
+🔗 https://fossunited.org/c/hyderabad/jun-26
+```
+
+---
+
+### [#215] cloud security engineer at Cred [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: jobs | **Source**: Lever (Cred)
+- **Quick Commands**: `python telegram_bot.py --approve 215` | `python telegram_bot.py --reject 215` | `python telegram_bot.py --edit 215`
+```text
+🚀 cloud security engineer at Cred [BENGALURU - OFFLINE]
+
+📌 What: What is CRED? Cred is an exclusive community for India’s most trustworthy and CREDitworthy individuals, where the members are rewarded for good financial behavior.
+📅 Date / Deadline: Check website
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: be
+🔗 https://jobs.lever.co/cred/9a746e68-0858-4190-9144-54b19a2cbf2c
+```
+
+---
+
+### [#214] Backend Engineer, Source Code: Repository Services (Ruby) at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, United Kingdom | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 214` | `python telegram_bot.py --reject 214` | `python telegram_bot.py --edit 214`
+```text
+🚀 Backend Engineer, Source Code: Repository Services (Ruby) at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, United Kingdom
+🎯 Who: be (2025, 2026 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8912709002
+```
+
+---
+
+### [#213] Backend Engineer (Ruby), Plan: Spec-Driven Development at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, Poland | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 213` | `python telegram_bot.py --reject 213` | `python telegram_bot.py --edit 213`
+```text
+🚀 Backend Engineer (Ruby), Plan: Spec-Driven Development at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, Poland
+🎯 Who: be (2025 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8749950002
+```
+
+---
+
+### [#212] Backend Engineer (Ruby), Create: Change Record at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, Poland; Remote, United Kingdom | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 212` | `python telegram_bot.py --reject 212` | `python telegram_bot.py --edit 212`
+```text
+🚀 Backend Engineer (Ruby), Create: Change Record at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, Poland; Remote, United Kingdom
+🎯 Who: be (2025 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8891301002
+```
+
+---
+
+### [#211] Backend Engineer (Python),AI Engineering: Agent Foundations at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, Canada; Remote, Poland; Remote, United Kingdom | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 211` | `python telegram_bot.py --reject 211` | `python telegram_bot.py --edit 211`
+```text
+🚀 Backend Engineer (Python),AI Engineering: Agent Foundations at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, Canada; Remote, Poland; Remote, United Kingdom
+🎯 Who: be (2025 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8704363002
+```
+
+---
+
+### [#210] Backend Engineer, GitLab Orbit at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, Canada; Remote, United States | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 210` | `python telegram_bot.py --reject 210` | `python telegram_bot.py --edit 210`
+```text
+🚀 Backend Engineer, GitLab Orbit at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, Canada; Remote, United States
+🎯 Who: be (2025 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8771512002
+```
+
+---
+
+### [#209] AI Transformation Owner, CRO at Gitlab [ONLINE]
+- **Location**: [ONLINE] Remote, United States | **Category**: jobs | **Source**: Greenhouse (Gitlab)
+- **Quick Commands**: `python telegram_bot.py --approve 209` | `python telegram_bot.py --reject 209` | `python telegram_bot.py --edit 209`
+```text
+🚀 AI Transformation Owner, CRO at Gitlab [ONLINE]
+
+📌 What: GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digi...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Remote, United States
+🎯 Who: be (2025 Batch)
+🔗 https://job-boards.greenhouse.io/gitlab/jobs/8638232002
+```
+
+---
+
+### [#207] FOSS Event Grants COGNICRAFT 2026 Must Attend 12 – 13 Dec 2026 Ernakulam, Keralam [ONLINE]
+- **Location**: [ONLINE] Online | **Category**: events | **Source**: FOSS United Events
+- **Quick Commands**: `python telegram_bot.py --approve 207` | `python telegram_bot.py --reject 207` | `python telegram_bot.py --edit 207`
+```text
+🚀 FOSS Event Grants COGNICRAFT 2026 Must Attend 12 – 13 Dec 2026 Ernakulam, Keralam [ONLINE]
+
+📌 What: Foss United community event for open-source developers: Foss Event Grants Cognicraft 2026 Must Attend 12 – 13 Dec 2026 Ernakulam, Keralam
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://fossunited.org/grants/events?s=COGNICRAFT 2026
+```
+
+---
+
+### [#204] LUCKNOW November 2026 Meetup 21 Nov 2026 09:30 AM InMobi , Awfis - CoWorking, 5th Floor, Fun Republic Mall, Lohia Path, Nehru Enclave, Gomti Nagar, Lucknow, Uttar Pradesh – 226010 [ONLINE]
+- **Location**: [ONLINE] Online | **Category**: events | **Source**: FOSS United Events
+- **Quick Commands**: `python telegram_bot.py --approve 204` | `python telegram_bot.py --reject 204` | `python telegram_bot.py --edit 204`
+```text
+🚀 LUCKNOW November 2026 Meetup 21 Nov 2026 09:30 AM InMobi , Awfis - CoWorking, 5th Floor, Fun Republic Mall, Lohia Path, Nehru Enclave, Gomti Nagar, Lucknow, Uttar Pradesh – 226010 [ONLINE]
+
+📌 What: Foss United community event for open-source developers: Lucknow November 2026 Meetup 21 Nov 2026 09:30 AM InMobi , Awfis - CoWorking, 5th Floor, Fun Republic Mall, Lohia Path, Nehru Enclave, Gomti Nagar, Lucknow, Utta...
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://fossunited.org/c/lucknow/nov-2026
+```
+
+---
+
+### [#205] BENGALURU November Meetup 28 Nov 2026 02:00 PM Samagata Foundation, Church Street [ONLINE]
+- **Location**: [ONLINE] Online | **Category**: events | **Source**: FOSS United Events
+- **Quick Commands**: `python telegram_bot.py --approve 205` | `python telegram_bot.py --reject 205` | `python telegram_bot.py --edit 205`
+```text
+🚀 BENGALURU November Meetup 28 Nov 2026 02:00 PM Samagata Foundation, Church Street [ONLINE]
+
+📌 What: Foss United community event for open-source developers: Bengaluru November Meetup 28 Nov 2026 02:00 PM Samagata Foundation, Church Street
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://fossunited.org/c/bengaluru/nov-2026
+```
+
+---
+
+### [#202] Python Meetup [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: events | **Source**: BangPypers
+- **Quick Commands**: `python telegram_bot.py --approve 202` | `python telegram_bot.py --reject 202` | `python telegram_bot.py --edit 202`
+```text
+🚀 Python Meetup [BENGALURU - OFFLINE]
+
+📌 What: BangPypers - Bangalore Python Users Group Agenda: Note 1. Rsvp opens 3 weeks before the even 2.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Be (2027 Batch)
+🔗 https://www.meetup.com/bangpypers/events/315439160/
+```
+
+---
+
+### [#201] Python Meetup [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: events | **Source**: BangPypers
+- **Quick Commands**: `python telegram_bot.py --approve 201` | `python telegram_bot.py --reject 201` | `python telegram_bot.py --edit 201`
+```text
+🚀 Python Meetup [BENGALURU - OFFLINE]
+
+📌 What: BangPypers - Bangalore Python Users Group Agenda: Note 1. Rsvp opens 3 weeks before the even 2.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Be (2027 Batch)
+🔗 https://www.meetup.com/bangpypers/events/315439159/
+```
+
+---
+
+### [#200] Python Meetup [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: events | **Source**: BangPypers
+- **Quick Commands**: `python telegram_bot.py --approve 200` | `python telegram_bot.py --reject 200` | `python telegram_bot.py --edit 200`
+```text
+🚀 Python Meetup [BENGALURU - OFFLINE]
+
+📌 What: BangPypers - Bangalore Python Users Group Agenda: Note 1. Rsvp opens 3 weeks before the even 2.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Be (2027 Batch)
+🔗 https://www.meetup.com/bangpypers/events/315439158/
+```
+
+---
+
+### [#199] Python Meetup [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: events | **Source**: BangPypers
+- **Quick Commands**: `python telegram_bot.py --approve 199` | `python telegram_bot.py --reject 199` | `python telegram_bot.py --edit 199`
+```text
+🚀 Python Meetup [BENGALURU - OFFLINE]
+
+📌 What: BangPypers - Bangalore Python Users Group Agenda: Note 1. Rsvp opens 3 weeks before the even 2.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Be (2026, 2027 Batch)
+🔗 https://www.meetup.com/bangpypers/events/312819341/
+```
+
+---
+
+### [#198] Bangpypers <> Pathfinder Community Meetup [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Category**: events | **Source**: BangPypers
+- **Quick Commands**: `python telegram_bot.py --approve 198` | `python telegram_bot.py --reject 198` | `python telegram_bot.py --edit 198`
+```text
+🚀 Bangpypers <> Pathfinder Community Meetup [BENGALURU - OFFLINE]
+
+📌 What: BangPypers - Bangalore Python Users Group Agenda: Note 1. Rsvp opens 3 weeks before the event 2.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: 2026, 2027 Batch
+🔗 https://www.meetup.com/bangpypers/events/312819340/
+```
+
+---
+
 ## 🔍 Review Queue (Needs Admin Verification)
 
-*Items flagged for manual verification: `26`*
+*Items flagged for manual verification: `27`*
+
+### [#206] FOSS Event Grants OpenSourceCon India Must Attend 5 Dec 2026 12:00 AM Kolkata [ONLINE]
+- **Flag Reason**: ⚠️ `Review needed: untrusted domain: opensourcecon.in`
+- **Source**: FOSS United Events | **Link**: [https://opensourcecon.in](https://opensourcecon.in)
+- **Quick Commands**: `python telegram_bot.py --approve 206` | `python telegram_bot.py --reject 206`
+```text
+🚀 FOSS Event Grants OpenSourceCon India Must Attend 5 Dec 2026 12:00 AM Kolkata [ONLINE]
+
+📌 What: Foss United community event for open-source developers: Foss Event Grants OpenSourceCon India Must Attend 5 Dec 2026 12:00 AM Kolkata
+📅 Date / Deadline: Check website
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://opensourcecon.in
+```
+
+---
 
 ### [#193] Apple capped engineers at a $200 daily AI budget [ONLINE]
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: stork.ai`

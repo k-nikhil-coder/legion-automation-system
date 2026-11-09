@@ -21,6 +21,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 import quality_gate
+import config
 
 # Ensure UTF-8 stdout on Windows
 if hasattr(sys.stdout, "reconfigure"):
@@ -40,7 +41,7 @@ try:
 except Exception:
     SSL_CTX = ssl.create_default_context()
 
-DEFAULT_TIMEOUT = 10
+DEFAULT_TIMEOUT = 12
 DEFAULT_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -552,7 +553,7 @@ def parse_ical(raw_text: str, source_name: str, limit: int = 10, city: str = "hy
         items.append({
             "id": f"{source_name}_{clean_date}_{title[:16]}",
             "title": title,
-            "summary": strip_html_tags(summary)[:220] or f"Meetup hosted by {source_name}: {title}",
+            "summary": strip_html_tags(summary)[:800] or f"Meetup hosted by {source_name}: {title}",
             "link": link or "https://meetup.com",
             "url": link or "https://meetup.com",
             "source": source_name,
@@ -580,7 +581,7 @@ def parse_devpost_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
             themes_list = [t.get("name") for t in h.get("themes", []) if t.get("name")]
             themes_str = f"Themes: {', '.join(themes_list)}. " if themes_list else ""
             loc_str = h.get("displayed_location", {}).get("location") or "Online"
-            summary = strip_html_tags(f"Online developer hackathon on Devpost. {themes_str}{loc_str}.")[:220]
+            summary = strip_html_tags(f"Online developer hackathon on Devpost. {themes_str}{loc_str}.")[:800]
             dates = h.get("submission_period_dates", "")
             clean_date = ""
             m = re.search(r'\b(20\d{2}-\d{2}-\d{2})\b', dates)
@@ -632,7 +633,7 @@ def parse_remoteok_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
                 url = str(job.get("url") or "").strip()
                 if url.startswith("/"):
                     url = "https://remoteok.com" + url
-                desc = strip_html_tags(str(job.get("description") or ""))[:220]
+                desc = strip_html_tags(str(job.get("description") or ""))[:800]
                 loc = str(job.get("location") or "Remote")
                 tags = job.get("tags") or []
                 skills = ", ".join(tags[:4]) if isinstance(tags, list) else "Tech"
@@ -671,7 +672,7 @@ def parse_bevy_api(data: bytes, source_name: str, limit: int = 10, city: str = "
             title = ev.get("title", "Community Event")
             raw_url = ev.get("url") or ""
             url = raw_url if raw_url.startswith("http") else f"https://gdg.community.dev{raw_url}"
-            summary = strip_html_tags(ev.get("description_short") or ev.get("description") or "")[:220]
+            summary = strip_html_tags(ev.get("description_short") or ev.get("description") or "")[:800]
             start_date = str(ev.get("start_date") or "")
             clean_date = start_date[:10] if len(start_date) >= 10 and "-" in start_date[:10] else ""
 
@@ -712,7 +713,7 @@ def parse_luma(html_text: str, source_name: str, limit: int = 10, city: str = "h
                 title = ev.get("name", "Tech Meetup")
                 slug = ev.get("url", "")
                 url = f"https://lu.ma/{slug}" if slug else "https://lu.ma"
-                summary = strip_html_tags(ev.get("description", ""))[:220]
+                summary = strip_html_tags(ev.get("description", ""))[:800]
                 start_at = str(ev.get("start_at", ""))
                 clean_date = start_at[:10] if len(start_at) >= 10 and "-" in start_at[:10] else ""
 
@@ -789,7 +790,7 @@ def parse_devto_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
             for art in articles[:limit]:
                 title = art.get("title", "Hackathon")
                 url = art.get("url", "https://dev.to")
-                summary = strip_html_tags(art.get("description", ""))[:220]
+                summary = strip_html_tags(art.get("description", ""))[:800]
                 pub_date = str(art.get("published_at") or "")[:10]
 
                 items.append({
@@ -868,6 +869,350 @@ def parse_commudle(raw_bytes: bytes, source_name: str, city: str = "hyderabad", 
 
 
 # ==============================================================================
+# SPECIALIZED COLLECTORS v3.0 (ASD-STE100)
+# ==============================================================================
+
+def collect_luma_events(city: str = "hyderabad") -> List[Dict[str, Any]]:
+    """
+    Fetches local events from Luma by parsing __NEXT_DATA__ from https://lu.ma/{city}.
+    Supports hyderabad and bengaluru.
+    """
+    cities = [city] if city else ["hyderabad", "bengaluru"]
+    if city in ("all", "both"):
+        cities = ["hyderabad", "bengaluru"]
+
+    items: List[Dict[str, Any]] = []
+    for c in cities:
+        url = f"https://lu.ma/{c}"
+        try:
+            raw, err = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            parsed = parse_luma(raw.decode("utf-8", errors="ignore"), f"Luma {c.capitalize()}", limit=10, city=c)
+            items.extend(parsed)
+        except Exception as e:
+            logger.warning(f"Error in collect_luma_events({c}): {e}")
+    return items
+
+
+def collect_devfolio_hackathons() -> List[Dict[str, Any]]:
+    """
+    Fetches Indian hackathons from Devfolio API or HTML fallback.
+    """
+    items: List[Dict[str, Any]] = []
+    # 1. Try public Devfolio endpoint
+    api_url = "https://api.devfolio.co/api/hackathons?filter=upcoming&page=1&per_page=15"
+    try:
+        raw, err = fetch_raw(api_url, headers={"User-Agent": DEFAULT_USER_AGENT, "Accept": "application/json"}, timeout=DEFAULT_TIMEOUT)
+        if raw:
+            data = json.loads(raw.decode("utf-8", errors="ignore"))
+            hackathons = data.get("result", []) or data.get("hackathons", [])
+            for h in hackathons[:15]:
+                title = h.get("name") or h.get("title", "Devfolio Hackathon")
+                slug = h.get("slug", "")
+                url = f"https://{slug}.devfolio.co" if slug else "https://devfolio.co/hackathons"
+                desc = strip_html_tags(h.get("desc") or h.get("tagline") or "")[:800]
+                start_date = str(h.get("starts_at") or "")[:10]
+                end_date = str(h.get("ends_at") or "")[:10]
+                prizes = str(h.get("prize_pool") or h.get("prizes", ""))
+                mode = "ONLINE" if h.get("is_online", True) else "OFFLINE"
+                themes = ", ".join(h.get("themes", [])) if isinstance(h.get("themes"), list) else ""
+
+                items.append({
+                    "id": f"devfolio_{slug or title[:16]}",
+                    "title": title,
+                    "summary": desc or f"Indian tech hackathon on Devfolio. Themes: {themes}. Prizes: {prizes}",
+                    "link": url,
+                    "url": url,
+                    "apply_url": url,
+                    "source": "Devfolio",
+                    "category": "hackathons",
+                    "type": "hackathon",
+                    "date": start_date,
+                    "date_str": start_date,
+                    "deadline": end_date or start_date or "Open",
+                    "location": "Online" if mode == "ONLINE" else "Offline",
+                    "mode": mode,
+                    "prize": prizes,
+                    "skill_tags": themes,
+                    "posted": datetime.now().strftime("%Y-%m-%d"),
+                })
+            if items:
+                return items
+    except Exception as e:
+        logger.debug(f"Devfolio API error: {e}")
+
+    # 2. Fallback to scraping __NEXT_DATA__ from /hackathons
+    try:
+        raw, err = fetch_raw("https://devfolio.co/hackathons", headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+        if raw:
+            html_txt = raw.decode("utf-8", errors="ignore")
+            m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_txt)
+            if m:
+                d = json.loads(m.group(1))
+                hacks = d.get("props", {}).get("pageProps", {}).get("hackathons", [])
+                for h in hacks[:10]:
+                    title = h.get("name") or "Devfolio Hackathon"
+                    slug = h.get("slug", "")
+                    url = f"https://{slug}.devfolio.co" if slug else "https://devfolio.co/hackathons"
+                    items.append({
+                        "id": f"devfolio_{slug or title[:16]}",
+                        "title": title,
+                        "summary": strip_html_tags(h.get("desc") or "")[:800] or "Devfolio Indian developer hackathon",
+                        "link": url,
+                        "url": url,
+                        "source": "Devfolio",
+                        "category": "hackathons",
+                        "type": "hackathon",
+                        "date": str(h.get("starts_at") or "")[:10],
+                        "posted": datetime.now().strftime("%Y-%m-%d"),
+                    })
+    except Exception as e:
+        logger.warning(f"Error in collect_devfolio_hackathons: {e}")
+    return items
+
+
+def collect_foss_united() -> List[Dict[str, Any]]:
+    """
+    Fetches open-source community meetups and events from FOSS United.
+    """
+    items: List[Dict[str, Any]] = []
+    targets = [
+        ("https://fossunited.org/events", "FOSS United Events"),
+        ("https://fossunited.org/c/hyderabad", "FOSS United Hyderabad"),
+    ]
+    for url, source_name in targets:
+        try:
+            raw, err = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            html_txt = raw.decode("utf-8", errors="ignore")
+            # Extract links and event titles
+            blocks = re.findall(r'<a[^>]+href=["\'](/[^"\']+|https?://[^"\']+)["\'][^>]*>([\s\S]*?)</a>', html_txt)
+            for href, anchor_txt in blocks:
+                clean_t = strip_html_tags(anchor_txt).strip()
+                if len(clean_t) > 10 and any(w in clean_t.lower() for w in ("meetup", "hackathon", "conference", "monstrous", "foss")):
+                    full_link = href if href.startswith("http") else f"https://fossunited.org{href}"
+                    city_val = "hyderabad" if "hyderabad" in (clean_t + " " + url).lower() else "online"
+                    items.append({
+                        "id": f"fossunited_{clean_t[:16]}",
+                        "title": clean_t,
+                        "summary": f"FOSS United community event for open-source developers: {clean_t}",
+                        "link": full_link,
+                        "url": full_link,
+                        "source": source_name,
+                        "category": "events",
+                        "type": "event",
+                        "city": city_val,
+                        "location": city_val.capitalize(),
+                        "posted": datetime.now().strftime("%Y-%m-%d"),
+                    })
+                    if len(items) >= 5:
+                        break
+        except Exception as e:
+            logger.warning(f"Error in collect_foss_united: {e}")
+    return items
+
+
+def collect_ats_jobs() -> List[Dict[str, Any]]:
+    """
+    Fetches direct tech job openings from Greenhouse and Lever APIs for top tech companies.
+    Filters for locations in Hyderabad, Bengaluru, Bangalore, India, or Remote.
+    """
+    items: List[Dict[str, Any]] = []
+    gh_boards = ["stripe", "gitlab", "postman", "swiggy", "razorpay"]
+    lever_companies = ["cred", "atlassian", "clevertap"]
+
+    loc_keywords = re.compile(r'\b(hyderabad|bengaluru|bangalore|india|remote)\b', re.IGNORECASE)
+
+    # 1. Greenhouse boards
+    for board in gh_boards:
+        try:
+            url = f"https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true"
+            raw, err = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            data = json.loads(raw.decode("utf-8", errors="ignore"))
+            jobs = data.get("jobs", [])
+            for job in jobs[:15]:
+                loc_name = (job.get("location") or {}).get("name", "")
+                if not loc_keywords.search(loc_name):
+                    continue
+                title = job.get("title", "Software Engineer")
+                job_url = job.get("absolute_url") or f"https://boards.greenhouse.io/{board}"
+                desc = strip_html_tags(job.get("content") or "")[:800]
+                city = "hyderabad" if "hyderabad" in loc_name.lower() else ("bengaluru" if "bengaluru" in loc_name.lower() or "bangalore" in loc_name.lower() else "online")
+
+                items.append({
+                    "id": f"gh_{job.get('id', title[:16])}",
+                    "title": f"{title} at {board.capitalize()}",
+                    "company": board.capitalize(),
+                    "role": title,
+                    "summary": desc or f"Direct tech opening at {board.capitalize()}: {title} in {loc_name}.",
+                    "link": job_url,
+                    "url": job_url,
+                    "apply_url": job_url,
+                    "source": f"Greenhouse ({board.capitalize()})",
+                    "category": "jobs",
+                    "type": "job",
+                    "location": loc_name or "Remote / India",
+                    "city": city,
+                    "posted": datetime.now().strftime("%Y-%m-%d"),
+                })
+                if len(items) >= 10:
+                    break
+        except Exception as e:
+            logger.debug(f"Greenhouse collect error ({board}): {e}")
+
+    # 2. Lever companies
+    for comp in lever_companies:
+        try:
+            url = f"https://api.lever.co/v0/postings/{comp}?mode=json"
+            raw, err = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            data = json.loads(raw.decode("utf-8", errors="ignore"))
+            if isinstance(data, list):
+                for job in data[:15]:
+                    categories = job.get("categories", {})
+                    loc_name = categories.get("location", "")
+                    if not loc_keywords.search(loc_name):
+                        continue
+                    title = job.get("text", "Software Engineer")
+                    job_url = job.get("hostedUrl") or job.get("applyUrl") or ""
+                    desc = strip_html_tags(job.get("descriptionPlain") or "")[:800]
+                    city = "hyderabad" if "hyderabad" in loc_name.lower() else ("bengaluru" if "bengaluru" in loc_name.lower() or "bangalore" in loc_name.lower() else "online")
+
+                    items.append({
+                        "id": f"lever_{job.get('id', title[:16])}",
+                        "title": f"{title} at {comp.capitalize()}",
+                        "company": comp.capitalize(),
+                        "role": title,
+                        "summary": desc or f"Direct tech opening at {comp.capitalize()}: {title} in {loc_name}.",
+                        "link": job_url,
+                        "url": job_url,
+                        "apply_url": job_url,
+                        "source": f"Lever ({comp.capitalize()})",
+                        "category": "jobs",
+                        "type": "job",
+                        "location": loc_name or "Remote / India",
+                        "city": city,
+                        "posted": datetime.now().strftime("%Y-%m-%d"),
+                    })
+                    if len(items) >= 15:
+                        break
+        except Exception as e:
+            logger.debug(f"Lever collect error ({comp}): {e}")
+
+    return items
+
+
+def collect_search_rss_jobs() -> List[Dict[str, Any]]:
+    """
+    Uses Google News RSS feeds with target search queries for hiring posts
+    across LinkedIn, Naukri, Internshala, and Foundit in Hyderabad and Bengaluru.
+    """
+    items: List[Dict[str, Any]] = []
+    queries = [
+        "software engineer fresher intern hyderabad site:linkedin.com OR site:naukri.com",
+        "software engineer intern bengaluru fresher site:internshala.com OR site:linkedin.com",
+    ]
+    for q in queries:
+        encoded_q = urllib.parse.quote(q)
+        rss_url = f"https://news.google.com/rss/search?q={encoded_q}&hl=en-IN&gl=IN&ceid=IN:en"
+        try:
+            raw, err = fetch_raw(rss_url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            parsed = parse_xml_feed(raw, "Search Jobs RSS", "jobs", limit=5)
+            items.extend(parsed)
+        except Exception as e:
+            logger.warning(f"Error in collect_search_rss_jobs query '{q[:30]}': {e}")
+    return items
+
+
+def collect_jobspy_sidecar() -> List[Dict[str, Any]]:
+    """
+    Scrapes jobs via jobspy if installed; otherwise logs info and returns empty list.
+    """
+    try:
+        from jobspy import scrape_jobs
+    except ImportError:
+        logger.info("jobspy not installed; skipping collect_jobspy_sidecar")
+        return []
+
+    try:
+        jobs = scrape_jobs(
+            site_name=["linkedin", "indeed"],
+            search_term="software engineer",
+            location="Hyderabad, India",
+            results_wanted=5,
+            hours_old=72,
+        )
+        items: List[Dict[str, Any]] = []
+        if jobs is not None and not jobs.empty:
+            for _, r in jobs.iterrows():
+                t = str(r.get("title") or "Software Engineer")
+                comp = str(r.get("company") or "Tech Company")
+                u = str(r.get("job_url") or "")
+                desc = strip_html_tags(str(r.get("description") or ""))[:800]
+                loc = str(r.get("location") or "Hyderabad")
+                items.append({
+                    "id": f"jobspy_{u[-16:] if u else t[:16]}",
+                    "title": f"{t} at {comp}",
+                    "company": comp,
+                    "role": t,
+                    "summary": desc or f"Software engineering role at {comp}.",
+                    "link": u,
+                    "url": u,
+                    "source": "JobSpy Sidecar",
+                    "category": "jobs",
+                    "type": "job",
+                    "location": loc,
+                    "city": "hyderabad",
+                    "posted": datetime.now().strftime("%Y-%m-%d"),
+                })
+        return items
+    except Exception as e:
+        logger.warning(f"Error running jobspy: {e}")
+        return []
+
+
+def collect_courses_and_certs() -> List[Dict[str, Any]]:
+    """
+    Fetches recent tech learning opportunities from DeepLearning.AI,
+    Hugging Face, and cloud provider feeds.
+    """
+    items: List[Dict[str, Any]] = []
+    feeds = [
+        ("https://www.deeplearning.ai/the-batch/feed/", "DeepLearning.AI The Batch", "courses"),
+        ("https://huggingface.co/blog/feed.xml", "Hugging Face Blog & Courses", "courses"),
+        ("https://aws.amazon.com/blogs/training-and-certification/feed/", "AWS Training & Certs", "courses"),
+    ]
+    for url, name, cat in feeds:
+        try:
+            raw, err = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            parsed = parse_xml_feed(raw, name, cat, limit=4)
+            items.extend(parsed)
+        except Exception as e:
+            logger.debug(f"Error fetching course feed {name}: {e}")
+    return items
+
+
+ALL_COLLECTORS = [
+    collect_luma_events,
+    collect_devfolio_hackathons,
+    collect_foss_united,
+    collect_ats_jobs,
+    collect_search_rss_jobs,
+    collect_jobspy_sidecar,
+    collect_courses_and_certs,
+]
+
+
+# ==============================================================================
 # COLLECTION DISPATCHER
 # ==============================================================================
 
@@ -941,6 +1286,17 @@ def collect(source: Optional[Any] = None, limit: int = 10) -> List[Dict[str, Any
                 collected.append(it)
         except Exception as e:
             logger.warning(f"Error collecting from {name}: {e}")
+
+    # Run specialized v3 collectors when performing full collection
+    if source is None:
+        for fn in ALL_COLLECTORS:
+            try:
+                fn_items = fn()
+                if fn_items:
+                    collected.extend(fn_items)
+            except Exception as e:
+                logger.warning(f"Error executing collector {getattr(fn, '__name__', str(fn))}: {e}")
+
     return collected
 
 

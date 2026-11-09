@@ -128,6 +128,90 @@ def summarize(text: str, max_len: int = config.SUMMARY_MAX) -> str:
     return candidate.strip()
 
 
+COMPENSATION_RE = re.compile(
+    r"(?:₹\s?\d+[\d,\.]*\s?(?:LPA|Lakhs?|Cr|Crores?|K|k|/month|/mo|per month)?|\$\d+[\d,\.]*\s?(?:k|K|/yr|/mo)?)",
+    re.IGNORECASE
+)
+
+CORE_SKILLS = [
+    "Python", "C++", "SQL", "Docker", "FastAPI", "React", "AWS", "GCP",
+    "PyTorch", "Scikit-Learn", "XGBoost", "LangChain", "LLM", "RAG", "Rust",
+    "Go", "Kubernetes", "Linux", "Git", "TypeScript", "Java", "JavaScript",
+    "Node.js", "Next.js", "Django", "Flask", "Pandas", "NumPy", "TensorFlow",
+    "Keras", "HuggingFace", "Terraform", "Azure", "MongoDB", "PostgreSQL",
+    "Redis", "GraphQL", "CI/CD", "HTML", "CSS"
+]
+
+PERK_KEYWORDS = [
+    "Free Certificate", "Swag", "Cloud Credits", "PPI", "PPO",
+    "Mentorship", "Lunch Provided", "Networking", "Remote Work"
+]
+
+
+def extract_compensation(text: str) -> str:
+    """Finds pay, stipends, and prize amounts from text."""
+    if not text:
+        return ""
+    m = COMPENSATION_RE.search(str(text))
+    return m.group(0).strip() if m else ""
+
+
+def extract_skill_tags(text: str) -> str:
+    """Identifies technical skills matching 40 core skills dictionary (up to 5 comma-separated)."""
+    if not text:
+        return ""
+    s = str(text)
+    matched = []
+    for skill in CORE_SKILLS:
+        pattern = r'\b' + re.escape(skill) + r'\b'
+        if re.search(pattern, s, re.IGNORECASE):
+            matched.append(skill)
+            if len(matched) >= 5:
+                break
+    return ", ".join(matched)
+
+
+def extract_eligibility(text: str, category: str = "events") -> str:
+    """Identifies target participants: batch years, degree types, or experience levels."""
+    if not text:
+        return "Open to Students & Developers"
+    s = str(text)
+    batches = re.findall(r'\b(202[5-8])\b', s)
+    degrees = re.findall(r'\b(B\.?Tech|M\.?Tech|B\.?E\.?|MCA|All Students)\b', s, re.IGNORECASE)
+    exp = re.findall(r'\b(0-2\s*years|0-1\s*years|freshers?|open to all)\b', s, re.IGNORECASE)
+
+    parts = []
+    if degrees:
+        deg_str = " / ".join(sorted(set(degrees)))
+        if batches:
+            deg_str += f" ({', '.join(sorted(set(batches)))} Batch)"
+        parts.append(deg_str)
+    elif batches:
+        parts.append(f"{', '.join(sorted(set(batches)))} Batch")
+
+    if exp:
+        parts.append(exp[0].title())
+
+    if parts:
+        return " | ".join(parts)
+    return "Open to Students & Developers"
+
+
+def extract_perks(text: str, category: str = "events") -> str:
+    """Identifies key benefits (up to 3 comma-separated perks)."""
+    if not text:
+        return ""
+    s = str(text)
+    matched = []
+    for perk in PERK_KEYWORDS:
+        pattern = r'\b' + re.escape(perk) + r'\b'
+        if re.search(pattern, s, re.IGNORECASE):
+            matched.append(perk)
+            if len(matched) >= 3:
+                break
+    return ", ".join(matched)
+
+
 def detect_city(text: str) -> str:
     """
     Normalizes city to hyderabad | bengaluru | online | other.
@@ -418,6 +502,16 @@ def extract_metadata(html_text: str, base_url: str = "", category: str = "news")
             m_kw = re.search(r'\b(open to all|students|working professionals|freshers)\b', plain_text, re.IGNORECASE)
             if m_kw:
                 fields["eligibility"] = m_kw.group(1).capitalize()
+        else:
+            fields["eligibility"] = extract_eligibility(plain_text, category)
+
+    # Compensation & Perks & Skills
+    if not fields.get("compensation"):
+        fields["compensation"] = extract_compensation(plain_text)
+    if not fields.get("skill_tags"):
+        fields["skill_tags"] = extract_skill_tags(plain_text)
+    if not fields.get("perks"):
+        fields["perks"] = extract_perks(plain_text, category)
 
     # Job-specific fields
     if category == "job":
@@ -513,13 +607,33 @@ def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dic
         if enriched.get("status") not in ("review", "rejected"):
             enriched["status"] = computed_status
 
+        # Extract v3 fields if missing
+        context_text = f"{enriched.get('title', '')} {enriched.get('summary', '')}"
+        if not enriched.get("compensation"):
+            comp_found = extract_compensation(context_text)
+            if comp_found:
+                enriched["compensation"] = comp_found
+        if not enriched.get("skill_tags"):
+            skills_found = extract_skill_tags(context_text)
+            if skills_found:
+                enriched["skill_tags"] = skills_found
+        if not enriched.get("perks"):
+            perks_found = extract_perks(context_text, cat)
+            if perks_found:
+                enriched["perks"] = perks_found
+        if not enriched.get("eligibility") or enriched.get("eligibility") == "Open to all":
+            elig_found = extract_eligibility(context_text, cat)
+            if elig_found and elig_found != "Open to Students & Developers":
+                enriched["eligibility"] = elig_found
+
         # Pack enriched structured fields into JSON
         clean_extracted = {
             k: enriched.get(k)
             for k in (
                 "organizer", "event_start", "event_end", "deadline", "mode",
                 "city", "venue", "fee", "prize", "eligibility", "apply_url",
-                "company", "role", "stipend", "experience", "expires_at", "fingerprint"
+                "company", "role", "stipend", "experience", "expires_at", "fingerprint",
+                "sub_category", "experience_level", "compensation", "skill_tags", "perks", "relevance_score"
             )
             if enriched.get(k) is not None
         }

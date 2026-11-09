@@ -301,15 +301,24 @@ def export_feed_html(
         seed_list.append({
             "id": f"db_{it.get('id')}",
             "type": it.get("category", "news"),
+            "category": it.get("category", "news"),
+            "sub_category": it.get("sub_category", ""),
             "title": it.get("title", ""),
-            "sum": formatter.clean_text(it.get("summary") or it.get("title", ""), 180),
+            "sum": formatter.clean_text(it.get("summary") or it.get("title", ""), 450),
             "date": clean_date,
             "where": where_val,
             "city": it.get("city") or ("bengaluru" if "bengaluru" in where_val.lower() else ("hyderabad" if "hyderabad" in where_val.lower() else "online")),
             "src": it.get("source") or "Legion Automation",
             "link": u,
             "posted": created_str,
-            "status": it.get("status", "pending")
+            "status": it.get("status", "pending"),
+            "experience_level": it.get("experience_level", "ALL"),
+            "compensation": it.get("compensation", ""),
+            "skill_tags": it.get("skill_tags", ""),
+            "eligibility": it.get("eligibility", ""),
+            "perks": it.get("perks", ""),
+            "relevance_score": int(it.get("relevance_score") or 0),
+            "whatsapp_draft": formatter.format_whatsapp_draft(it),
         })
         
     # Add existing template items that are active and unexpired
@@ -359,16 +368,20 @@ def export_feed_html(
                 "status": "seed"
             })
             
+    # Sort seed_list by relevance_score descending
+    seed_list.sort(key=lambda x: int(x.get("relevance_score") or 0), reverse=True)
+
     # Serialize to clean JS array JSON
     seed_json = json.dumps(seed_list, indent=2, ensure_ascii=False)
 
     
-    # Replace var SEED = [...];
-    updated_html = re.sub(
-        r'var\s+SEED\s*=\s*\[[\s\S]*?\]\s*;',
-        f'var SEED = {seed_json};',
-        base_html
-    )
+    # Replace var SEED = [...]; safely without regex escape interpretation
+    seed_pattern = re.compile(r'var\s+SEED\s*=\s*\[[\s\S]*?\]\s*;')
+    m_seed = seed_pattern.search(base_html)
+    if m_seed:
+        updated_html = base_html[:m_seed.start()] + f"var SEED = {seed_json};" + base_html[m_seed.end():]
+    else:
+        updated_html = base_html
     
     # Ensure TODAY is current date
     today_str = datetime.now().strftime("%Y-%m-%d")
@@ -466,11 +479,13 @@ def export_posts_json(
         # Clean out any verification spam tags like **BENEVOLENT** or long hex strings
         raw_summary = re.sub(r'\*\*.*?\*\*', '', raw_summary)
         raw_summary = re.sub(r'#[A-Za-z0-9_-]{8,}', '', raw_summary).strip()
-        clean_summary = formatter.clean_text(raw_summary, 180)
+        clean_summary = formatter.clean_text(raw_summary, 450)
 
         posts_list.append({
             "id": f"db_{it.get('id')}",
             "type": it.get("category", "news"),
+            "category": it.get("category", "news"),
+            "sub_category": it.get("sub_category", ""),
             "title": it.get("title", ""),
             "sum": clean_summary,
             "date": clean_date,
@@ -480,7 +495,14 @@ def export_posts_json(
             "src": it.get("source") or "Legion Automation",
             "link": u,
             "posted": created_str,
-            "status": it.get("status", "pending")
+            "status": it.get("status", "pending"),
+            "experience_level": it.get("experience_level", "ALL"),
+            "compensation": it.get("compensation", ""),
+            "skill_tags": it.get("skill_tags", ""),
+            "eligibility": it.get("eligibility", ""),
+            "perks": it.get("perks", ""),
+            "relevance_score": int(it.get("relevance_score") or 0),
+            "whatsapp_draft": formatter.format_whatsapp_draft(it)
         })
 
     # Preserve previous curated seed items only, never re-import rejected or deleted DB items
@@ -521,6 +543,9 @@ def export_posts_json(
                 "posted": seed_curated.get("posted", datetime.now().strftime("%Y-%m-%d")),
                 "status": "seed"
             })
+
+    # Sort default feed view by relevance_score in descending order
+    posts_list.sort(key=lambda x: int(x.get("relevance_score") or 0), reverse=True)
 
     out_dir = os.path.dirname(os.path.abspath(actual_out))
     os.makedirs(out_dir, exist_ok=True)

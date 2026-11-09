@@ -2208,12 +2208,12 @@ function tabs(){} function render(){}
         self.assertTrue(any(it.get("title") == "Resilient AI Workshop" for it in items))
 
     def test_export_posts_json_truncates_long_summaries(self):
-        """Verifies that export_posts_json caps summaries to <= 180 chars to avoid UI stretching."""
-        long_text = "This is a very long opportunity description for an engineering role. " * 10
+        """Verifies that export_posts_json caps summaries to <= 450 chars with sentence boundary."""
+        long_text = "This is a very long opportunity description for an engineering role. " * 20
         db.insert_item({
             "source": "Test Feed",
             "category": "job",
-            "title": "Staff AI Engineer",
+            "title": "Junior AI Engineer",
             "url": "https://test.example/long-summary-job",
             "summary": long_text,
             "status": "pending"
@@ -2221,8 +2221,8 @@ function tabs(){} function render(){}
         
         posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
         item = [p for p in posts if p["link"] == "https://test.example/long-summary-job"][0]
-        self.assertLessEqual(len(item["sum"]), 180)
-        self.assertTrue(item["sum"].endswith("..."))
+        self.assertLessEqual(len(item["sum"]), 450)
+        self.assertTrue(item["sum"].endswith("...") or item["sum"].endswith("."))
 
     def test_export_posts_json_strips_spam_tokens(self):
         """Verifies that verification tokens like **BENEVOLENT** are stripped from export."""
@@ -2505,7 +2505,7 @@ class TestLegionEnhancements(unittest.TestCase):
         self.assertEqual(res3.get("title"), "Platform Engineer")
 
     def test_formatter_omits_missing_fields_and_stays_under_400_chars(self):
-        """Formatter omits missing fields and stays under 400 chars."""
+        """Formatter omits missing fields and generates valid WhatsApp templates."""
         # Minimal item with only title and URL (missing fee, prize, eligibility, venue, date)
         minimal_item = {
             "category": "event",
@@ -2515,8 +2515,6 @@ class TestLegionEnhancements(unittest.TestCase):
         }
         res_min = formatter.format_whatsapp(minimal_item)
 
-        self.assertLessEqual(len(res_min), 400)
-        self.assertLessEqual(len(res_min.splitlines()), 7)
         self.assertNotIn("Fee:", res_min)
         self.assertNotIn("Prize:", res_min)
         self.assertNotIn("Eligibility:", res_min)
@@ -2524,48 +2522,125 @@ class TestLegionEnhancements(unittest.TestCase):
         self.assertNotIn("Date/Deadline:", res_min)
         self.assertIn("https://example.com/min-py", res_min)
 
-        # Maximal item with very long text and all fields present
+        # Maximal item with full details
         maximal_item = {
             "category": "hackathon",
-            "title": "Ultra Scalable Global Autonomous Multi-Agent AI Hackathon With Massive International Prizes",
-            "url": "https://devpost.com/hackathons/ultra-scalable-global-multi-agent-hackathon-2026-super-long-url-slug",
-            "summary": "Join thousands of world-class AI developers from across the planet for an incredible multi-week hackathon building autonomous agents on cutting edge foundational models with top tier mentors and enterprise sponsors. " * 3,
+            "title": "Ultra Scalable Global Autonomous Multi-Agent AI Hackathon",
+            "url": "https://devpost.com/hackathons/ultra-scalable-hackathon",
+            "summary": "Join world-class AI developers building autonomous agents on cutting edge models with top tier mentors and sponsors.",
             "deadline": "2026-12-30",
             "venue": "T-Hub Phase 2, Hyderabad",
             "fee": "Free",
             "prize": "₹50,00,000",
-            "eligibility": "Students and Professionals",
+            "skill_tags": "Python, Docker, FastAPI",
+            "eligibility": "Students & Developers",
             "city": "hyderabad",
             "mode": "OFFLINE",
             "badge": "HYDERABAD - OFFLINE"
         }
         res_max = formatter.format_whatsapp(maximal_item)
-
-        self.assertLessEqual(len(res_max), 400)
-        self.assertLessEqual(len(res_max.splitlines()), 7)
-        self.assertIn("Fee: Free", res_max)
-        self.assertIn("Prize: ₹50,00,000", res_max)
+        self.assertTrue(250 <= len(res_max) <= 750, f"Length {len(res_max)} not in [250, 750]")
+        self.assertIn("🏆 *Prizes & Perks:* ₹50,00,000", res_max)
+        self.assertIn("📝 *Overview:*", res_max)
 
         # Job item test
         job_item = {
             "category": "job",
-            "title": "Senior AI Infrastructure Engineer",
-            "role": "Senior AI Infrastructure Engineer",
+            "title": "Software Engineer",
+            "role": "Software Engineer",
             "company": "Anthropic Partner Hub",
             "url": "https://example.com/careers/ai-infra",
             "summary": "Design and optimize distributed model training cluster infrastructure.",
-            "stipend": "₹35-45 LPA",
-            "experience": "3+ years",
+            "compensation": "₹35-45 LPA",
+            "skill_tags": "Python, PyTorch, Kubernetes",
+            "experience_level": "FRESHER_INTERN",
             "location": "Bengaluru",
+            "venue": "Bengaluru",
             "city": "bengaluru",
             "badge": "BENGALURU - OFFLINE"
         }
         res_job = formatter.format_whatsapp(job_item)
-        self.assertLessEqual(len(res_job), 400)
-        self.assertLessEqual(len(res_job.splitlines()), 7)
-        self.assertIn("💼 *Senior AI Infrastructure Engineer at Anthropic Partner Hub*", res_job)
-        self.assertIn("💰 Stipend: ₹35-45 LPA", res_job)
-        self.assertIn("🎓 Experience: 3+ years", res_job)
+        self.assertTrue(250 <= len(res_job) <= 750, f"Length {len(res_job)} not in [250, 750]")
+        self.assertIn("💼 *Software Engineer*", res_job)
+        self.assertIn("💰 *CTC / Stipend:* ₹35-45 LPA", res_job)
+        self.assertIn("🛠️ *Tech Stack:* Python, PyTorch, Kubernetes", res_job)
+
+    def test_rich_whatsapp_template_sections(self):
+        """Asserts hackathon and job drafts include expected section headers."""
+        hack_item = {
+            "category": "hackathon",
+            "title": "Agentic AI Hackathon",
+            "summary": "Build collaborative multi-agent autonomous tools.",
+            "skill_tags": "Python, LLM, LangChain",
+            "eligibility": "Open to all students",
+            "prize": "₹10,00,000",
+            "date_str": "2026-11-20",
+            "venue": "T-Hub Phase 2",
+            "url": "https://devpost.com/hackathon"
+        }
+        draft_hack = formatter.format_whatsapp_draft(hack_item)
+        self.assertIn("📝 *Overview:*", draft_hack)
+        self.assertIn("🛠️ *Tracks / Tech:*", draft_hack)
+        self.assertIn("🏆 *Prizes & Perks:*", draft_hack)
+        self.assertIn("🔗 *Register Here:*", draft_hack)
+
+        job_item = {
+            "category": "job",
+            "title": "AI Research Intern",
+            "summary": "Work on state of the art diffusion and language models.",
+            "skill_tags": "Python, PyTorch",
+            "compensation": "₹50,000 / month",
+            "experience_level": "FRESHER_INTERN",
+            "date_str": "2026-11-30",
+            "venue": "Hyderabad",
+            "url": "https://greenhouse.io/job"
+        }
+        draft_job = formatter.format_whatsapp_draft(job_item)
+        self.assertIn("🏢 *Role Overview:*", draft_job)
+        self.assertIn("🛠️ *Tech Stack:*", draft_job)
+        self.assertIn("💰 *CTC / Stipend:*", draft_job)
+        self.assertIn("🔗 *Apply Direct:*", draft_job)
+
+    def test_senior_job_rejection(self):
+        """Asserts job titles with Senior, Lead, Principal are filtered with senior_role_filtered."""
+        senior_roles = [
+            "Senior Software Engineer",
+            "Lead Backend Developer",
+            "Principal Platform Architect",
+            "Staff Machine Learning Engineer",
+            "Engineering Director",
+        ]
+        for role in senior_roles:
+            item = {
+                "title": role,
+                "summary": "Looking for deep cloud and distributed systems architecture experience.",
+                "category": "job",
+                "type": "job",
+                "link": "https://remoteok.com/job"
+            }
+            decision, reason, _ = quality_gate.gate(item)
+            self.assertEqual(decision, "reject", f"Failed for role: {role}")
+            self.assertEqual(reason, "senior_role_filtered", f"Reason was: {reason} for {role}")
+
+    def test_workshop_vs_event_split(self):
+        """Asserts items with 'hands-on' or 'workshop' in title or summary are classified as workshops."""
+        ws1 = {
+            "title": "Hands-on PyTorch and Deep Learning Workshop",
+            "summary": "Join us for an interactive training session on neural networks.",
+            "category": "event",
+            "link": "https://meetup.com/event1"
+        }
+        dec1, _, clean1 = quality_gate.gate(ws1)
+        self.assertEqual(clean1.get("category"), "workshops")
+
+        ev1 = {
+            "title": "Hyderabad Open Source Community Meetup",
+            "summary": "Discussion and networking around recent open source tools.",
+            "category": "event",
+            "link": "https://meetup.com/event2"
+        }
+        dec2, _, clean2 = quality_gate.gate(ev1)
+        self.assertEqual(clean2.get("category"), "events")
 
     def test_past_date_far_in_past_expires_immediately(self):
         """Dates far in the past (e.g. 100 days ago, or 2024) must expire immediately."""
