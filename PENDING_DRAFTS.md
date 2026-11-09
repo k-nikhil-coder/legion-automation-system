@@ -1,7 +1,7 @@
 # 🛡️ Legion Community - Pending Content Review Queue
 
-> **Generated at**: `2026-11-09 11:35:29`  
-> **Database Stats**: ⏳ Pending: `106` | ✅ Approved: `0` | ❌ Rejected: `51` | 🚀 Posted: `0`
+> **Generated at**: `2026-11-09 13:43:21`  
+> **Database Stats**: ⏳ Pending: `109` | ✅ Approved: `0` | ❌ Rejected: `51` | 🚀 Posted: `0`
 
 ## 📌 Workflow Guide
 - **Option A (Telegram Bot)**: Run `python telegram_bot.py --push` to push unreviewed items to your Telegram chat with inline Approve / Reject / Done buttons.
@@ -284,7 +284,7 @@
 ---
 
 ## 💼 Jobs & Internships
-*Target WhatsApp Group: `💼 Jobs & Internships`* | *Pending: 5*
+*Target WhatsApp Group: `💼 Jobs & Internships`* | *Pending: 6*
 
 ### [#72] Walk-in drive at Ksquare Group: Salesforce and Data Engineering [HYDERABAD - OFFLINE]
 - **Location**: [HYDERABAD - OFFLINE] Hyderabad (Nanakramguda) | **Source**: Community admin | **Created**: `2026-11-07 09:52:47`
@@ -316,6 +316,23 @@
 📍 Location: Hyderabad
 🎯 Skills: Tech / Engineering
 🔗 Apply: https://lnkd.in/p/dG8pVZs7
+```
+
+---
+
+### [#194] Meet Mohammad Sazzad: Full-Stack Developer and Co-Founder of Nomira Digital [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-09 08:08:48`
+- **Original Link**: [https://dev.to/nomira_digital_eb55e35542/meet-mohammad-sazzad-full-stack-developer-and-co-founder-of-nomira-digital-234l](https://dev.to/nomira_digital_eb55e35542/meet-mohammad-sazzad-full-stack-developer-and-co-founder-of-nomira-digital-234l)
+- **Quick Commands**: `python telegram_bot.py --approve 194` | `python telegram_bot.py --reject 194` | `python telegram_bot.py --edit 194`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Meet Mohammad Sazzad: Full-Stack Developer and Co-Founder of Nomira Digital - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://dev.to/nomira_digital_eb55e35542/meet-mohammad-sazzad-full-stack-developer-and-co-founder-of-nomira-digital-234l
 ```
 
 ---
@@ -447,7 +464,43 @@
 ---
 
 ## 📚 Courses & Resources
-*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 48*
+*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 50*
+
+### [#195] This sub deserves better than AI slop. And if you are a learner, you deserve better [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-09 08:08:48`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xrl0m4/this_sub_deserves_better_than_ai_slop_and_if_you](https://www.reddit.com/r/learnmachinelearning/comments/1xrl0m4/this_sub_deserves_better_than_ai_slop_and_if_you)
+- **Quick Commands**: `python telegram_bot.py --approve 195` | `python telegram_bot.py --reject 195` | `python telegram_bot.py --edit 195`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🎓 This sub deserves better than AI slop. And if you are a learner, you deserve better [ONLINE]
+
+📌 What: It is going to be a rant about frequent posts starting with something like: "Wanna learn X? I built Y" AI slop. Learning together? Absolutely. Showcasing project you do? Great.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to all
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xrl0m4/this_sub_deserves_better_than_ai_slop_and_if_you/
+```
+
+---
+
+### [#196] Help!!! [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-09 08:08:48`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xrlviw/help](https://www.reddit.com/r/learnmachinelearning/comments/1xrlviw/help)
+- **Quick Commands**: `python telegram_bot.py --approve 196` | `python telegram_bot.py --reject 196` | `python telegram_bot.py --edit 196`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🎓 Help!!! [ONLINE]
+
+📌 What: I have a degree in pharmacy but i have a lot of interest in learning ML/AI in healthcare domain can anyone help me to tell that which kind of stuff i learn and also is it good choice to health tech submitted by…
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to all
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xrlviw/help/
+```
+
+---
 
 ### [#192] Job Market: How's The Job Market For Entry-level AI majors? [ONLINE]
 - **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-09 06:05:29`
@@ -1930,7 +1983,23 @@
 
 ## 🔍 Review Queue (Needs Admin Verification)
 
-*Items flagged for manual verification: `25`*
+*Items flagged for manual verification: `26`*
+
+### [#193] Apple capped engineers at a $200 daily AI budget [ONLINE]
+- **Flag Reason**: ⚠️ `Review needed: untrusted domain: stork.ai`
+- **Source**: Hacker News API | **Link**: [https://www.stork.ai/newsletter/2026-11-08-apple-capped-engineers-at-a-200-daily-ai-budget](https://www.stork.ai/newsletter/2026-11-08-apple-capped-engineers-at-a-200-daily-ai-budget)
+- **Quick Commands**: `python telegram_bot.py --approve 193` | `python telegram_bot.py --reject 193`
+```text
+💡 Apple capped engineers at a $200 daily AI budget [ONLINE]
+
+📌 What: Trending on Hacker News (10 points) posted by @GloVin.
+📅 Date / Deadline: Published
+📍 Where: [ONLINE] Online
+🎯 Who: Open to all
+🔗 https://www.stork.ai/newsletter/2026-11-08-apple-capped-engineers-at-a-200-daily-ai-budget#story-1
+```
+
+---
 
 ### [#171] KetchUp – Open-source SketchUp alternative built with Rust and WebGPU [ONLINE]
 - **Flag Reason**: ⚠️ `Review needed: untrusted domain: ketchup3d.github.io`

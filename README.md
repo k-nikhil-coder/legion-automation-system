@@ -90,13 +90,13 @@ The system collects hackathons, tech jobs, local meetups, developer courses, and
   - `reject` $\rightarrow$ Logged with reason and dropped.
 
 ### 3. High-Density India-Specific Web UI (`legion_feed.html`)
-- **Sticky Metro Hub Switcher**: Instant 1-click filtering between `🇮🇳 All India`, `📍 Hyderabad (📌 HUB)`, `📍 Bengaluru`, `📍 Mumbai`, and `📍 Delhi NCR`.
+- **Sticky Metro Hub Switcher**: Instant 1-click filtering between `🇮🇳 All India`, `📍 Hyderabad (📌 HUB)`, and `📍 Bengaluru`.
 - **Summary Minification & Line-Clamping**: Cards strictly clamp summaries to 3 lines (`-webkit-line-clamp: 3; display: -webkit-box; overflow: hidden;`) to maintain a clean, compact, mobile-first scanning layout.
 - **Live Status & Time-Left Badges**:
   - `🔴 LIVE NOW` (with pulsing red indicator for active hackathons and events).
   - `⚡ TODAY` (amber badge for events happening today).
-  - `⏳ X DAYS LEFT` (amber badge for deadlines closing within 3 days).
-  - `📍 [HYDERABAD - OFFLINE]` (emerald green) and `🌐 [ONLINE]` (vibrant blue) badges.
+  - `⏳ X DAYS LEFT` (amber badge for deadlines closing within 5 days).
+  - `📍 [HYDERABAD - OFFLINE]`, `📍 [BENGALURU - OFFLINE]`, and `🌐 [ONLINE]` badges.
 - **Quick-Action Bottom Bar**:
   - `Open link ↗`: Directly opens the official registration or application link.
   - `📋 Copy for WhatsApp`: Generates a clean 4-line WhatsApp template strictly under 200 characters.
@@ -104,6 +104,17 @@ The system collects hackathons, tech jobs, local meetups, developer courses, and
   - `☆ Save`: Local bookmark toggle stored in browser `localStorage`.
 - **Interactive "Update Feed" Button**: Sends a background `POST /api/refresh` request, shows an animated spinner, and updates the view live without reloading.
 - **Auto-Syncing**: Multi-threaded server runs a background feed collector every 30 minutes, and the client auto-polls `/posts.json` every 3 minutes.
+
+### 4. Post Enricher & Auto-Expiry Engine (`enricher.py` & `db.py`)
+- **Multi-Tier Field Extraction**: Prioritized extraction via Schema.org JSON-LD $\rightarrow$ OpenGraph/meta tags $\rightarrow$ Visible text regex.
+- **Rate-Limited & Cached**: 1 request per host per second with 24-hour URL caching.
+- **Strict Expiry Rules**:
+  - Future deadlines/events expire at end-of-day IST, capped at `first_seen + 30 days`.
+  - Past dates expire immediately.
+  - Missing dates default to `first_seen + 7 days` (TTL).
+  - Hackathons missing dates are routed to `review`, never auto-`accepted`.
+- **Dual Deduplication**: Primary URL deduplication + secondary fingerprint (`normalized_title + start_date + city`) collapsing cross-platform reposts.
+- **Data Purge**: Automatically nulls raw body/summary after 30 days while retaining URL, title, and fingerprint.
 
 ---
 
@@ -286,7 +297,7 @@ Run the test suite using `pytest`:
 pytest -v
 ```
 
-The 98 test cases cover:
+The 112 test cases cover:
 - **Quality Gate**: Keyword regex matchers, junk topic exclusions, length thresholds, domain trust checks, and location classification (`ONLINE`, `HYDERABAD - OFFLINE`, discard other cities).
 - **Text Minification**: Guarantees summaries are truncated to $\le 180$ characters and strips anti-spam keywords (e.g. `**BENEVOLENT**`).
 - **HTTP Endpoints & Headers**: Validates `/api/refresh`, `/posts.json` anti-caching headers (`no-store`, `no-cache`), and thread-safety concurrency locks.

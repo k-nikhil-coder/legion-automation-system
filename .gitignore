@@ -2,10 +2,37 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 
-# Local environment variables
+# Environment and sensitive credential files
 .env
+.env.*
+!.env.example
 
-# Database WAL files if active
+# SQLite and Local Database files
+*.db
 *.db-wal
 *.db-shm
+*.sqlite
+*.sqlite3
+legion.db
+
+# Test and coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and runtime files
+*.log
+.tmp*
+*.tmp*
+
+# Agent workspace directories
+.agents/
+.gemini/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

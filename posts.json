@@ -1,5 +1,57 @@
 [
   {
+    "id": "db_196",
+    "type": "course",
+    "title": "Help!!!",
+    "sum": "I have a degree in pharmacy but i have a lot of interest in learning ML/AI in healthcare domain can anyone help me to tell that which kind of stuff i learn and also is it good c...",
+    "date": "",
+    "where": "Online",
+    "badge": "ONLINE",
+    "src": "Reddit r/learnmachinelearning",
+    "link": "https://www.reddit.com/r/learnmachinelearning/comments/1xrlviw/help",
+    "posted": "2026-11-09",
+    "status": "pending"
+  },
+  {
+    "id": "db_195",
+    "type": "course",
+    "title": "This sub deserves better than AI slop. And if you are a learner, you deserve better",
+    "sum": "It is going to be a rant about frequent posts starting with something like: \"Wanna learn X? I built Y\" AI slop. Learning together? Absolutely. Showcasing project you do? Great.",
+    "date": "",
+    "where": "Online",
+    "badge": "ONLINE",
+    "src": "Reddit r/learnmachinelearning",
+    "link": "https://www.reddit.com/r/learnmachinelearning/comments/1xrl0m4/this_sub_deserves_better_than_ai_slop_and_if_you",
+    "posted": "2026-11-09",
+    "status": "pending"
+  },
+  {
+    "id": "db_194",
+    "type": "job",
+    "title": "Meet Mohammad Sazzad: Full-Stack Developer and Co-Founder of Nomira Digital",
+    "sum": "Mohammad Sazzad is a full-stack developer and co-founder of Nomira Digital, a web development and digital marketing agency founded in Nepal.",
+    "date": "",
+    "where": "Online",
+    "badge": "ONLINE",
+    "src": "Dev.to Career RSS",
+    "link": "https://dev.to/nomira_digital_eb55e35542/meet-mohammad-sazzad-full-stack-developer-and-co-founder-of-nomira-digital-234l",
+    "posted": "2026-11-09",
+    "status": "pending"
+  },
+  {
+    "id": "db_193",
+    "type": "news",
+    "title": "Apple capped engineers at a $200 daily AI budget",
+    "sum": "Trending on Hacker News (10 points) posted by @GloVin.",
+    "date": "",
+    "where": "Online",
+    "badge": "ONLINE",
+    "src": "Hacker News API",
+    "link": "https://www.stork.ai/newsletter/2026-11-08-apple-capped-engineers-at-a-200-daily-ai-budget",
+    "posted": "2026-11-09",
+    "status": "review"
+  },
+  {
     "id": "db_192",
     "type": "course",
     "title": "Job Market: How's The Job Market For Entry-level AI majors?",

@@ -302,7 +302,7 @@ def export_feed_html(
             "id": f"db_{it.get('id')}",
             "type": it.get("category", "news"),
             "title": it.get("title", ""),
-            "sum": it.get("summary") or it.get("title", ""),
+            "sum": formatter.clean_text(it.get("summary") or it.get("title", ""), 180),
             "date": clean_date,
             "where": where_val,
             "city": it.get("city") or ("bengaluru" if "bengaluru" in where_val.lower() else ("hyderabad" if "hyderabad" in where_val.lower() else "online")),
