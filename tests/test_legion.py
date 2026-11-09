@@ -19,6 +19,7 @@ from unittest.mock import MagicMock, patch
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from datetime import datetime, timedelta
 import config
 import db
 import formatter
@@ -27,6 +28,7 @@ import collectors2
 import pipeline
 import telegram_bot
 import quality_gate
+import enricher
 
 class TestDatabase(unittest.TestCase):
     def setUp(self):
@@ -2240,6 +2242,460 @@ function tabs(){} function render(){}
         self.assertNotIn("#RMTM2LjIzMi4yMjcuMjAy", item["sum"])
 
 
+class TestLegionEnhancements(unittest.TestCase):
+    """
+    Tests covering the new Legion requirements:
+    1. Item with deadline yesterday is absent from /posts.json.
+    2. Item with no date, first_seen 8 days ago is expired; at 6 days it is shown.
+    3. Item with deadline in 20 days and first_seen 10 days ago is still shown.
+    4. Re-collecting an expired URL does not create a new active row.
+    5. Missing event date on a hackathon goes to review, never accept.
+    6. Same event from two URLs collapses to one row.
+    7. "Bangalore" and "Bengaluru" both map to bengaluru.
+    8. Enricher survives timeout, 404 and malformed HTML without raising.
+    9. Formatter omits missing fields and stays under 400 chars.
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = os.path.join(self.temp_dir.name, "test_enhancements.db")
+        self.posts_path = os.path.join(self.temp_dir.name, "posts.json")
+        db.init_db(self.db_path)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_item_with_deadline_yesterday_is_absent_from_posts_json(self):
+        """Item with deadline yesterday is absent from /posts.json."""
+        yesterday_str = (config.now_ist() - timedelta(days=1)).strftime("%Y-%m-%d")
+        future_str = (config.now_ist() + timedelta(days=5)).strftime("%Y-%m-%d")
+
+        # Expired item (deadline yesterday)
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Yesterday Hackathon",
+            "url": "https://devpost.com/yesterday-hack",
+            "deadline": yesterday_str,
+            "status": "accepted"
+        }, self.db_path)
+
+        # Active future item
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Future Hackathon",
+            "url": "https://devpost.com/future-hack",
+            "deadline": future_str,
+            "status": "accepted"
+        }, self.db_path)
+
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        post_urls = [p["link"] for p in posts]
+
+        self.assertNotIn("https://devpost.com/yesterday-hack", post_urls)
+        self.assertIn("https://devpost.com/future-hack", post_urls)
+
+    def test_item_no_date_ttl_expiry(self):
+        """Item with no date, first_seen 8 days ago is expired; at 6 days it is shown."""
+        eight_days_ago = (config.now_ist() - timedelta(days=8)).strftime("%Y-%m-%d %H:%M:%S")
+        six_days_ago = (config.now_ist() - timedelta(days=6)).strftime("%Y-%m-%d %H:%M:%S")
+
+        # Item 1: first_seen 8 days ago, no date (TTL 7 days -> expired)
+        db.insert_item({
+            "source": "Lobste.rs",
+            "category": "news",
+            "title": "Old News Item 8 Days",
+            "url": "https://lobste.rs/s/old-8-days",
+            "first_seen": eight_days_ago,
+            "status": "accepted"
+        }, self.db_path)
+
+        # Item 2: first_seen 6 days ago, no date (TTL 7 days -> active)
+        db.insert_item({
+            "source": "Lobste.rs",
+            "category": "news",
+            "title": "Recent News Item 6 Days",
+            "url": "https://lobste.rs/s/recent-6-days",
+            "first_seen": six_days_ago,
+            "status": "accepted"
+        }, self.db_path)
+
+        # Run expiry job
+        db.expire_old_items(self.db_path)
+
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        post_urls = [p["link"] for p in posts]
+
+        # 8-day-old item must be absent (expired)
+        self.assertNotIn("https://lobste.rs/s/old-8-days", post_urls)
+        # 6-day-old item must be shown
+        self.assertIn("https://lobste.rs/s/recent-6-days", post_urls)
+
+        # Check DB status
+        with db.get_db_connection(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT status FROM items WHERE url='https://lobste.rs/s/old-8-days'")
+            row = cursor.fetchone()
+            self.assertEqual(row["status"], "expired")
+
+    def test_item_with_deadline_in_20_days_first_seen_10_days_ago(self):
+        """Item with deadline in 20 days and first_seen 10 days ago is still shown."""
+        ten_days_ago = (config.now_ist() - timedelta(days=10)).strftime("%Y-%m-%d %H:%M:%S")
+        twenty_days_ahead = (config.now_ist() + timedelta(days=20)).strftime("%Y-%m-%d")
+
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Long Running Hackathon",
+            "url": "https://devpost.com/long-running",
+            "first_seen": ten_days_ago,
+            "deadline": twenty_days_ahead,
+            "status": "accepted"
+        }, self.db_path)
+
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        post_urls = [p["link"] for p in posts]
+
+        self.assertIn("https://devpost.com/long-running", post_urls)
+
+    def test_recollecting_expired_url_does_not_create_new_active_row(self):
+        """Re-collecting an expired URL does not create a new active row."""
+        old_seen = (config.now_ist() - timedelta(days=15)).strftime("%Y-%m-%d %H:%M:%S")
+        expired_at = (config.now_ist() - timedelta(days=8)).strftime("%Y-%m-%d %H:%M:%S")
+
+        # Initial insertion of an expired item
+        inserted_id = db.insert_item({
+            "source": "Unstop",
+            "category": "hackathon",
+            "title": "Expired Contest",
+            "url": "https://unstop.com/competitions/expired-contest-101",
+            "first_seen": old_seen,
+            "expires_at": expired_at,
+            "status": "expired"
+        }, self.db_path)
+        self.assertIsNotNone(inserted_id)
+
+        # Attempt to re-collect the same URL with active/accepted status
+        res = db.insert_item({
+            "source": "Unstop",
+            "category": "hackathon",
+            "title": "Expired Contest (Re-scraped)",
+            "url": "https://unstop.com/competitions/expired-contest-101",
+            "status": "accepted"
+        }, self.db_path)
+
+        # Must not insert a new row
+        self.assertIsNone(res)
+
+        # Database must still have only 1 row, and status must remain 'expired'
+        with db.get_db_connection(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, status, first_seen FROM items WHERE url='https://unstop.com/competitions/expired-contest-101'")
+            rows = cursor.fetchall()
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["status"], "expired")
+            # first_seen must never be overwritten on re-collection
+            self.assertEqual(rows[0]["first_seen"], old_seen)
+
+    def test_missing_event_date_on_hackathon_goes_to_review_never_accept(self):
+        """Missing event date on a hackathon goes to review, never accept."""
+        raw_hackathon = {
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Undated AI Hackathon",
+            "url": "https://devpost.com/hackathons/undated-ai",
+            "link": "https://devpost.com/hackathons/undated-ai",
+            "summary": "AI hackathon with exciting challenges for builders.",
+            "location": "Online",
+            "status": "accepted"  # even if upstream marked it accepted
+        }
+
+        with patch("enricher.fetch_page", return_value="<html><body><h1>Undated AI Hackathon</h1><p>Join our online hackathon!</p></body></html>"):
+            enriched = enricher.enrich_item(raw_hackathon)
+
+        self.assertEqual(enriched.get("status"), "review")
+        self.assertEqual(enriched.get("reason"), "no date")
+        self.assertNotEqual(enriched.get("status"), "accept")
+        self.assertNotEqual(enriched.get("status"), "accepted")
+
+    def test_same_event_from_two_urls_collapses_to_one_row(self):
+        """Same event from two URLs collapses to one row via fingerprint."""
+        event_unstop = {
+            "source": "Unstop",
+            "category": "hackathon",
+            "title": "India AI Hackathon 2026",
+            "url": "https://unstop.com/competitions/india-ai-hack-2026",
+            "deadline": "2026-12-25",
+            "city": "hyderabad",
+            "status": "accepted"
+        }
+        event_devpost = {
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "India AI Hackathon 2026",
+            "url": "https://devpost.com/hackathons/india-ai-hack-2026",
+            "deadline": "2026-12-25",
+            "city": "hyderabad",
+            "status": "accepted"
+        }
+
+        # First URL insert succeeds
+        id1 = db.insert_item(event_unstop, self.db_path)
+        self.assertIsNotNone(id1)
+
+        # Second URL with identical title, date, city must collapse and return None
+        id2 = db.insert_item(event_devpost, self.db_path)
+        self.assertIsNone(id2)
+
+        # Total items in DB must be exactly 1
+        with db.get_db_connection(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT count(*) as cnt FROM items")
+            self.assertEqual(cursor.fetchone()["cnt"], 1)
+
+    def test_bangalore_and_bengaluru_both_map_to_bengaluru(self):
+        """'Bangalore' and 'Bengaluru' both map to bengaluru."""
+        # Test config normalization
+        self.assertEqual(config.normalize_city("Bangalore"), "bengaluru")
+        self.assertEqual(config.normalize_city("Bengaluru"), "bengaluru")
+        self.assertEqual(config.normalize_city("Koramangala, Bangalore"), "bengaluru")
+        self.assertEqual(config.normalize_city("Indiranagar, Bengaluru"), "bengaluru")
+        self.assertEqual(config.normalize_city("BLR Tech Hub"), "bengaluru")
+
+        # Test enricher detection
+        self.assertEqual(enricher.detect_city("Whitefield, Bangalore"), "bengaluru")
+        self.assertEqual(enricher.detect_city("Electronic City, Bengaluru"), "bengaluru")
+
+    @patch("enricher.fetch_page")
+    def test_enricher_survives_timeout_404_and_malformed_html(self, mock_fetch):
+        """Enricher survives timeout, 404 and malformed HTML without raising."""
+        item_base = {
+            "source": "Devpost",
+            "category": "job",
+            "title": "Platform Engineer",
+            "url": "https://example.com/job/101",
+            "location": "Bengaluru",
+            "summary": "Building scalable developer tools"
+        }
+
+        # 1. Timeout / URLError
+        mock_fetch.side_effect = urllib.error.URLError("Connection timed out")
+        res1 = enricher.enrich_item(item_base)
+        self.assertIsInstance(res1, dict)
+        self.assertEqual(res1.get("title"), "Platform Engineer")
+
+        # 2. HTTP 404 error
+        mock_fetch.side_effect = urllib.error.HTTPError(
+            url="https://example.com/job/101",
+            code=404,
+            msg="Not Found",
+            hdrs={},
+            fp=None
+        )
+        res2 = enricher.enrich_item(item_base)
+        self.assertIsInstance(res2, dict)
+        self.assertEqual(res2.get("title"), "Platform Engineer")
+
+        # 3. Malformed HTML
+        mock_fetch.side_effect = None
+        mock_fetch.return_value = "<<<malformed <<<<unclosed <html><head><script>alert(1)</head><div>broken body"
+        res3 = enricher.enrich_item(item_base)
+        self.assertIsInstance(res3, dict)
+        self.assertEqual(res3.get("title"), "Platform Engineer")
+
+    def test_formatter_omits_missing_fields_and_stays_under_400_chars(self):
+        """Formatter omits missing fields and stays under 400 chars."""
+        # Minimal item with only title and URL (missing fee, prize, eligibility, venue, date)
+        minimal_item = {
+            "category": "event",
+            "title": "Minimal Python Meetup",
+            "url": "https://example.com/min-py",
+            "badge": "ONLINE"
+        }
+        res_min = formatter.format_whatsapp(minimal_item)
+
+        self.assertLessEqual(len(res_min), 400)
+        self.assertLessEqual(len(res_min.splitlines()), 7)
+        self.assertNotIn("Fee:", res_min)
+        self.assertNotIn("Prize:", res_min)
+        self.assertNotIn("Eligibility:", res_min)
+        self.assertNotIn("Venue:", res_min)
+        self.assertNotIn("Date/Deadline:", res_min)
+        self.assertIn("https://example.com/min-py", res_min)
+
+        # Maximal item with very long text and all fields present
+        maximal_item = {
+            "category": "hackathon",
+            "title": "Ultra Scalable Global Autonomous Multi-Agent AI Hackathon With Massive International Prizes",
+            "url": "https://devpost.com/hackathons/ultra-scalable-global-multi-agent-hackathon-2026-super-long-url-slug",
+            "summary": "Join thousands of world-class AI developers from across the planet for an incredible multi-week hackathon building autonomous agents on cutting edge foundational models with top tier mentors and enterprise sponsors. " * 3,
+            "deadline": "2026-12-30",
+            "venue": "T-Hub Phase 2, Hyderabad",
+            "fee": "Free",
+            "prize": "₹50,00,000",
+            "eligibility": "Students and Professionals",
+            "city": "hyderabad",
+            "mode": "OFFLINE",
+            "badge": "HYDERABAD - OFFLINE"
+        }
+        res_max = formatter.format_whatsapp(maximal_item)
+
+        self.assertLessEqual(len(res_max), 400)
+        self.assertLessEqual(len(res_max.splitlines()), 7)
+        self.assertIn("Fee: Free", res_max)
+        self.assertIn("Prize: ₹50,00,000", res_max)
+
+        # Job item test
+        job_item = {
+            "category": "job",
+            "title": "Senior AI Infrastructure Engineer",
+            "role": "Senior AI Infrastructure Engineer",
+            "company": "Anthropic Partner Hub",
+            "url": "https://example.com/careers/ai-infra",
+            "summary": "Design and optimize distributed model training cluster infrastructure.",
+            "stipend": "₹35-45 LPA",
+            "experience": "3+ years",
+            "location": "Bengaluru",
+            "city": "bengaluru",
+            "badge": "BENGALURU - OFFLINE"
+        }
+        res_job = formatter.format_whatsapp(job_item)
+        self.assertLessEqual(len(res_job), 400)
+        self.assertLessEqual(len(res_job.splitlines()), 7)
+        self.assertIn("💼 *Senior AI Infrastructure Engineer at Anthropic Partner Hub*", res_job)
+        self.assertIn("💰 Stipend: ₹35-45 LPA", res_job)
+        self.assertIn("🎓 Experience: 3+ years", res_job)
+
+    def test_past_date_far_in_past_expires_immediately(self):
+        """Dates far in the past (e.g. 100 days ago, or 2024) must expire immediately."""
+        past_100_days = (config.now_ist() - timedelta(days=100)).strftime("%Y-%m-%d")
+        id_past = db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Old 2024 Past Hackathon",
+            "url": "https://devpost.com/hackathons/past-100-days",
+            "deadline": past_100_days,
+            "status": "accepted"
+        }, self.db_path)
+        self.assertIsNotNone(id_past)
+
+        item = db.get_item(id_past, self.db_path)
+        self.assertEqual(item["status"], "expired")
+        self.assertTrue(item["expires_at"] < config.now_ist().strftime("%Y-%m-%d %H:%M:%S"))
+
+        posts = pipeline.export_posts_json(db_path=self.db_path, output_path=self.posts_path)
+        post_urls = [p["link"] for p in posts]
+        self.assertNotIn("https://devpost.com/hackathons/past-100-days", post_urls)
+
+    def test_safe_migration_adds_missing_columns(self):
+        """Safe database migration ALTER TABLE only if columns are missing."""
+        migration_db = os.path.join(self.temp_dir.name, "migration_test.db")
+        # Create legacy table with missing columns
+        with db.get_db_connection(migration_db) as conn:
+            with conn:
+                conn.execute("""
+                    CREATE TABLE items (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        source TEXT,
+                        category TEXT,
+                        title TEXT,
+                        url TEXT UNIQUE
+                    );
+                """)
+        # Run init_db which should safely run ALTER TABLE for all new columns
+        db.init_db(migration_db)
+
+        with db.get_db_connection(migration_db) as conn:
+            cursor = conn.cursor()
+            cursor.execute("PRAGMA table_info(items);")
+            cols = {row["name"] for row in cursor.fetchall()}
+            for expected_col in (
+                "first_seen", "event_start", "event_end", "deadline", "expires_at",
+                "status", "city", "mode", "fingerprint", "organizer", "venue", "fee", "prize"
+            ):
+                self.assertIn(expected_col, cols)
+
+    def test_update_item_recomputes_expiry_and_preserves_first_seen(self):
+        """db.update_item updates fields, recomputes expires_at, and preserves first_seen."""
+        old_seen = "2026-11-01 10:00:00"
+        future_dl = (config.now_ist() + timedelta(days=10)).strftime("%Y-%m-%d")
+        row_id = db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Initial Hackathon",
+            "url": "https://devpost.com/update-test",
+            "first_seen": old_seen,
+            "deadline": future_dl,
+            "status": "accepted"
+        }, self.db_path)
+
+        orig = db.get_item(row_id, self.db_path)
+        self.assertEqual(orig["first_seen"], old_seen)
+
+        # Update deadline to yesterday -> should immediately become expired
+        yesterday_str = (config.now_ist() - timedelta(days=1)).strftime("%Y-%m-%d")
+        updated = db.update_item(row_id, {"deadline": yesterday_str}, self.db_path)
+        self.assertTrue(updated)
+
+        after = db.get_item(row_id, self.db_path)
+        self.assertEqual(after["first_seen"], old_seen)  # Never overwritten
+        self.assertEqual(after["status"], "expired")
+
+    def test_export_feed_html_excludes_expired_and_rejected_items(self):
+        """Dashboard HTML export must only include unexpired active items."""
+        yesterday_str = (config.now_ist() - timedelta(days=1)).strftime("%Y-%m-%d")
+        future_str = (config.now_ist() + timedelta(days=10)).strftime("%Y-%m-%d")
+
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Expired HTML Event",
+            "url": "https://example.com/expired-html",
+            "deadline": yesterday_str,
+            "status": "expired"
+        }, self.db_path)
+
+        db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Active Future HTML Event",
+            "url": "https://example.com/active-html",
+            "deadline": future_str,
+            "status": "accepted"
+        }, self.db_path)
+
+        html_out = os.path.join(self.temp_dir.name, "test_feed_out.html")
+        base_html = """<!DOCTYPE html><html><body><script>
+        var SEED=[];
+        var TODAY="2026-11-09";
+        </script></body></html>"""
+        template_file = os.path.join(self.temp_dir.name, "tpl.html")
+        with open(template_file, "w", encoding="utf-8") as f:
+            f.write(base_html)
+
+        res_html = pipeline.export_feed_html(db_path=self.db_path, template_path=template_file, output_path=html_out)
+        self.assertNotIn("Expired HTML Event", res_html)
+        self.assertIn("Active Future HTML Event", res_html)
+
+    def test_source_health_consecutive_zero_runs_and_alert(self):
+        """Source health tracks consecutive zero runs and triggers Telegram alert on 3 failures."""
+        with patch("telegram_bot.send_health_alert") as mock_alert:
+            # Run 1: 0 items
+            z1 = db.update_source_health("TestSource", 0, self.db_path)
+            self.assertEqual(z1, 1)
+
+            # Run 2: 0 items
+            z2 = db.update_source_health("TestSource", 0, self.db_path)
+            self.assertEqual(z2, 2)
+
+            # Run 3: 0 items -> alerts
+            z3 = db.update_source_health("TestSource", 0, self.db_path)
+            self.assertEqual(z3, 3)
+
+            # Run 4: returns items -> resets to 0
+            z4 = db.update_source_health("TestSource", 5, self.db_path)
+            self.assertEqual(z4, 0)
 
 
 if __name__ == "__main__":

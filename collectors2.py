@@ -350,6 +350,63 @@ SOURCES: Dict[str, Dict[str, Any]] = {
         "category": "news",
         "headers": {"User-Agent": CURL_USER_AGENT},
     },
+    # 16. Bengaluru & Hyderabad Local Ecosystem Sources
+    "gdg_bangalore": {
+        "name": "GDG Bangalore",
+        "url": "https://gdg.community.dev/api/chapter/182/event/",
+        "type": "bevy_api",
+        "category": "event",
+        "city": "bengaluru",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "bangpypers": {
+        "name": "BangPypers",
+        "url": "https://www.meetup.com/bangpypers/events/ical/",
+        "type": "ical",
+        "category": "event",
+        "city": "bengaluru",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "hasgeek": {
+        "name": "Hasgeek",
+        "url": "https://hasgeek.com/feed",
+        "type": "xml",
+        "category": "event",
+        "city": "bengaluru",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "commudle_bengaluru": {
+        "name": "Commudle Bengaluru",
+        "url": "https://api.commudle.com/api/v1/events?city=Bengaluru",
+        "type": "commudle",
+        "category": "event",
+        "city": "bengaluru",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "luma_bengaluru": {
+        "name": "Luma Bengaluru",
+        "url": "https://api.lu.ma/discover/events?location=Bengaluru",
+        "type": "luma",
+        "category": "event",
+        "city": "bengaluru",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "commudle_hyderabad": {
+        "name": "Commudle Hyderabad",
+        "url": "https://api.commudle.com/api/v1/events?city=Hyderabad",
+        "type": "commudle",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "luma_hyderabad": {
+        "name": "Luma Hyderabad",
+        "url": "https://api.lu.ma/discover/events?location=Hyderabad",
+        "type": "luma",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
 }
 
 # Feeds that have failed or were deprecated by upstream providers
@@ -463,7 +520,7 @@ def parse_xml_feed(raw_bytes: bytes, source_name: str, category: str, limit: int
     return items
 
 
-def parse_ical(raw_text: str, source_name: str, limit: int = 10) -> List[Dict[str, Any]]:
+def parse_ical(raw_text: str, source_name: str, limit: int = 10, city: str = "hyderabad") -> List[Dict[str, Any]]:
     """Parses iCal VEVENT blocks into normalized event dicts."""
     items: List[Dict[str, Any]] = []
     if not raw_text:
@@ -491,7 +548,7 @@ def parse_ical(raw_text: str, source_name: str, limit: int = 10) -> List[Dict[st
             if m:
                 clean_date = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
 
-        location = fields.get("LOCATION", "Hyderabad")
+        location = fields.get("LOCATION") or (city.capitalize() if city else "Online")
         items.append({
             "id": f"{source_name}_{clean_date}_{title[:16]}",
             "title": title,
@@ -604,8 +661,8 @@ def parse_remoteok_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
     return items
 
 
-def parse_bevy_api(data: bytes, source_name: str, limit: int = 10) -> List[Dict[str, Any]]:
-    """Parses Bevy chapter API (e.g. GDG Hyderabad) JSON."""
+def parse_bevy_api(data: bytes, source_name: str, limit: int = 10, city: str = "hyderabad") -> List[Dict[str, Any]]:
+    """Parses Bevy chapter API (e.g. GDG Hyderabad, GDG Bangalore) JSON."""
     items: List[Dict[str, Any]] = []
     try:
         j = json.loads(data.decode("utf-8", errors="ignore"))
@@ -618,6 +675,7 @@ def parse_bevy_api(data: bytes, source_name: str, limit: int = 10) -> List[Dict[
             start_date = str(ev.get("start_date") or "")
             clean_date = start_date[:10] if len(start_date) >= 10 and "-" in start_date[:10] else ""
 
+            loc_val = city.capitalize() if city else "Online"
             items.append({
                 "id": f"bevy_{ev.get('id', title[:16])}",
                 "title": title,
@@ -627,19 +685,20 @@ def parse_bevy_api(data: bytes, source_name: str, limit: int = 10) -> List[Dict[
                 "source": source_name,
                 "category": "event",
                 "type": "event",
+                "city": city,
                 "date": clean_date,
                 "date_str": start_date,
                 "deadline": "RSVP on Chapter Page",
-                "location": "Hyderabad",
-                "where": "Hyderabad",
-                "posted": datetime.now().strftime("%Y-%m-%d"),
+                "location": loc_val,
+                "where": loc_val,
+                "posted": config.now_ist().strftime("%Y-%m-%d"),
             })
     except Exception as e:
         logger.warning(f"Error parsing Bevy API: {e}")
     return items
 
 
-def parse_luma(html_text: str, source_name: str, limit: int = 10) -> List[Dict[str, Any]]:
+def parse_luma(html_text: str, source_name: str, limit: int = 10, city: str = "hyderabad") -> List[Dict[str, Any]]:
     """Parses Luma calendar page HTML by extracting Next.js __NEXT_DATA__."""
     items: List[Dict[str, Any]] = []
     try:
@@ -657,6 +716,7 @@ def parse_luma(html_text: str, source_name: str, limit: int = 10) -> List[Dict[s
                 start_at = str(ev.get("start_at", ""))
                 clean_date = start_at[:10] if len(start_at) >= 10 and "-" in start_at[:10] else ""
 
+                loc_val = city.capitalize() if city else "Online"
                 items.append({
                     "id": f"luma_{ev.get('api_id', title[:16])}",
                     "title": title,
@@ -666,12 +726,13 @@ def parse_luma(html_text: str, source_name: str, limit: int = 10) -> List[Dict[s
                     "source": source_name,
                     "category": "event",
                     "type": "event",
+                    "city": city,
                     "date": clean_date,
                     "date_str": start_at,
                     "deadline": "RSVP on Luma",
-                    "location": "Hyderabad",
-                    "where": "Hyderabad",
-                    "posted": datetime.now().strftime("%Y-%m-%d"),
+                    "location": loc_val,
+                    "where": loc_val,
+                    "posted": config.now_ist().strftime("%Y-%m-%d"),
                 })
     except Exception as e:
         logger.warning(f"Error parsing Luma page: {e}")
@@ -752,6 +813,60 @@ def parse_devto_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
     return items
 
 
+def parse_commudle(raw_bytes: bytes, source_name: str, city: str = "hyderabad", limit: int = 10) -> List[Dict[str, Any]]:
+    """Parses events from Commudle JSON API or HTML fallback."""
+    try:
+        raw_text = raw_bytes.decode("utf-8", errors="replace")
+        items = []
+        try:
+            data = json.loads(raw_text)
+            events = []
+            if isinstance(data, list):
+                events = data
+            elif isinstance(data, dict):
+                events = data.get("data") or data.get("events") or []
+            for ev in events[:limit]:
+                title = ev.get("title") or ev.get("name") or "Commudle Event"
+                slug = ev.get("slug") or ev.get("id") or ""
+                link = f"https://www.commudle.com/events/{slug}" if slug else "https://www.commudle.com"
+                items.append({
+                    "title": title,
+                    "url": link,
+                    "link": link,
+                    "source": source_name,
+                    "category": "event",
+                    "city": city,
+                    "date": str(ev.get("start_date") or ev.get("date") or "")[:10],
+                    "location": ev.get("venue") or city.capitalize(),
+                    "summary": ev.get("description") or f"Event by {source_name}"
+                })
+            if items:
+                return items
+        except Exception:
+            pass
+
+        # HTML fallback
+        matches = re.findall(r'<a[^>]+href=["\'](/events/[^"\']+)["\'][^>]*>([\s\S]*?)</a>', raw_text, re.IGNORECASE)
+        for href, text in matches[:limit]:
+            clean_title = strip_html_tags(text).strip()
+            if clean_title and len(clean_title) > 3:
+                link = f"https://www.commudle.com{href}" if href.startswith("/") else href
+                items.append({
+                    "title": clean_title,
+                    "url": link,
+                    "link": link,
+                    "source": source_name,
+                    "category": "event",
+                    "city": city,
+                    "date": "",
+                    "location": city.capitalize(),
+                    "summary": f"Commudle community event: {clean_title}"
+                })
+        return items
+    except Exception:
+        return []
+
+
 # ==============================================================================
 # COLLECTION DISPATCHER
 # ==============================================================================
@@ -759,6 +874,7 @@ def parse_devto_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
 def collect(source: Optional[Any] = None, limit: int = 10) -> List[Dict[str, Any]]:
     """
     Collects raw items from a specific source (by key or dict) or all sources.
+    Tracks per-source health and alerts after 3 consecutive zero-item runs.
     """
     if source is not None:
         if isinstance(source, str):
@@ -780,33 +896,45 @@ def collect(source: Optional[Any] = None, limit: int = 10) -> List[Dict[str, Any
         stype = cfg.get("type", "xml")
         cat = cfg.get("category", "news")
         headers = cfg.get("headers")
+        source_city = cfg.get("city", "hyderabad")
 
         try:
             raw, err = fetch_raw(url, headers=headers)
-            if not raw:
-                continue
+            items = []
+            if raw:
+                if stype == "xml":
+                    items = parse_xml_feed(raw, name, cat, limit=limit)
+                elif stype == "ical":
+                    items = parse_ical(raw.decode("utf-8", errors="ignore"), name, limit=limit, city=source_city)
+                elif stype == "devpost_api":
+                    items = parse_devpost_api(raw, limit=limit)
+                elif stype == "remoteok_api":
+                    items = parse_remoteok_api(raw, limit=limit)
+                elif stype == "bevy_api":
+                    items = parse_bevy_api(raw, name, limit=limit, city=source_city)
+                elif stype == "luma":
+                    items = parse_luma(raw.decode("utf-8", errors="ignore"), name, limit=limit, city=source_city)
+                elif stype == "commudle":
+                    items = parse_commudle(raw, name, city=source_city, limit=limit)
+                elif stype == "hn_api":
+                    items = parse_hn_api(raw, limit=limit)
+                elif stype == "devto_api":
+                    items = parse_devto_api(raw, limit=limit)
 
-            if stype == "xml":
-                items = parse_xml_feed(raw, name, cat, limit=limit)
-            elif stype == "ical":
-                items = parse_ical(raw.decode("utf-8", errors="ignore"), name, limit=limit)
-            elif stype == "devpost_api":
-                items = parse_devpost_api(raw, limit=limit)
-            elif stype == "remoteok_api":
-                items = parse_remoteok_api(raw, limit=limit)
-            elif stype == "bevy_api":
-                items = parse_bevy_api(raw, name, limit=limit)
-            elif stype == "luma":
-                items = parse_luma(raw.decode("utf-8", errors="ignore"), name, limit=limit)
-            elif stype == "hn_api":
-                items = parse_hn_api(raw, limit=limit)
-            elif stype == "devto_api":
-                items = parse_devto_api(raw, limit=limit)
-            else:
-                items = []
+            # Per-source health tracking: alert if 0 items for 3 consecutive runs
+            try:
+                import db
+                import telegram_bot
+                zero_runs = db.update_source_health(name, len(items))
+                if zero_runs >= 3:
+                    logger.warning(f"Source '{name}' returned 0 items for {zero_runs} consecutive runs!")
+                    telegram_bot.send_health_alert(f"⚠️ Source Health Alert: {name} returned 0 items for {zero_runs} consecutive runs.")
+            except Exception as e:
+                logger.debug(f"Source health update error: {e}")
 
             today = datetime.now().strftime("%Y-%m-%d")
             for it in items:
+                it["city"] = cfg.get("city", "online")
                 it_date = it.get("date") or ""
                 if it_date and it_date < today:
                     continue

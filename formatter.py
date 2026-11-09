@@ -7,6 +7,9 @@ import re
 import sys
 from typing import Dict, Any, Optional
 
+import config
+import db
+
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -195,18 +198,50 @@ def is_online_accessible(item: Optional[Dict[str, Any]]) -> bool:
     )
     return any(m in combined for m in remote_markers)
 
+def detect_bengaluru_venue(text: Any) -> Optional[str]:
+    """
+    Detects specific Bengaluru tech neighborhoods, parks, or hubs.
+    """
+    if not text:
+        return None
+    s = str(text).lower()
+    if re.search(r'\bkoramangala\b', s):
+        return "Koramangala"
+    if re.search(r'\bindiranagar\b', s):
+        return "Indiranagar"
+    if re.search(r'\bwhitefield\b', s):
+        return "Whitefield"
+    if re.search(r'\bhsr(?:\s+layout)?\b', s):
+        return "HSR Layout"
+    if re.search(r'\belectronic\s+city\b', s):
+        return "Electronic City"
+    if re.search(r'\bmanyata\b', s):
+        return "Manyata Tech Park"
+    if re.search(r'\bbagmane\b', s):
+        return "Bagmane Tech Park"
+    if re.search(r'\bbellandur\b', s):
+        return "Bellandur"
+    if re.search(r'\bmg\s+road\b', s):
+        return "MG Road"
+    return None
+
 def is_location_allowed(item: Dict[str, Any]) -> bool:
     """
     Filters items based on location routing rules:
     - Retain Hyderabad in-person/offline opportunities.
+    - Retain Bengaluru in-person/offline opportunities (when tagged or confirmed).
     - Retain Online/Remote/National opportunities accessible from India/Hyderabad.
     - Discard opportunities explicitly located in other cities (Bangalore, Delhi, Mumbai, etc.)
       unless they are online/remote or national events with remote participation.
     """
     if not isinstance(item, dict):
         return True
+
+    # If item is explicitly tagged for Bengaluru
+    if item.get("city") == "bengaluru":
+        return True
         
-    if is_hyderabad_offline(item):
+    if is_hyderabad_offline(item) or item.get("city") == "hyderabad":
         return True
         
     location = _safe_str(item.get("location") or item.get("where"), "")
@@ -217,7 +252,6 @@ def is_location_allowed(item: Dict[str, Any]) -> bool:
     is_accessible_online_or_national = is_online_accessible(item)
     
     # Check if explicitly in a disallowed other city
-    # Check in location field, in title, or in combined with location markers
     has_disallowed_city = False
     for city in DISALLOWED_OTHER_CITIES:
         pattern = r'\b' + re.escape(city) + r'\b'
@@ -235,8 +269,7 @@ def is_location_allowed(item: Dict[str, Any]) -> bool:
 
 def get_location_badge(item: Optional[Dict[str, Any]]) -> str:
     """
-    Returns the badge set by quality_gate: ONLINE, HYDERABAD - OFFLINE, or none ("").
-    When 'badge' is set by quality_gate, never defaults to [ONLINE].
+    Returns the badge set by quality_gate / enricher: ONLINE, HYDERABAD - OFFLINE, BENGALURU - OFFLINE, or none ("").
     """
     if item is None:
         return "[ONLINE]"
@@ -251,10 +284,14 @@ def get_location_badge(item: Optional[Dict[str, Any]]) -> str:
         b_str = str(b).strip().upper()
         if b_str in ("HYDERABAD - OFFLINE", "[HYDERABAD - OFFLINE]"):
             return "[HYDERABAD - OFFLINE]"
+        if b_str in ("BENGALURU - OFFLINE", "[BENGALURU - OFFLINE]"):
+            return "[BENGALURU - OFFLINE]"
         if b_str in ("ONLINE", "[ONLINE]"):
             return "[ONLINE]"
         return ""
-    if is_hyderabad_offline(item):
+    if item.get("city") == "bengaluru":
+        return "[BENGALURU - OFFLINE]"
+    if is_hyderabad_offline(item) or item.get("city") == "hyderabad":
         return "[HYDERABAD - OFFLINE]"
     return "[ONLINE]"
 
@@ -266,15 +303,22 @@ def format_location_string(item: Optional[Dict[str, Any]]) -> str:
         return "[ONLINE] Online"
         
     badge = get_location_badge(item)
+    location = _safe_str(item.get("location") or item.get("where"), "")
+    title = _safe_str(item.get("title"), "")
+    summary = _safe_str(item.get("summary") or item.get("sum"), "")
+    combined = f"{location} {title} {summary}"
+
     if badge == "[HYDERABAD - OFFLINE]" or is_hyderabad_offline(item):
-        location = _safe_str(item.get("location") or item.get("where"), "")
-        title = _safe_str(item.get("title"), "")
-        summary = _safe_str(item.get("summary") or item.get("sum"), "")
-        combined = f"{location} {title} {summary}"
         venue = detect_hyderabad_venue(combined)
         if venue:
             return f"[HYDERABAD - OFFLINE] Hyderabad ({venue})"
         return "[HYDERABAD - OFFLINE] Hyderabad"
+
+    if badge == "[BENGALURU - OFFLINE]" or item.get("city") == "bengaluru":
+        venue = detect_bengaluru_venue(combined)
+        if venue:
+            return f"[BENGALURU - OFFLINE] Bengaluru ({venue})"
+        return "[BENGALURU - OFFLINE] Bengaluru"
         
     loc = _safe_str(item.get("location") or item.get("where"), "")
     if badge == "[ONLINE]":
@@ -308,7 +352,7 @@ def format_draft(item: Dict[str, Any]) -> str:
     if not isinstance(item, dict):
         item = {}
         
-    category = _safe_str(item.get("category"), "news").lower()
+    category = _safe_str(item.get("category") or item.get("type"), "news").lower()
     title = _safe_str(item.get("title"), "Community Update")
     url = _safe_str(item.get("url"), "")
     badge = get_location_badge(item)
@@ -360,6 +404,148 @@ def format_draft(item: Dict[str, Any]) -> str:
         )
         
     return draft
+
+def format_whatsapp(item: Dict[str, Any]) -> str:
+    """
+    Standardized WhatsApp format:
+    Max 7 lines, under 400 chars total.
+    Includes a line ONLY if the field exists.
+    Jobs: Role at Company, stipend, experience, location, apply.
+    Adds '⏳ N days left' line when deadline is within 5 days.
+    """
+    if not isinstance(item, dict):
+        item = {}
+
+    category = _safe_str(item.get("category") or item.get("type"), "news").lower()
+    title = _safe_str(item.get("title"), "Opportunity")
+    url = _safe_str(item.get("apply_url") or item.get("url") or item.get("link"))
+    badge = get_location_badge(item)
+    badge_str = f" {badge}" if badge and badge not in title else ""
+
+    # Calculate days left if deadline parseable
+    days_left = None
+    deadline_val = item.get("deadline") or item.get("event_start") or item.get("date_str")
+    if deadline_val:
+        dt_dl = db.parse_date_ist(deadline_val)
+        if dt_dl:
+            diff = (dt_dl - config.now_ist()).total_seconds() / 86400.0
+            if 0 <= diff <= 5:
+                days_left = max(0, int(round(diff)))
+
+    lines = []
+
+    if category == "job":
+        role = _safe_str(item.get("role") or title)
+        company = _safe_str(item.get("company"))
+        if company:
+            lines.append(f"💼 *{role} at {company}*{badge_str}")
+        else:
+            lines.append(f"💼 *{role}*{badge_str}")
+
+        raw_summary = _safe_str(item.get("summary"))
+        if raw_summary:
+            import enricher
+            clean_s = enricher.summarize(raw_summary, max_len=config.SUMMARY_MAX)
+            if clean_s:
+                lines.append(f"📌 {clean_s}")
+
+        stipend = _safe_str(item.get("stipend") or item.get("salary"))
+        if stipend:
+            lines.append(f"💰 Stipend: {stipend}")
+
+        experience = _safe_str(item.get("experience"))
+        if experience:
+            lines.append(f"🎓 Experience: {experience}")
+
+        location = _safe_str(item.get("location") or item.get("venue") or item.get("where"))
+        if location:
+            lines.append(f"📍 Location: {location}")
+
+        if days_left is not None:
+            if days_left == 0:
+                lines.append("⏳ Ends today")
+            elif days_left == 1:
+                lines.append("⏳ 1 day left")
+            else:
+                lines.append(f"⏳ {days_left} days left")
+
+        if url:
+            lines.append(f"🔗 Apply: {url}")
+
+    else:
+        icon_map = {
+            "hackathon": "⚡",
+            "event": "🗓️",
+            "course": "🎓",
+            "news": "💡"
+        }
+        icon = icon_map.get(category, "🚀")
+        lines.append(f"{icon} *{title}*{badge_str}")
+
+        raw_summary = _safe_str(item.get("summary"))
+        if raw_summary:
+            import enricher
+            clean_s = enricher.summarize(raw_summary, max_len=config.SUMMARY_MAX)
+            if clean_s:
+                lines.append(f"📌 {clean_s}")
+
+        date_deadline = _safe_str(item.get("deadline") or item.get("event_start") or item.get("date_str"))
+        if date_deadline:
+            lines.append(f"📅 Date/Deadline: {date_deadline}")
+
+        if days_left is not None:
+            if days_left == 0:
+                lines.append("⏳ Ends today")
+            elif days_left == 1:
+                lines.append("⏳ 1 day left")
+            else:
+                lines.append(f"⏳ {days_left} days left")
+
+        venue = _safe_str(item.get("venue") or (item.get("location") if not is_online_accessible(item) else ""))
+        if venue and venue.lower() not in ("online", "virtual"):
+            lines.append(f"📍 Venue: {venue}")
+
+        details_parts = []
+        fee = _safe_str(item.get("fee"))
+        if fee:
+            details_parts.append(f"🎟️ Fee: {fee}")
+        prize = _safe_str(item.get("prize"))
+        if prize:
+            details_parts.append(f"🏆 Prize: {prize}")
+        eligibility = _safe_str(item.get("eligibility"))
+        if eligibility:
+            details_parts.append(f"👥 Eligibility: {eligibility}")
+
+        if details_parts:
+            lines.append(" | ".join(details_parts))
+
+        if url:
+            lines.append(f"🔗 Apply: {url}")
+
+    if len(lines) > 7:
+        lines = lines[:7]
+
+    res = "\n".join(lines)
+    if len(res) >= 400:
+        excess = len(res) - 395
+        for i, l in enumerate(lines):
+            if l.startswith("📌 "):
+                new_len = len(l) - excess - 3
+                if new_len > 15:
+                    lines[i] = l[:new_len].rstrip() + "..."
+                else:
+                    lines.pop(i)
+                break
+        res = "\n".join(lines)
+        if len(res) >= 400:
+            excess = len(res) - 395
+            if len(lines) > 0 and len(lines[0]) > excess + 20:
+                lines[0] = lines[0][:len(lines[0]) - excess - 3].rstrip() + "...*"
+            res = "\n".join(lines)
+        if len(res) >= 400:
+            res = res[:396] + "..."
+
+    return res
 
 def get_whatsapp_target_group(category: str) -> str:
     """Returns the matching WhatsApp group name."""

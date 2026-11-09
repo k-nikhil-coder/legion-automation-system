@@ -201,14 +201,29 @@ def format_telegram_card(item: Dict[str, Any]) -> str:
     )
     return msg
 
+def send_health_alert(text: str, token: Optional[str] = None, chat_id: Optional[str] = None) -> bool:
+    """Sends a system alert message via Telegram."""
+    bot_token = token or config.TELEGRAM_BOT_TOKEN
+    target_chat = chat_id or config.TELEGRAM_CHAT_ID
+    if not bot_token or not target_chat:
+        return False
+    bot = TelegramClient(bot_token)
+    res = bot.send_message(target_chat, text)
+    return bool(res and res.get("ok"))
+
 def push_pending_to_telegram(
     bot: TelegramClient,
     chat_id: str,
     limit: int = 10,
     db_path: str = config.DB_PATH
 ) -> int:
-    """Pushes pending drafts to Telegram chat with approval buttons."""
-    pending = db.get_pending_items(limit=limit, db_path=db_path)
+    """Pushes active unexpired pending drafts to Telegram chat with approval buttons."""
+    now_str = config.now_ist().strftime("%Y-%m-%d %H:%M:%S")
+    raw_pending = db.get_pending_items(limit=limit, db_path=db_path)
+    pending = [
+        it for it in raw_pending
+        if it.get("status") in ("accepted", "review", "pending") and (not it.get("expires_at") or it.get("expires_at") > now_str)
+    ]
     if not pending:
         logger.info("No pending items to push.")
         return 0

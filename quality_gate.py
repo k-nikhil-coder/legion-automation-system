@@ -61,18 +61,18 @@ def _is_trusted(url):
 
 
 def _trim(text):
-    text = re.sub(r"\s+", " ", text or "").strip()
-    if len(text) <= MAX_SUMMARY:
-        return text
-    cut = text[:MAX_SUMMARY]
-    end = max(cut.rfind(". "), cut.rfind("; "))
-    return (cut[:end + 1] if end > 80 else cut.rsplit(" ", 1)[0] + "…")
+    import enricher
+    return enricher.summarize(text, max_len=MAX_SUMMARY)
 
 
-def locate(text):
-    """Return (badge, reason). badge: ONLINE | HYDERABAD - OFFLINE | None."""
+def locate(text, city=None):
+    """Return (badge, reason). badge: ONLINE | HYDERABAD - OFFLINE | BENGALURU - OFFLINE | None."""
     if ONLINE.search(text):
         return "ONLINE", ""
+    if city == "bengaluru":
+        return "BENGALURU - OFFLINE", ""
+    if city == "hyderabad":
+        return "HYDERABAD - OFFLINE", ""
     if HYD.search(text):
         return "HYDERABAD - OFFLINE", ""
     m = OTHER_CITIES.search(text)
@@ -85,6 +85,7 @@ def gate(item):
     title = item.get("title", "")
     raw = item.get("summary", "")
     loc = item.get("location") or item.get("where") or ""
+    city = item.get("city")
     head = f"{title} {loc} {raw[:400]}"
 
     if JUNK.search(title) or len(JUNK.findall(head)) >= 2:
@@ -94,7 +95,7 @@ def gate(item):
     if ARTICLE.search(title) or len(raw) > 1500:
         return "reject", "article or listicle, not an opportunity", item
 
-    badge, why = locate(head)
+    badge, why = locate(head, city=city)
     if badge is None and why.startswith("offline"):
         return "reject", why, item
 
