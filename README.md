@@ -1,345 +1,313 @@
 # 🛡️ Legion Automation System
 
-Automated opportunity discovery, deduplication, house-style formatting, and multi-channel community curation pipeline for **Legion**.
+Automated opportunity discovery, quality filtering, house-style formatting, and multi-channel community curation pipeline for **Legion**.
 
-The system collects hackathons, remote jobs, tech events, learning resources, and developer news from reliable public sources, cleans and formats them into Legion's standardized WhatsApp post formats, and stages them for admin review via Telegram approval bots or a local Markdown review queue.
+The system collects hackathons, tech jobs, local meetups, developer courses, and tech news across 34 resilient sources, passes them through a strict quality gate, formats them into concise, 4-line WhatsApp drafts under 200 characters, and surfaces them through an India-first interactive web dashboard and Telegram moderation bot.
 
 ---
 
 ## 🏗️ Architecture & Component Overview
 
 ```
-                      ┌───────────────────────────────────────────────┐
-                      │    Antigravity Scheduled Sidecar              │
-                      │    CRON_TZ=Asia/Kolkata 0 */6 * * *           │
-                      └───────────────────────┬───────────────────────┘
-                                              │ Triggers every 6 hours
-                                              ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     collectors.py                                      │
-│  ┌──────────────────┬─────────────────┬──────────────────┬───────────────────────────┐ │
-│  │ Devpost / Dev.to │   Hacker News   │ Reddit / FCC     │ WeWorkRemotely / RemoteOK │ │
-│  │ (Hackathons)     │   (Tech News)   │ (Courses)        │ (Jobs & Internships)      │ │
-│  └──────────────────┴─────────────────┴──────────────────┴───────────────────────────┘ │
-└─────────────────────────────────────────────┬──────────────────────────────────────────┘
-                                              │ Raw Items
-                                              ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     pipeline.py                                        │
-│  1. Deduplicate URLs against SQLite Database (db.py)                                   │
-│  2. Format new items into Legion Community House Style (formatter.py)                  │
-│  3. Insert into database with status = 'pending'                                       │
-│  4. Export structured review digest to PENDING_DRAFTS.md                               │
-└───────────────────────┬──────────────────────┬──────────────────────┬──────────────────┘
-                        │                      │                      │
-                        ▼                      ▼                      ▼
-       ┌─────────────────────────────────┐   ┌──────────────────┐   ┌─────────────────────────────────┐
-       │         telegram_bot.py         │   │ legion_feed.html │   │        PENDING_DRAFTS.md        │
-       │ Inline Approval Keyboard:       │   │ Interactive Web: │   │ Local Markdown Review Queue:    │
-       │  [✅ Approve]   [❌ Reject]      │   │  - 1-Tap WA Copy │   │  - Formatted Copy-Ready Blocks  │
-       │  [📋 Mark Done] [✏️ Edit Draft]  │   │  - Filter/Search │   │  - Direct CLI Command Links     │
-       └────────────────┬────────────────┘   └────────┬─────────┘   └────────────────┬────────────────┘
-                        │                             │                              │
-                        └─────────────────────────────┼──────────────────────────────┘
-                                                      │ Admin Approval & 1-Tap Copy
-                                                      ▼
-                                     ┌─────────────────────────────────┐
-                                     │  Legion WhatsApp Groups         │
-                                     │   🏆 Hackathons                 │
-                                     │   💼 Jobs & Internships         │
-                                     │   📅 Events & Workshops         │
-                                     │   📚 Courses and Resources      │
-                                     │   🌐 Tech Updates & NEWS        │
-                                     └─────────────────────────────────┘
+                               ┌────────────────────────────────────────────────────────┐
+                               │             Antigravity Scheduled Sidecar              │
+                               │             CRON_TZ=Asia/Kolkata 0 */6 * * *           │
+                               └───────────────────────────┬────────────────────────────┘
+                                                           │ Triggers every 6 hours
+                                                           ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                 collectors2.py                                                    │
+│  34 Resilient Direct APIs & Feeds (Per-source error isolation · Zero brittle scrapers)                           │
+│  ┌───────────────────────────┬───────────────────────────┬─────────────────────────┬───────────────────────────┐  │
+│  │ Unstop & Devpost          │ RemoteOK & WWR            │ GDG, HydPy, React Hyd   │ Hacker News & Dev.to      │  │
+│  │ (Hackathons & Contests)   │ (Tech Jobs & Internships) │ (Hyderabad Communities) │ (Tech News & Discussions) │  │
+│  └───────────────────────────┴───────────────────────────┴─────────────────────────┴───────────────────────────┘  │
+└──────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────┘
+                                                           │ Raw Collected Items
+                                                           ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                 quality_gate.py                                                   │
+│  Strict Junk, Length, and Relevance Filter:                                                                       │
+│  • Off-topic reject: JUNK regex (shopping, rugby, 7s, festivals, gold, betting)                                  │
+│  • Article reject: ARTICLE regex or text > 1500 chars (prevents tutorials and discussion rants)                  │
+│  • Tech keyword validation: TECH regex (AI, ML, Python, React, Cloud, DevOps, etc.)                               │
+│  • Domain verification: Whitelisted TRUSTED domains                                                              │
+│  • Location router: ONLINE vs. HYDERABAD - OFFLINE (auto-discards other cities unless remote/national)           │
+│  • Summary minification: Strictly trims summaries to <= 220 chars                                                │
+└──────────────────────────────────────┬───────────────────────────────────┬────────────────────────────────────────┘
+                                       │ "accept"                          │ "review"
+                                       ▼                                   ▼
+┌───────────────────────────────────────────────────────────────────────┐ ┌─────────────────────────────────────────┐
+│                               pipeline.py                             │ │             Review Queue                │
+│  1. SQLite deduplication (db.py)                                      │ │ Stored with status='review'             │
+│  2. Formatting in Legion house style (formatter.py)                   │ │ Exported to PENDING_DRAFTS.md           │
+│  3. ThreadingTCPServer on port 8000 with /api/refresh & /posts.json   │ │ for manual admin verification           │
+│  4. Background auto-updater daemon thread (every 30m)                 │ └─────────────────────────────────────────┘
+└──────────────────┬────────────────────────────────┬───────────────────┘
+                   │                                │
+                   ▼                                ▼
+┌──────────────────────────────────────┐  ┌─────────────────────────────────────────────────────────────────────────┐
+│           telegram_bot.py            │  │                     legion_feed.html (Web Dashboard)                    │
+│  Inline Admin Approval Keyboard:     │  │  📍 Sticky Metro Hub Switcher (All India, Hyderabad, Bengaluru, etc.)   │
+│   [✅ Approve]   [❌ Reject]         │  │  🏷️ Segmented Category Tray (Hackathons, Jobs, Meetups, Courses, News)  │
+│   [📋 Mark Done] [✏️ Edit Draft]     │  │  🔴 Pulsing Live Badges (LIVE NOW, TODAY, CLOSING SOON)                 │
+│   [📋 1-Tap Copy for WhatsApp]       │  │  ✂️ 3-Line Clamped Cards (No 2000-char text walls or overflow)           │
+│                                      │  │  🔄 1-Click "Update Feed" Button (/api/refresh)                         │
+│                                      │  │  📅 1-Click "Add to Calendar" (.ics download)                           │
+│                                      │  │  📋 1-Tap "Copy for WhatsApp" (Clean 4-line bullet template)            │
+└──────────────────┬───────────────────┘  └────────────────────────────────────┬────────────────────────────────────┘
+                   │                                                           │
+                   └─────────────────────────────┬─────────────────────────────┘
+                                                 │ Admin 1-Tap Clipboard Copy
+                                                 ▼
+                                ┌───────────────────────────────────┐
+                                │       Legion WhatsApp Groups      │
+                                │   ⚡ Hackathons                    │
+                                │   💼 Jobs & Internships           │
+                                │   🗓️ Events & Workshops          │
+                                │   🎓 Courses and Resources        │
+                                │   💡 Tech Updates & NEWS          │
+                                └───────────────────────────────────┘
 ```
-
-### Module Breakdown
-
-- **[`config.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/config.py)**: Loads `.env` without external dependencies. Centralizes paths, timeouts, feed definitions, user-agent, and Telegram tokens.
-- **[`db.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/db.py)**: SQLite interface managing the `items` table, unique URL index for deduplication, status queries (`pending`, `approved`, `rejected`, `posted`), and summary stats.
-- **[`formatter.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/formatter.py)**: Converts raw metadata into Legion's house post templates with standardized emoji headers, fields, and WhatsApp group mappings.
-- **[`collectors.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/collectors.py)**: Standard-library HTTP and XML/JSON collectors with automated fallback sources (e.g. Devpost -> Dev.to, Reddit -> FreeCodeCamp, Legion Feed HTML parser) and timeout resilience.
-- **[`pipeline.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/pipeline.py)**: Orchestrator that coordinates collection, deduplication, formatting, database insertion, and dual markdown/HTML digest generation.
-- **[`telegram_bot.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/telegram_bot.py)**: Telegram approval bot supporting inline button workflows, message updates, `/status`, `/pending`, `/push`, `/feed`, `/web` commands, and terminal CLI fallback options.
-- **[`PENDING_DRAFTS.md`](file:///c:/Users/kunbh/Legion%20Automation%20System/PENDING_DRAFTS.md)**: Live generated review queue grouped by category with copyable post blocks.
-- **[`legion_feed.html`](file:///c:/Users/kunbh/Legion%20Automation%20System/legion_feed.html)**: Interactive browser-based feed dashboard with category filters, search, bookmarking, and 1-tap WhatsApp clipboard copying.
 
 ---
 
+## 🌟 What's New in Version 2.0
 
-## 🚀 Quickstart & Setup
+### 1. Robust Collectors (`collectors2.py`)
+- **34 Real-Time Sources**: Hacker News (API + RSS), Dev.to (Hackathons, Career, News), Devpost, RemoteOK (API + RSS), WeWorkRemotely, FreeCodeCamp, ArXiv AI, Lobste.rs, TechCrunch, Kaggle, GitHub Trending, and more.
+- **Hyderabad Developer Community Feeds**: Built-in tracking for GDG Hyderabad, HydPy, React Hyderabad, AWS User Group Hyderabad, and Hyderabad AI Community.
+- **Resilient Network Layer**: Custom User-Agents, SSL certificate verification compatibility (`certifi`), and per-source `try/except` safety blocks so one flaky feed never interrupts the entire pipeline.
+- **Built-in Health Diagnostic**: Run `python collectors2.py` anytime to view the live status, response time, and collected item count across all 34 sources in an ASCII table.
 
-### 1. Prerequisites
-- Python 3.10+ (Standard library only; zero mandatory third-party pip dependencies required).
+### 2. Intelligent Quality Gate (`quality_gate.py`)
+- **Zero Junk / Noise**: Eliminates Dubai shopping festivals, rugby sevens tournaments, jewelry sales, raffles, and betting posts before they reach the database.
+- **No Discussion Rants or Articles**: Identifies and drops lengthy blog posts, listicles, and Reddit rants (e.g. 14,000-character discussions) that are not actionable opportunities.
+- **Automatic Location Routing**: Detects Hyderabad venues (T-Hub Phase 2, IIIT Hyderabad, DevX, WeWork, HICC) and flags them as `[HYDERABAD - OFFLINE]`. Discards in-person opportunities in other cities (Bangalore, Delhi, Mumbai, etc.) unless they offer online/remote accessibility.
+- **3-Tier Routing**:
+  - `accept` $\rightarrow$ Added to pending draft queue.
+  - `review` $\rightarrow$ Added to review list with explicit flag reason (e.g. untrusted domain, location unstated).
+  - `reject` $\rightarrow$ Logged with reason and dropped.
 
-### 2. Configuration (`.env`)
+### 3. High-Density India-Specific Web UI (`legion_feed.html`)
+- **Sticky Metro Hub Switcher**: Instant 1-click filtering between `🇮🇳 All India`, `📍 Hyderabad (📌 HUB)`, `📍 Bengaluru`, `📍 Mumbai`, and `📍 Delhi NCR`.
+- **Summary Minification & Line-Clamping**: Cards strictly clamp summaries to 3 lines (`-webkit-line-clamp: 3; display: -webkit-box; overflow: hidden;`) to maintain a clean, compact, mobile-first scanning layout.
+- **Live Status & Time-Left Badges**:
+  - `🔴 LIVE NOW` (with pulsing red indicator for active hackathons and events).
+  - `⚡ TODAY` (amber badge for events happening today).
+  - `⏳ X DAYS LEFT` (amber badge for deadlines closing within 3 days).
+  - `📍 [HYDERABAD - OFFLINE]` (emerald green) and `🌐 [ONLINE]` (vibrant blue) badges.
+- **Quick-Action Bottom Bar**:
+  - `Open link ↗`: Directly opens the official registration or application link.
+  - `📋 Copy for WhatsApp`: Generates a clean 4-line WhatsApp template strictly under 200 characters.
+  - `📅 Cal`: Downloads a standard `.ics` iCalendar file on the fly for 1-click addition to Google Calendar, Apple Calendar, or Outlook.
+  - `☆ Save`: Local bookmark toggle stored in browser `localStorage`.
+- **Interactive "Update Feed" Button**: Sends a background `POST /api/refresh` request, shows an animated spinner, and updates the view live without reloading.
+- **Auto-Syncing**: Multi-threaded server runs a background feed collector every 30 minutes, and the client auto-polls `/posts.json` every 3 minutes.
+
+---
+
+## 📁 Repository Structure
+
+| File | Purpose |
+| :--- | :--- |
+| **[`pipeline.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/pipeline.py)** | Core orchestrator, multi-threaded HTTP server (`--serve`), auto-updater, and JSON/markdown exporter. |
+| **[`collectors2.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/collectors2.py)** | 34 resilient live collectors, feed parsers, health diagnostics table, and `--out posts.json` export. |
+| **[`quality_gate.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/quality_gate.py)** | 3-tier junk, article, keyword, domain trust, and location validation gate (`accept`, `review`, `reject`). |
+| **[`formatter.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/formatter.py)** | Formats opportunities into standardized Legion community WhatsApp post templates; Hyderabad venue detector. |
+| **[`db.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/db.py)** | SQLite database driver (`legion.db`) with WAL mode, unique URL index, deduplication, and badge tracking. |
+| **[`legion_feed.html`](file:///c:/Users/kunbh/Legion%20Automation%20System/legion_feed.html)** | Interactive high-density dashboard with sticky metro hub switcher, category tray, `.ics` calendar generator, and WhatsApp copy. |
+| **[`posts.json`](file:///c:/Users/kunbh/Legion%20Automation%20System/posts.json)** | Clean, quality-gated JSON feed exported for frontend rendering (with anti-cache headers). |
+| **[`telegram_bot.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/telegram_bot.py)** | Telegram approval bot supporting inline buttons (`Approve`, `Reject`, `Edit`, `Copy`, `Posted`) and terminal review. |
+| **[`PENDING_DRAFTS.md`](file:///c:/Users/kunbh/Legion%20Automation%20System/PENDING_DRAFTS.md)** | Auto-generated review queue grouped by category with ready-to-copy post blocks. |
+| **[`config.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/config.py)** | Zero-dependency `.env` configuration loader for paths, timeouts, and tokens. |
+| **[`tests/test_legion.py`](file:///c:/Users/kunbh/Legion%20Automation%20System/tests/test_legion.py)** | 98 automated unit and integration tests covering collectors, quality gate, server routes, concurrency, and formatting. |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Requirements
+- **Python 3.10+** (Standard library only; zero mandatory third-party pip dependencies).
+- Optional for tests: `pip install pytest certifi`.
+
+### 2. Configuration
 Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
-Edit `.env` with your settings:
+Key configuration parameters in `.env`:
 ```ini
-# Optional Telegram approval bot (leave blank to use PENDING_DRAFTS.md)
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
-TELEGRAM_CHAT_ID=123456789
+# Server & Dashboard
+PORT=8000
+AUTO_UPDATE_MINUTES=30
 
-# Collector & Request Settings
-HTTP_TIMEOUT=10
+# Telegram Bot (Optional)
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+
+# Network Settings
+HTTP_TIMEOUT=12
 MAX_ITEMS_PER_FEED=10
 ```
 
-### 3. Run the Pipeline
-To fetch the latest items, deduplicate, and generate `PENDING_DRAFTS.md`:
+### 3. Launching the Web App
+Start the local server with background auto-updating:
 ```bash
-python pipeline.py
+python pipeline.py --serve 8000
+```
+Then visit:
+- **Dashboard**: [http://localhost:8000/](http://localhost:8000/)
+- **Live Feed JSON**: [http://localhost:8000/posts.json](http://localhost:8000/posts.json)
+
+---
+
+## 🛠️ CLI Command Reference
+
+### Running Collectors & Diagnostics
+```bash
+# Run all 34 collectors and display live ASCII health table
+python collectors2.py
+
+# Run collectors and export directly to posts.json
+python collectors2.py --out posts.json
+
+# Fetch up to 5 items per source
+python collectors2.py --limit 5
 ```
 
-Options:
-
-- `python pipeline.py --limit 5`: Collect up to 5 items per feed.
-- `python pipeline.py --export-only`: Regenerate `PENDING_DRAFTS.md` and `legion_feed.html` from database without fetching feeds.
-- `python pipeline.py --import-feed`: Ingest curated opportunities from `legion_feed.html` (or `Downloads\Legion Feed.html`) into SQLite.
-- `python pipeline.py --export-html`: Rebuild and sync the `legion_feed.html` dashboard with current database opportunities.
-- `python pipeline.py --open`: Open `legion_feed.html` directly in your default web browser.
-- `python pipeline.py --serve 8000`: Launch a lightweight local HTTP server for the Legion Feed web dashboard at `http://localhost:8000`.
-
----
-
-## 🌐 Interactive Web Dashboard (`legion_feed.html`)
-
-The system includes a zero-dependency, self-contained interactive web application: [`legion_feed.html`](file:///c:/Users/kunbh/Legion%20Automation%20System/legion_feed.html).
-
-### Features
-1. **Interactive Category Filtering**: Toggle between `All`, `Jobs`, `Hackathons`, `Events`, `Courses`, `Tech News`, and `★ Saved`.
-2. **Instant Search**: Real-time filtering across opportunity titles, summaries, sources, and locations.
-3. **1-Tap WhatsApp Copy**: Formats the post with standard Legion Community house style emojis (`⚡` Hackathon, `💼` Job, `🗓️` Event, `🎓` Course, `💡` News), date, location, and apply link, directly copied to clipboard.
-4. **Countdown Badges**: Automatically highlights opportunities closing soon (`today`, `X days left`).
-5. **"+ Add Post" Dialog**: Allows community admins to manually add bespoke posts directly in the browser, stored locally in `localStorage`.
-6. **Dark / Light Mode**: Built-in responsive theme toggle with system preference detection.
-
-### Viewing & Managing the Dashboard
-- **Direct file opening**:
-  ```bash
-  python pipeline.py --open
-  # or
-  python telegram_bot.py --web
-  ```
-- **Local HTTP server**:
-  ```bash
-  python pipeline.py --serve 8000
-  ```
-- **Syncing & Ingesting**:
-  ```bash
-  # Ingest curated feed posts into SQLite database
-  python pipeline.py --import-feed
-
-  # Refresh HTML dashboard with latest database items
-  python pipeline.py --export-html
-  ```
-
----
-
-
-## 📲 Telegram Approval Bot Workflow
-
-The Telegram bot allows community managers to review drafts directly from Telegram using inline buttons.
-
-### Starting the Bot
+### Pipeline & Feed Management
 ```bash
-# Push pending items to Telegram and listen for admin button clicks
+# Full collection, deduplication, quality gate, and export
+python pipeline.py
+
+# Start multi-threaded server on custom port with 15-minute auto-update
+python pipeline.py --serve 8080 --auto-update 15
+
+# Export posts.json and PENDING_DRAFTS.md from database without network fetching
+python pipeline.py --export-only
+
+# Open the feed dashboard in your default browser
+python pipeline.py --open
+```
+
+### Telegram Bot & Terminal Moderation
+```bash
+# Push pending drafts to Telegram and listen for inline button clicks
 python telegram_bot.py
 
 # Push pending drafts to Telegram and immediately exit
 python telegram_bot.py --push
 
-# Start polling listener only
-python telegram_bot.py --poll
-```
-
-### Telegram Bot Commands
-- `/status` — View current counts of pending, approved, rejected, and posted items.
-- `/pending` — Show pending item count and queue size.
-- `/push` — Send the next batch of pending drafts to the chat with approval buttons.
-- `/edit <ID> <new text>` — Edit and update draft text for an item directly from Telegram.
-- `/refresh` — Regenerate `PENDING_DRAFTS.md`.
-
-### Inline Keyboard Buttons
-Each draft card in Telegram includes interactive buttons:
-1. **`[✅ Approve]`**: Marks item as `approved` in SQLite, refreshes `PENDING_DRAFTS.md`, and shows WhatsApp group mapping.
-2. **`[❌ Reject]`**: Marks item as `rejected` in SQLite, removing it from the pending review queue.
-3. **`[✏️ Edit Draft]`**: Displays the current draft and provides quick `/edit <ID> <text>` instructions.
-4. **`[🚀 Mark Done / Posted]`**: Marks item as `posted` once forwarded to WhatsApp.
-5. **`[📋 Copy Draft to Clipboard]`**: 1-tap instant clipboard copy on modern Telegram clients (with `<pre>` code block fallback).
-
----
-
-## 💻 Local CLI / Markdown Fallback Review
-
-If Telegram credentials are not configured, the system operates seamlessly via local files:
-
-### 1. Inspecting the Markdown Digest
-Open [`PENDING_DRAFTS.md`](file:///c:/Users/kunbh/Legion%20Automation%20System/PENDING_DRAFTS.md). Items are grouped by category with ready-to-copy text boxes, original links, and quick commands.
-
-### 2. Interactive Terminal Review
-Review pending drafts interactively in your terminal:
-```bash
+# Review pending drafts interactively in your terminal
 python telegram_bot.py --review
-```
-Options per item: `[a]`pprove, `[r]`eject, `[p]`osted, `[e]`dit, `[s]`kip, `[q]`uit.
 
-### 3. CLI Direct Status Updates & Edits
-```bash
-# Approve, reject, or mark as posted
-python telegram_bot.py --approve <ITEM_ID>
-python telegram_bot.py --reject <ITEM_ID>
-python telegram_bot.py --posted <ITEM_ID>
+# Approve, reject, or mark an opportunity as posted
+python telegram_bot.py --approve <ID>
+python telegram_bot.py --reject <ID>
+python telegram_bot.py --posted <ID>
 
-# Edit a draft via CLI (with inline text or interactive multi-line prompt)
-python telegram_bot.py --edit <ITEM_ID> --text "New formatted draft text..."
-python telegram_bot.py --edit <ITEM_ID>
-
-# Check queue statistics
+# Check moderation queue statistics
 python telegram_bot.py --status
 ```
 
 ---
 
-## 📋 WhatsApp Manual Forwarding Protocol
+## 📋 Standard Legion WhatsApp Formats
 
-Legion community posts are published across dedicated WhatsApp groups. Community admins should follow this manual forwarding protocol:
+When an admin clicks **`📋 Copy for WhatsApp`** on any card or in Telegram, the system generates a concise, standardized, 4-line message under 200 characters:
 
-### Target Group Mapping
+### Hackathons & Competitions (`⚡`)
+```text
+⚡ *Agentversity AI Hackathon* [HYDERABAD - OFFLINE]
 
-| Category | Target WhatsApp Group | Post Format Icon |
-| :--- | :--- | :--- |
-| **Hackathons** | `🏆 Hackathons` | `⚡` |
-| **Jobs & Internships** | `💼 Jobs & Internships` | `💼` |
-| **Events & Workshops** | `📅 Events & Workshops` | `🗓️` |
-| **Courses & Resources** | `📚 Courses and Resources` | `🎓` |
-| **Tech News & Updates** | `🌐 Tech Updates & NEWS` | `💡` |
-
-### Step-by-Step Moderation Protocol
-1. **Review**: Check the draft in Telegram or [`PENDING_DRAFTS.md`](file:///c:/Users/kunbh/Legion%20Automation%20System/PENDING_DRAFTS.md). Verify that the link works and the opportunity is relevant to the Legion community.
-2. **Approve**: Click `[✅ Approve]` in Telegram or run `python telegram_bot.py --approve <ID>`.
-3. **Copy Draft**: Copy the standardized formatted text block.
-4. **Post to WhatsApp**: Open WhatsApp, go to the corresponding target group (e.g. `🏆 Hackathons`), and paste the text as a new message.
-5. **Mark Done**: In Telegram, click `[🚀 Copied & Posted to WhatsApp]` or run `python telegram_bot.py --posted <ID>` to update the database state to `posted`.
-
----
-
-## ⚙️ Antigravity Scheduled Automation
-
-The pipeline is automated to run every 6 hours via an Antigravity Sidecar configuration:
-
-- **Location**: `C:\Users\kunbh\.gemini\config\sidecars\legion-content-pipeline\sidecar.json`
-- **Schedule**: `CRON_TZ=Asia/Kolkata 0 */6 * * *` (Every 6 hours at 00:00, 06:00, 12:00, 18:00 IST)
-- **Action**: Initiates an automated conversation to execute `pipeline.py`, deduplicate, insert new opportunities into SQLite, format drafts, and update the review queue.
-- **Permissions (`agent_permissions`)**:
-  - `workspace_uris`: `["file:///c:/Users/kunbh/Legion Automation System"]`
-  - `access_grants`: `["command(python pipeline.py)", "command(python)"]`
-
-### Configuration Specification (`sidecar.json`)
-```json
-{
-  "builtin": "schedule",
-  "args": [
-    "CRON_TZ=Asia/Kolkata 0 */6 * * *",
-    "agentapi",
-    "new-conversation",
-    "--",
-    "Run the Legion Automation pipeline in c:\\Users\\kunbh\\Legion Automation System, collect latest opportunities across all categories, deduplicate against the SQLite database, format drafts in the Legion house style, and summarize newly pending items."
-  ],
-  "restart_policy": "always",
-  "display_name": "Legion Content Pipeline",
-  "description": "Runs every 6 hours (Asia/Kolkata) to collect, deduplicate, and draft opportunities for the Legion community.",
-  "agent_permissions": {
-    "workspace_uris": [
-      "file:///c:/Users/kunbh/Legion Automation System"
-    ],
-    "access_grants": [
-      "command(python pipeline.py)",
-      "command(python)"
-    ]
-  }
-}
+📌 Hyderabad flagship multi-agent AI hackathon. ₹5 Lakhs compute credits.
+📅 Date: 20 Nov 2026
+📍 Venue: Hyderabad (T-Hub Phase 2)
+🔗 Apply: https://unstop.com/hackathons/agentversity-2026
 ```
 
-### Enabling the Sidecar Automation
-1. Open the Automations Dashboard: `sidecar://dashboard`
-2. Locate **Legion Content Pipeline** (`legion-content-pipeline`).
-3. Turn on the toggle switch to enable recurring execution.
+### Tech Jobs & Internships (`💼`)
+```text
+💼 *Senior Machine Learning Engineer at Anthropic* [ONLINE]
+
+📌 Lead model alignment and low-latency inference. Remote across India.
+📅 Date: 12 Nov 2026
+📍 Venue: Remote / All India
+🔗 Apply: https://remoteok.com/remote-jobs/senior-ml-engineer
+```
+
+### Local Meetups & Community Events (`🗓️`)
+```text
+🗓️ *GDG DevFest Hyderabad 2026* [HYDERABAD - OFFLINE]
+
+📌 Annual developer gathering. Sessions on Cloud, Android, and Gemini.
+📅 Date: 28 Nov 2026
+📍 Venue: Hyderabad (HICC Novotel)
+🔗 Apply: https://gdg.community.dev/gdg-hyderabad/
+```
+
+### Courses & Learning Resources (`🎓`)
+```text
+🎓 *Autonomous Agents Architecture – FreeCodeCamp* [ONLINE]
+
+📌 Free 8-hour hands-on curriculum covering tool calling and vector memory.
+📍 Venue: Online
+🔗 Apply: https://freecodecamp.org/news/autonomous-agents
+```
+
+### Tech News & Updates (`💡`)
+```text
+💡 *Clj.rs – Clojure dialect implemented in Rust* [ONLINE]
+
+📌 Trending on Hacker News (10 points) posted by @simonpure.
+📍 Venue: Online
+🔗 Apply: https://clj.rs/
+```
 
 ---
 
-## 📍 Hyderabad Local Feed Ecosystem Integration
+## 🌐 API Endpoints
 
-The Legion Automation System includes native integration with the **Hyderabad tech community & event ecosystem**, discovering local in-person opportunities while automatically routing and filtering global/virtual feeds.
+When running `python pipeline.py --serve 8000`:
 
-### 1. Platforms & Collectors
-- **Commudle Hyderabad**: Collects tech community events across Hyderabad, tracking key developer communities including:
-  - `GDG Hyderabad` (Google Developer Group)
-  - `HydPy` (Python User Group Hyderabad)
-  - `React Hyderabad`
-  - `AWS User Group Hyderabad`
-  - `AI Community Hyderabad`
-- **Luma Hyderabad**: Ingests tech & AI events from `api.lu.ma` discover feed and `luma.com/MeetUpsinIndia` community calendars with multi-tier fallbacks (JSON API, Next.js `__NEXT_DATA__`, Schema.org JSON-LD, and HTML scraping).
-- **Meetup.com Hyderabad**: Tracks tech, machine learning, software development, and startup meetups (`radius=25 miles`) via RSS/Atom feeds, Schema.org `@graph` JSON-LD schemas, Next.js Apollo state, and HTML regex parsing.
-- **Unstop & Devpost India/Hyderabad Hackathons**: Gathers student & professional developer competitions across Hyderabad, premier institutes (IIIT Hyderabad, CBIT), and national tracks.
-- **Hyderabad Hub Monitors**: Monitors local tech venues:
-  - `T-Hub Phase 2` (Gachibowli)
-  - `IIIT Hyderabad` (Center for Innovation & Entrepreneurship - CIE)
-  - `DevX` (Hitec City)
-  - `WeWork Kondapur` & `WeWork Nanakramguda`
-  - `T-Works`, `HICC`, `HITEX`, `Mindspace Madhapur`, `Knowledge City`, `Cyber Towers`
-
-### 2. Location Filtering, Prioritizing & Routing
-- **Local In-Person Events**: Offline Hyderabad events are detected via venue patterns or location terms, badged as `[HYDERABAD - OFFLINE]`, and prioritized to the top of review queues.
-- **Virtual / Online Events**: Virtual webinars, remote jobs, and worldwide hackathons are marked as `[ONLINE]`. Online events mentioning venue discussions in text are safeguarded from false-positive offline classification.
-- **Other-City Discard Rule**: Opportunities explicitly located in other offline cities (e.g. Bangalore, Mumbai, Delhi, Pune, Chennai, Gurugram, Kolkata, Ahmedabad) in title or location are automatically discarded unless they explicitly offer online/remote participation or are national competitions.
-
-### 3. House Style Badges & Venue Formatting
-Formatted drafts and approval cards display clear location tags:
-- **Offline Venue Example**:
-  ```text
-  🗓️ GDG Hyderabad DevFest [HYDERABAD - OFFLINE]
-
-  📌 What: Full day in-person developer festival at T-Hub Phase 2.
-  📅 Date / Deadline: 2026-03-15
-  📍 Where: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)
-  🎯 Who: Developers across Hyderabad
-  🔗 https://commudle.com/events/gdg-devfest
-  ```
-- **Virtual Event Example**:
-  ```text
-  ⚡ Global AI Hackathon [ONLINE]
-
-  📌 What: Worldwide AI agent sprint.
-  📅 Date / Deadline: 2026-03-20
-  📍 Where: [ONLINE] Online
-  🎯 Who: Open to all
-  🔗 https://devpost.com/hackathons/global-ai
-  ```
-- **Telegram Cards & CLI Review**: Prominently display `🛡️ [Legion Review #ID] [HYDERABAD - OFFLINE]` and `📍 Location: [HYDERABAD - OFFLINE] Hyderabad (T-Hub Phase 2)`.
-- **Interactive Feed Web App (`legion_feed.html`)**: Renders dedicated green `[📍 HYDERABAD - OFFLINE]` and blue `[🌐 ONLINE]` badges on each card with 1-tap WhatsApp formatting and duplicate badge prevention.
+| Method | Endpoint | Description | Headers |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/` | Serves `legion_feed.html`. | `Content-Type: text/html; charset=utf-8` |
+| `GET` | `/posts.json` | Returns clean, quality-gated opportunity array. | `Cache-Control: no-cache, no-store, must-revalidate`<br>`Access-Control-Allow-Origin: *` |
+| `GET` / `POST` | `/api/refresh` | Triggers thread-safe background collection from 34 sources and exports updated `posts.json`. | `Content-Type: application/json` |
 
 ---
 
-## 🧪 Testing & Verification
+## 🧪 Testing & Quality Assurance
 
-Run the test suite using Python's standard `unittest` framework:
+Run the test suite using `pytest`:
 ```bash
-python -m unittest discover tests -v
-# or using pytest
-python -m pytest
+pytest -v
 ```
-Tests cover:
-- SQLite schema, indexing, unique constraints, and status updates.
-- House-style draft formatting and WhatsApp category mapping.
-- XML/Atom feed parsing, HTML stripping, and error resilience.
-- Hyderabad event platform collectors (Commudle, Luma, Meetup, Unstop, Devpost, Venue monitors).
-- Hyderabad venue detection (T-Hub Phase 2, IIIT Hyderabad, DevX, WeWork, Gachibowli, Hitec City, Kondapur, etc.).
-- Location routing & other-city discard rules (Bangalore, Delhi, Mumbai, etc. discarded unless virtual/remote).
-- Badging logic (`[HYDERABAD - OFFLINE]`, `[ONLINE]`) across drafts, review markdown, web app, and Telegram cards.
-- Pipeline execution, deduplication filtering, and markdown generation.
-- Telegram client API request framing and callback handling.
-- Sidecar configuration schema and permission validation.
+
+The 98 test cases cover:
+- **Quality Gate**: Keyword regex matchers, junk topic exclusions, length thresholds, domain trust checks, and location classification (`ONLINE`, `HYDERABAD - OFFLINE`, discard other cities).
+- **Text Minification**: Guarantees summaries are truncated to $\le 180$ characters and strips anti-spam keywords (e.g. `**BENEVOLENT**`).
+- **HTTP Endpoints & Headers**: Validates `/api/refresh`, `/posts.json` anti-caching headers (`no-store`, `no-cache`), and thread-safety concurrency locks.
+- **Database Integrity**: Tests WAL mode, indexing, deduplication on unique URLs, and status queries.
+- **Collector Resilience**: Simulates network timeouts and malformed responses to ensure zero unhandled exceptions.
+
+---
+
+## ⚙️ Automated 6-Hour Background Schedule
+
+The pipeline is automated to run every 6 hours via Antigravity Sidecar:
+- **Configuration**: `C:\Users\kunbh\.gemini\config\sidecars\legion-content-pipeline\sidecar.json`
+- **Schedule**: `CRON_TZ=Asia/Kolkata 0 */6 * * *` (00:00, 06:00, 12:00, 18:00 IST)
+- **Action**: Executes `python pipeline.py`, deduplicates new opportunities, formats drafts, and refreshes the live feed dashboard.
+
+---
+
+## 🤝 Community Moderation Protocol
+
+1. **Scan Feed**: Open [http://localhost:8000/](http://localhost:8000/) or inspect [`PENDING_DRAFTS.md`](file:///c:/Users/kunbh/Legion%20Automation%20System/PENDING_DRAFTS.md).
+2. **Filter by Metro**: Click `📍 Hyderabad` for in-person opportunities or `🇮🇳 All India` for nationwide hackathons and remote roles.
+3. **Copy Draft**: Click **`📋 Copy for WhatsApp`** to copy the formatted text block.
+4. **Post to WhatsApp**: Paste into the matching WhatsApp group (`⚡ Hackathons`, `💼 Jobs`, `🗓️ Events`, `🎓 Courses`, or `💡 News`).
+5. **Mark Done**: Toggle **`☆ Save`** to mark as handled, or approve via Telegram bot.
