@@ -2772,6 +2772,198 @@ class TestLegionEnhancements(unittest.TestCase):
             z4 = db.update_source_health("TestSource", 5, self.db_path)
             self.assertEqual(z4, 0)
 
+    def test_rss_job_pubdate_does_not_immediately_expire(self):
+        """Past RSS pubDate in date_str must not expire jobs/courses/news immediately."""
+        yesterday = (config.now_ist() - timedelta(days=1)).strftime("%Y-%m-%d")
+        job_item = {
+            "source": "Search Jobs RSS",
+            "category": "job",
+            "title": "Fresher Python Developer Intern in Hyderabad",
+            "url": "https://linkedin.com/jobs/view/999001",
+            "date_str": yesterday,
+            "deadline": "See details",
+            "location": "Hyderabad",
+            "status": "pending",
+        }
+        exp_str, computed_status = db.compute_expires_at(job_item)
+        self.assertNotEqual(computed_status, "expired")
+        self.assertEqual(computed_status, "pending")
+
+        # Conversely, past date_str on event MUST expire immediately
+        ev_item = {
+            "source": "FOSS United",
+            "category": "event",
+            "title": "Past Community Meetup",
+            "url": "https://fossunited.org/past-ev",
+            "date_str": yesterday,
+            "deadline": "",
+            "status": "pending",
+        }
+        _, ev_status = db.compute_expires_at(ev_item)
+        self.assertEqual(ev_status, "expired")
+
+    def test_non_engineering_and_reddit_noise_rejected(self):
+        """Sales/DACH roles and Reddit Q&A noise are rejected cleanly by quality_gate."""
+        sales_job = {
+            "title": "Account Executive, DACH at Stripe",
+            "summary": "Cloud fintech sales role in Germany. Remote work.",
+            "category": "job",
+            "link": "https://boards.greenhouse.io/stripe/jobs/1"
+        }
+        dec1, rsn1, _ = quality_gate.gate(sales_job)
+        self.assertEqual(dec1, "reject")
+        self.assertEqual(rsn1, "non_tech_role_filtered")
+
+        reddit_qa = {
+            "title": "Help!!! Confused whether I should go for laptop with dedicated gpu or igpu",
+            "summary": "I am about to buy a laptop for ML AI BTech CSE.",
+            "category": "course",
+            "source": "Reddit r/learnmachinelearning",
+            "link": "https://reddit.com/r/learnmachinelearning/comments/abc"
+        }
+        dec2, rsn2, _ = quality_gate.gate(reddit_qa)
+        self.assertEqual(dec2, "reject")
+        self.assertIn("noise", rsn2)
+
+    def test_location_other_city_not_masked_by_generic_online(self):
+        """Generic location='Online' fallback must not mask explicit out-of-scope city in title."""
+        chennai_job = {
+            "title": "Associate Software Developer (Fresher - MERN) - Chennai",
+            "summary": "Update from Search Jobs RSS",
+            "location": "Online",
+            "category": "job",
+            "link": "https://news.google.com/rss/articles/test1"
+        }
+        dec, reason, _ = quality_gate.gate(chennai_job)
+        self.assertEqual(dec, "reject")
+        self.assertIn("Chennai", reason)
+
+    def test_post_enrichment_updates_relevance_score(self):
+        """Enricher extracts skills, compensation, badges, and recomputes relevance_score."""
+        raw_item = {
+            "title": "Python AI Intern Hackathon",
+            "summary": "Build FastAPI and Docker agents. Prize ₹1,00,000 in Hyderabad!",
+            "category": "hackathon",
+            "city": "hyderabad",
+            "location": "Hyderabad",
+            "deadline": (config.now_ist() + timedelta(days=3)).strftime("%Y-%m-%d"),
+            "url": "https://devpost.com/hackathons/hyd-py-ai",
+            "link": "https://devpost.com/hackathons/hyd-py-ai",
+        }
+        with patch("enricher.fetch_page", return_value=None):
+            enriched = enricher.enrich_item(raw_item, db_path=self.db_path)
+        self.assertIn("Python", enriched.get("skill_tags", ""))
+        self.assertTrue(enriched.get("compensation"))
+        self.assertEqual(enriched.get("badge"), "HYDERABAD - OFFLINE")
+        self.assertGreaterEqual(enriched.get("relevance_score", 0), 80)
+
+    def test_source_health_empty_ical_no_false_alert(self):
+        """Valid HTTP 200 empty iCal schedules record EMPTY_OK without failing health checks."""
+        z = db.update_source_health("HydPy", 0, self.db_path, status="EMPTY_OK")
+        self.assertEqual(z, 0)
+        health = db.get_source_health(self.db_path)
+        self.assertEqual(health[0]["last_status"], "EMPTY_OK")
+
+    def test_telegram_authorization_rejects_unknown_chat_id(self):
+        """Commands and callbacks from unauthorized chat_ids are ignored when TELEGRAM_CHAT_ID is set."""
+        bot_mock = MagicMock()
+        item_id = db.insert_item({
+            "source": "Devpost",
+            "category": "hackathon",
+            "title": "Auth Test Hack",
+            "url": "https://devpost.com/hackathons/auth-test",
+            "status": "pending"
+        }, self.db_path)
+
+        with patch.object(config, "TELEGRAM_CHAT_ID", "999999"):
+            telegram_bot.handle_text_command(bot_mock, {"chat": {"id": 111111}, "text": "/status"}, db_path=self.db_path)
+            bot_mock.send_message.assert_not_called()
+
+            telegram_bot.handle_callback_query(
+                bot_mock,
+                {"id": "q_unauth", "data": f"approve:{item_id}", "message": {"chat": {"id": 111111}, "message_id": 1, "text": "x"}},
+                db_path=self.db_path
+            )
+            bot_mock.answer_callback_query.assert_called_with("q_unauth", text="Unauthorized chat", show_alert=True)
+            row = db.get_item(item_id, db_path=self.db_path)
+            self.assertEqual(row["status"], "pending")
+
+    def test_http_api_health_create_and_status_transition(self):
+        """Tests GET /health, POST /api/items, POST /api/items/<id>/status, and ADMIN_API_KEY guard."""
+        import socketserver, threading, urllib.request, urllib.error
+
+        outer_dir = self.temp_dir.name
+        posts_out = os.path.join(outer_dir, "api_posts.json")
+        md_out = os.path.join(outer_dir, "API_DRAFTS.md")
+
+        class ApiHandler(pipeline.FeedHTTPRequestHandler):
+            server_filename = "legion_feed.html"
+            db_path = self.db_path
+            posts_path = posts_out
+            markdown_path = md_out
+            html_path = os.path.join(outer_dir, "legion_feed.html")
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=outer_dir, **kwargs)
+
+        server = socketserver.TCPServer(("127.0.0.1", 0), ApiHandler)
+        port = server.server_address[1]
+        t = threading.Thread(target=server.serve_forever, daemon=True)
+        t.start()
+        base = f"http://127.0.0.1:{port}"
+        try:
+            # 1. GET /health
+            with urllib.request.urlopen(f"{base}/health", timeout=5) as r:
+                self.assertEqual(r.status, 200)
+                hdata = json.loads(r.read().decode("utf-8"))
+                self.assertEqual(hdata["status"], "ok")
+
+            # 2. POST /api/items creates record in DB
+            req_create = urllib.request.Request(
+                f"{base}/api/items",
+                data=json.dumps({
+                    "type": "workshops",
+                    "title": "Hyderabad Agentic Workshop",
+                    "sum": "Hands-on FastAPI workshop at T-Hub.",
+                    "where": "Hyderabad",
+                    "link": "https://luma.com/hyd-workshop-api-test"
+                }).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req_create, timeout=5) as r:
+                self.assertEqual(r.status, 201)
+                cdata = json.loads(r.read().decode("utf-8"))
+                created_id = cdata["id"]
+
+            # 3. POST /api/items/<id>/status updates SQLite & posts.json
+            req_status = urllib.request.Request(
+                f"{base}/api/items/db_{created_id}/status",
+                data=json.dumps({"status": "posted"}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req_status, timeout=5) as r:
+                self.assertEqual(r.status, 200)
+                sdata = json.loads(r.read().decode("utf-8"))
+                self.assertEqual(sdata["new_status"], "posted")
+            self.assertEqual(db.get_item(created_id, self.db_path)["status"], "posted")
+
+            # 4. ADMIN_API_KEY blocks unauthenticated status mutations
+            with patch.object(config, "ADMIN_API_KEY", "secret-key-42"):
+                req_unauth = urllib.request.Request(
+                    f"{base}/api/items/{created_id}/status",
+                    data=json.dumps({"status": "rejected"}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                with self.assertRaises(urllib.error.HTTPError) as ctx:
+                    urllib.request.urlopen(req_unauth, timeout=5)
+                self.assertEqual(ctx.exception.code, 401)
+        finally:
+            server.shutdown()
+            server.server_close()
+
 
 if __name__ == "__main__":
     unittest.main()

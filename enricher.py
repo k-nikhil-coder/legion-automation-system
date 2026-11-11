@@ -220,9 +220,10 @@ def detect_city(text: str) -> str:
     return config.normalize_city(text)
 
 
-def fetch_page(url: str, timeout: int = config.HTTP_TIMEOUT) -> Optional[str]:
+def fetch_page(url: str, timeout: int = config.HTTP_TIMEOUT, db_path: Optional[str] = None) -> Optional[str]:
     """
-    Fetches HTML content with per-host rate limit (max 1 req/sec) and 24h cache.
+    Fetches HTML content with non-blocking per-host rate limit (max 1 req/sec per host)
+    and 24h in-memory + SQLite persistent cache.
     Resilient: survives timeouts, 404s, connection errors without raising.
     """
     if not url or not isinstance(url, str):
@@ -232,23 +233,34 @@ def fetch_page(url: str, timeout: int = config.HTTP_TIMEOUT) -> Optional[str]:
         return None
 
     now = time.time()
-    # Check cache
+    # 1. Check in-memory cache
     with _cache_lock:
         if url in _url_cache:
             ts, content = _url_cache[url]
             if now - ts < CACHE_TTL_SECONDS:
                 return content
 
-    # Rate limit by host
+    # 2. Check SQLite persistent 24h cache
+    if db_path:
+        cached_html = db.get_cached_url(url, ttl_seconds=CACHE_TTL_SECONDS, db_path=db_path)
+        if cached_html is not None:
+            with _cache_lock:
+                _url_cache[url] = (now, cached_html)
+            return cached_html
+
+    # 3. Per-host rate limit without holding global lock while sleeping
     parsed = urllib.parse.urlparse(url)
     host = parsed.netloc.lower()
     if host:
+        wait_for = 0.0
         with _rate_lock:
+            now = time.time()
             last = _host_last_req.get(host, 0.0)
-            elapsed = now - last
-            if elapsed < 1.0:
-                time.sleep(1.0 - elapsed)
-            _host_last_req[host] = time.time()
+            target_ts = max(now, last + 1.0)
+            wait_for = max(0.0, target_ts - now)
+            _host_last_req[host] = target_ts
+        if wait_for > 0:
+            time.sleep(wait_for)
 
     req = urllib.request.Request(
         url,
@@ -264,6 +276,8 @@ def fetch_page(url: str, timeout: int = config.HTTP_TIMEOUT) -> Optional[str]:
             html_text = raw.decode("utf-8", errors="replace")
             with _cache_lock:
                 _url_cache[url] = (time.time(), html_text)
+            if db_path:
+                db.set_cached_url(url, html_text, db_path=db_path)
             return html_text
     except Exception as e:
         logger.debug(f"Fetch detail page failed for {url}: {e}")
@@ -535,11 +549,12 @@ def extract_metadata(html_text: str, base_url: str = "", category: str = "news")
     return fields
 
 
-def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dict[str, Any]:
+def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT, db_path: Optional[str] = None) -> Dict[str, Any]:
     """
     Enriches item by fetching detail page.
     Guaranteed never to crash (per-item try/except).
     Stores extracted fields as columns & JSON in enriched_data.
+    Recomputes category/workshop routing and relevance_score after enrichment.
     """
     if not isinstance(item, dict):
         return {}
@@ -549,8 +564,11 @@ def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dic
         url = enriched.get("url") or enriched.get("link") or ""
         cat = enriched.get("category", "news").lower()
 
-        # Fetch detail page
-        html_page = fetch_page(url, timeout=timeout) if url else None
+        # Fetch detail page (call without extra kwarg if db_path is None for mock compatibility)
+        if url:
+            html_page = fetch_page(url, timeout=timeout, db_path=db_path) if db_path else fetch_page(url, timeout=timeout)
+        else:
+            html_page = None
         extracted = extract_metadata(html_page, base_url=url, category=cat) if html_page else {}
 
         # Merge extracted fields only if present and not already non-empty
@@ -562,9 +580,12 @@ def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dic
         raw_summary = enriched.get("summary") or extracted.get("summary") or enriched.get("title", "")
         enriched["summary"] = summarize(raw_summary, max_len=config.SUMMARY_MAX)
 
-        # Normalize city
+        # Normalize city without discarding ONLINE badge fallback
         city_raw = enriched.get("city") or enriched.get("location") or ""
-        enriched["city"] = detect_city(city_raw)
+        det_city = detect_city(city_raw)
+        if det_city == "other" and enriched.get("badge") == "ONLINE":
+            det_city = "online"
+        enriched["city"] = det_city
 
         # Mode
         if not enriched.get("mode"):
@@ -581,14 +602,39 @@ def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dic
         elif enriched.get("city") == "online" or enriched.get("mode") == "ONLINE":
             enriched["badge"] = "ONLINE"
 
-        # Rule: If no parseable event_start/deadline for event or hackathon -> status='review', reason='no date'
-        if cat in ("event", "hackathon"):
+        # Extract v3 fields before scoring and workshop routing
+        context_text = f"{enriched.get('title', '')} {enriched.get('summary', '')}"
+        if not enriched.get("compensation"):
+            comp_found = extract_compensation(context_text)
+            if comp_found:
+                enriched["compensation"] = comp_found
+        if not enriched.get("skill_tags"):
+            skills_found = extract_skill_tags(context_text)
+            if skills_found:
+                enriched["skill_tags"] = skills_found
+        if not enriched.get("perks"):
+            perks_found = extract_perks(context_text, cat)
+            if perks_found:
+                enriched["perks"] = perks_found
+        if not enriched.get("eligibility") or enriched.get("eligibility") in ("Open to all", "Review needed: no date"):
+            elig_found = extract_eligibility(context_text, cat)
+            if elig_found and elig_found != "Open to Students & Developers":
+                enriched["eligibility"] = elig_found
+
+        # Re-check workshop routing using enriched text
+        import quality_gate
+        if cat in ("event", "events") and quality_gate.WORKSHOP_REGEX.search(context_text):
+            enriched["category"] = "workshops"
+            enriched["type"] = "workshops"
+            cat = "workshops"
+
+        # Rule: If no parseable event_start/deadline for event/workshop/hackathon -> status='review', reason='no date'
+        if cat in ("event", "events", "workshops", "workshop", "hackathon", "hackathons"):
             has_date = bool(
                 enriched.get("event_start") or
                 enriched.get("deadline") or
                 enriched.get("date_str")
             )
-            # Check if any parseable date can be extracted
             if not has_date or not db.parse_date_ist(enriched.get("deadline") or enriched.get("event_start") or enriched.get("date_str")):
                 enriched["status"] = "review"
                 enriched["reason"] = "no date"
@@ -607,24 +653,8 @@ def enrich_item(item: Dict[str, Any], timeout: int = config.HTTP_TIMEOUT) -> Dic
         if enriched.get("status") not in ("review", "rejected"):
             enriched["status"] = computed_status
 
-        # Extract v3 fields if missing
-        context_text = f"{enriched.get('title', '')} {enriched.get('summary', '')}"
-        if not enriched.get("compensation"):
-            comp_found = extract_compensation(context_text)
-            if comp_found:
-                enriched["compensation"] = comp_found
-        if not enriched.get("skill_tags"):
-            skills_found = extract_skill_tags(context_text)
-            if skills_found:
-                enriched["skill_tags"] = skills_found
-        if not enriched.get("perks"):
-            perks_found = extract_perks(context_text, cat)
-            if perks_found:
-                enriched["perks"] = perks_found
-        if not enriched.get("eligibility") or enriched.get("eligibility") == "Open to all":
-            elig_found = extract_eligibility(context_text, cat)
-            if elig_found and elig_found != "Open to Students & Developers":
-                enriched["eligibility"] = elig_found
+        # Recompute relevance score AFTER all extracted fields, dates, and badges are set
+        enriched["relevance_score"] = quality_gate.compute_relevance_score(enriched)
 
         # Pack enriched structured fields into JSON
         clean_extracted = {

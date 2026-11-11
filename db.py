@@ -81,7 +81,11 @@ def parse_date_ist(val: Any) -> Optional[datetime]:
     if not val:
         return None
     s = str(val).strip()
-    if not s or s.lower() in ("tba / open", "check website", "ongoing", "open", "tba", "check link"):
+    if not s or s.lower() in (
+        "tba / open", "check website", "ongoing", "open", "tba", "check link",
+        "rsvp on chapter page", "rsvp on meetup", "see details", "see article",
+        "until filled", "unknown"
+    ):
         return None
     res_dt = None
     for fmt in (
@@ -148,6 +152,8 @@ def compute_expires_at(item: Dict[str, Any], first_seen_dt: Optional[datetime] =
        expires_at = end of that day IST, capped at first_seen + MAX_FUTURE_DAYS.
     b) If that date is already past: expire immediately (status='expired').
     c) If no usable date: expires_at = first_seen + TTL_DAYS.
+    Note: RSS publish timestamps in date_str are only treated as expiry anchors
+    for events, hackathons, and workshops; jobs/courses/news fall back to TTL.
     NEVER defaults a missing date to now().
     """
     now = config.now_ist()
@@ -159,8 +165,13 @@ def compute_expires_at(item: Dict[str, Any], first_seen_dt: Optional[datetime] =
         else:
             first_seen_dt = now
 
+    cat = str(item.get("category") or item.get("type") or "").strip().lower()
+    date_fields = ["deadline", "event_end", "event_start"]
+    if cat in ("hackathon", "hackathons", "event", "events", "workshop", "workshops"):
+        date_fields.append("date_str")
+
     usable_dt = None
-    for field in ("deadline", "event_end", "event_start", "date_str"):
+    for field in date_fields:
         val = item.get(field)
         if val:
             parsed = parse_date_ist(val)
@@ -332,7 +343,21 @@ def init_db(db_path: str = DB_PATH):
                     source_name TEXT PRIMARY KEY,
                     consecutive_zero_runs INTEGER DEFAULT 0,
                     last_run TIMESTAMP,
-                    last_count INTEGER
+                    last_count INTEGER,
+                    last_status TEXT DEFAULT 'OK'
+                );
+            """)
+            try:
+                cursor.execute("ALTER TABLE source_health ADD COLUMN last_status TEXT DEFAULT 'OK';")
+            except sqlite3.OperationalError:
+                pass
+
+            # Persistent 24h Enricher URL Cache Table
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS url_cache (
+                    url TEXT PRIMARY KEY,
+                    html TEXT,
+                    fetched_at REAL
                 );
             """)
 
@@ -543,12 +568,17 @@ def get_review_items(limit: int = 50, db_path: str = DB_PATH) -> List[Dict[str, 
         return [dict(row) for row in cursor.fetchall()]
 
 def update_item_status(item_id: int, status: str, db_path: str = DB_PATH) -> bool:
-    """Updates status ('approved', 'rejected', 'posted', 'expired')."""
+    """Updates status ('approved', 'rejected', 'posted', 'expired', 'pending')."""
     with get_db_connection(db_path) as conn:
         with conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE items SET status = ? WHERE id = ?", (status, item_id))
-            return cursor.rowcount > 0
+            updated = cursor.rowcount > 0
+            try:
+                cursor.execute("UPDATE opportunities SET status = ? WHERE id = ?", (status, item_id))
+            except Exception:
+                pass
+            return updated
 
 def update_item_draft(item_id: int, draft_text: str, db_path: str = DB_PATH) -> bool:
     """Updates the draft text of an item."""
@@ -689,33 +719,87 @@ def purge_old_expired_bodies(db_path: str = DB_PATH) -> int:
             """, (cutoff, cutoff))
             return cursor.rowcount
 
-def update_source_health(source_name: str, item_count: int, db_path: str = DB_PATH) -> int:
+def update_source_health(source_name: str, item_count: int, db_path: str = DB_PATH, status: str = "OK") -> int:
     """
     Updates consecutive 0-item run counts for a source.
+    Distinguishes valid empty schedules ('EMPTY_OK') from fetch/parse failures
+    so valid quiet community calendars do not raise false alerts.
     Returns the current consecutive_zero_runs.
     """
     now_str = config.now_ist().strftime("%Y-%m-%d %H:%M:%S")
+    is_failure_zero = (item_count == 0 and status != "EMPTY_OK")
     with get_db_connection(db_path) as conn:
         with conn:
             cursor = conn.cursor()
+            try:
+                cursor.execute("ALTER TABLE source_health ADD COLUMN last_status TEXT DEFAULT 'OK';")
+            except sqlite3.OperationalError:
+                pass
             cursor.execute("SELECT consecutive_zero_runs FROM source_health WHERE source_name = ?", (source_name,))
             row = cursor.fetchone()
             if row is None:
-                zero_runs = 1 if item_count == 0 else 0
+                zero_runs = 1 if is_failure_zero else 0
                 cursor.execute("""
-                    INSERT INTO source_health (source_name, consecutive_zero_runs, last_run, last_count)
-                    VALUES (?, ?, ?, ?)
-                """, (source_name, zero_runs, now_str, item_count))
+                    INSERT INTO source_health (source_name, consecutive_zero_runs, last_run, last_count, last_status)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (source_name, zero_runs, now_str, item_count, status))
                 return zero_runs
             else:
                 prev_zeros = row["consecutive_zero_runs"]
-                new_zeros = (prev_zeros + 1) if item_count == 0 else 0
+                new_zeros = (prev_zeros + 1) if is_failure_zero else 0
                 cursor.execute("""
                     UPDATE source_health 
-                    SET consecutive_zero_runs = ?, last_run = ?, last_count = ?
+                    SET consecutive_zero_runs = ?, last_run = ?, last_count = ?, last_status = ?
                     WHERE source_name = ?
-                """, (new_zeros, now_str, item_count, source_name))
+                """, (new_zeros, now_str, item_count, status, source_name))
                 return new_zeros
+
+
+def get_source_health(db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Returns source health records ordered by consecutive failures."""
+    try:
+        with get_db_connection(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM source_health ORDER BY consecutive_zero_runs DESC, source_name ASC")
+            return [dict(r) for r in cursor.fetchall()]
+    except Exception:
+        return []
+
+
+def get_cached_url(url: str, ttl_seconds: float = 86400.0, db_path: str = DB_PATH) -> Optional[str]:
+    """Retrieves cached HTML from SQLite url_cache if within TTL."""
+    if not url:
+        return None
+    import time as _time
+    now_ts = _time.time()
+    try:
+        with get_db_connection(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT html, fetched_at FROM url_cache WHERE url = ?", (url,))
+            row = cursor.fetchone()
+            if row and (now_ts - float(row["fetched_at"] or 0)) < ttl_seconds:
+                return row["html"]
+    except Exception:
+        pass
+    return None
+
+
+def set_cached_url(url: str, html_text: str, db_path: str = DB_PATH) -> None:
+    """Stores fetched HTML in SQLite url_cache."""
+    if not url or html_text is None:
+        return
+    import time as _time
+    now_ts = _time.time()
+    try:
+        with get_db_connection(db_path) as conn:
+            with conn:
+                conn.execute("""
+                    INSERT INTO url_cache (url, html, fetched_at) VALUES (?, ?, ?)
+                    ON CONFLICT(url) DO UPDATE SET html = excluded.html, fetched_at = excluded.fetched_at
+                """, (url, html_text, now_ts))
+    except Exception:
+        pass
+
 
 if __name__ == "__main__":
     init_db()

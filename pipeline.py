@@ -5,6 +5,7 @@ and exports the updated PENDING_DRAFTS.md review digest.
 """
 
 import argparse
+import concurrent.futures
 import http.server
 import json
 import logging
@@ -66,7 +67,8 @@ def export_pending_markdown(
     other_items: List[Dict[str, Any]] = []
     
     for item in pending_items:
-        cat = item.get("category", "news").lower()
+        raw_cat = str(item.get("category") or "news").lower()
+        cat = "event" if raw_cat in ("event", "events", "workshop", "workshops") else config.normalize_category(raw_cat)
         if cat in grouped:
             grouped[cat].append(item)
         else:
@@ -209,6 +211,85 @@ def import_legion_feed(
     logger.info(f"Imported {new_count} new opportunities from Legion Feed into {actual_db}")
     return new_count
 
+def _serialize_db_item_for_feed(it: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Normalizes an active SQLite row into the canonical dashboard / posts.json schema.
+    Shared by both export_feed_html and export_posts_json to prevent schema drift.
+    """
+    u = str(it.get("url") or "").strip()
+    norm_cat = config.normalize_category(it.get("category", "news"))
+
+    raw_date = it.get("deadline") or it.get("event_start") or (it.get("date_str") if norm_cat in ("hackathon", "event", "workshops") else "") or ""
+    date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(raw_date))
+    clean_date = date_match.group(0) if date_match else ""
+    if not clean_date and raw_date:
+        parsed_dt = db.parse_date_ist(raw_date)
+        if parsed_dt:
+            clean_date = parsed_dt.strftime("%Y-%m-%d")
+
+    created_str = str(it.get("created_at") or "")[:10]
+    if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
+        created_str = config.now_ist().strftime("%Y-%m-%d")
+
+    raw_loc = it.get("location") or "Online"
+    if formatter.is_hyderabad_offline(it):
+        venue = formatter.detect_hyderabad_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
+        where_val = f"Hyderabad ({venue})" if venue else "Hyderabad"
+        badge_val = "HYDERABAD - OFFLINE"
+    elif it.get("city") == "bengaluru" or formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}"):
+        venue = formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
+        where_val = f"Bengaluru ({venue})" if venue else "Bengaluru"
+        badge_val = "BENGALURU - OFFLINE"
+    else:
+        where_val = raw_loc
+        badge_val = it.get("badge") or (
+            "HYDERABAD - OFFLINE" if "hyderabad" in raw_loc.lower() and "online" not in raw_loc.lower()
+            else ("BENGALURU - OFFLINE" if ("bengaluru" in raw_loc.lower() or "bangalore" in raw_loc.lower()) and "online" not in raw_loc.lower() else "ONLINE")
+        )
+
+    raw_summary = str(it.get("summary") or it.get("title", "")).strip()
+    raw_summary = re.sub(r'\*\*.*?\*\*', '', raw_summary)
+    raw_summary = re.sub(r'#[A-Za-z0-9_-]{8,}', '', raw_summary).strip()
+    clean_summary = formatter.clean_text(raw_summary, config.SUMMARY_MAX)
+
+    resolved_city = it.get("city")
+    if not resolved_city:
+        if "bengaluru" in badge_val.lower():
+            resolved_city = "bengaluru"
+        elif "hyderabad" in badge_val.lower():
+            resolved_city = "hyderabad"
+        else:
+            resolved_city = "online"
+
+    enriched_copy = dict(it, category=norm_cat, type=norm_cat, badge=badge_val, city=resolved_city)
+    score = int(it.get("relevance_score") or 0) or quality_gate.compute_relevance_score(enriched_copy)
+
+    return {
+        "id": f"db_{it.get('id')}",
+        "db_id": it.get("id"),
+        "type": norm_cat,
+        "category": norm_cat,
+        "sub_category": it.get("sub_category", ""),
+        "title": it.get("title", ""),
+        "sum": clean_summary,
+        "date": clean_date,
+        "where": where_val,
+        "badge": badge_val,
+        "city": resolved_city,
+        "src": it.get("source") or "Legion Automation",
+        "link": u,
+        "posted": created_str,
+        "status": it.get("status", "pending"),
+        "experience_level": it.get("experience_level", "ALL"),
+        "compensation": it.get("compensation", ""),
+        "skill_tags": it.get("skill_tags", ""),
+        "eligibility": it.get("eligibility", ""),
+        "perks": it.get("perks", ""),
+        "relevance_score": score,
+        "whatsapp_draft": formatter.format_whatsapp_draft(enriched_copy),
+    }
+
+
 def export_feed_html(
     db_path: Optional[str] = None,
     template_path: Optional[str] = None,
@@ -262,7 +343,7 @@ def export_feed_html(
                 SELECT * FROM items 
                 WHERE status IN ('accepted', 'review', 'pending', 'approved', 'posted')
                   AND (expires_at IS NULL OR expires_at > ?)
-                ORDER BY id DESC LIMIT 150
+                ORDER BY COALESCE(relevance_score, 0) DESC, id DESC LIMIT 150
             """, (now_str,))
             rows = cursor.fetchall()
             db_items = [dict(r) for r in rows]
@@ -272,54 +353,13 @@ def export_feed_html(
     seed_list: List[Dict[str, Any]] = []
     seen_urls = set()
     
-    # Add DB items first
+    # Add DB items first using shared serializer
     for it in db_items:
-        u = it.get("url", "").strip()
+        u = str(it.get("url") or "").strip()
         if not u or u in seen_urls:
             continue
         seen_urls.add(u)
-        
-        # Determine date YYYY-MM-DD if available
-        raw_date = it.get("deadline") or it.get("date_str") or ""
-        date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(raw_date))
-        clean_date = date_match.group(0) if date_match else ""
-        
-        created_str = str(it.get("created_at") or "")[:10]
-        if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
-            created_str = config.now_ist().strftime("%Y-%m-%d")
-            
-        raw_loc = it.get("location") or "Online"
-        if formatter.is_hyderabad_offline(it):
-            venue = formatter.detect_hyderabad_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
-            where_val = f"Hyderabad ({venue})" if venue else "Hyderabad"
-        elif it.get("city") == "bengaluru" or formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}"):
-            venue = formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
-            where_val = f"Bengaluru ({venue})" if venue else "Bengaluru"
-        else:
-            where_val = raw_loc
-            
-        seed_list.append({
-            "id": f"db_{it.get('id')}",
-            "type": it.get("category", "news"),
-            "category": it.get("category", "news"),
-            "sub_category": it.get("sub_category", ""),
-            "title": it.get("title", ""),
-            "sum": formatter.clean_text(it.get("summary") or it.get("title", ""), 450),
-            "date": clean_date,
-            "where": where_val,
-            "city": it.get("city") or ("bengaluru" if "bengaluru" in where_val.lower() else ("hyderabad" if "hyderabad" in where_val.lower() else "online")),
-            "src": it.get("source") or "Legion Automation",
-            "link": u,
-            "posted": created_str,
-            "status": it.get("status", "pending"),
-            "experience_level": it.get("experience_level", "ALL"),
-            "compensation": it.get("compensation", ""),
-            "skill_tags": it.get("skill_tags", ""),
-            "eligibility": it.get("eligibility", ""),
-            "perks": it.get("perks", ""),
-            "relevance_score": int(it.get("relevance_score") or 0),
-            "whatsapp_draft": formatter.format_whatsapp_draft(it),
-        })
+        seed_list.append(_serialize_db_item_for_feed(it))
         
     # Add existing template items that are active and unexpired
     for orig in existing_items:
@@ -432,7 +472,7 @@ def export_posts_json(
                 SELECT * FROM items 
                 WHERE status IN ('accepted', 'review', 'pending', 'approved', 'posted')
                   AND (expires_at IS NULL OR expires_at > ?)
-                ORDER BY id DESC LIMIT 200
+                ORDER BY COALESCE(relevance_score, 0) DESC, id DESC LIMIT 200
             """, (now_str,))
             rows = cursor.fetchall()
             db_items = [dict(r) for r in rows]
@@ -453,57 +493,7 @@ def export_posts_json(
         if not u or u in seen_urls:
             continue
         seen_urls.add(u)
-
-        raw_date = it.get("deadline") or it.get("date_str") or ""
-        date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(raw_date))
-        clean_date = date_match.group(0) if date_match else ""
-
-        created_str = str(it.get("created_at") or "")[:10]
-        if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
-            created_str = datetime.now().strftime("%Y-%m-%d")
-
-        raw_loc = it.get("location") or "Online"
-        if formatter.is_hyderabad_offline(it):
-            venue = formatter.detect_hyderabad_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
-            where_val = f"Hyderabad ({venue})" if venue else "Hyderabad"
-            badge_val = "HYDERABAD - OFFLINE"
-        elif it.get("city") == "bengaluru" or formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}"):
-            venue = formatter.detect_bengaluru_venue(f"{raw_loc} {it.get('title')} {it.get('summary')}")
-            where_val = f"Bengaluru ({venue})" if venue else "Bengaluru"
-            badge_val = "BENGALURU - OFFLINE"
-        else:
-            where_val = raw_loc
-            badge_val = it.get("badge") or ("HYDERABAD - OFFLINE" if "hyderabad" in raw_loc.lower() and "online" not in raw_loc.lower() else ("BENGALURU - OFFLINE" if ("bengaluru" in raw_loc.lower() or "bangalore" in raw_loc.lower()) and "online" not in raw_loc.lower() else "ONLINE"))
-
-        raw_summary = str(it.get("summary") or it.get("title", "")).strip()
-        # Clean out any verification spam tags like **BENEVOLENT** or long hex strings
-        raw_summary = re.sub(r'\*\*.*?\*\*', '', raw_summary)
-        raw_summary = re.sub(r'#[A-Za-z0-9_-]{8,}', '', raw_summary).strip()
-        clean_summary = formatter.clean_text(raw_summary, 450)
-
-        posts_list.append({
-            "id": f"db_{it.get('id')}",
-            "type": it.get("category", "news"),
-            "category": it.get("category", "news"),
-            "sub_category": it.get("sub_category", ""),
-            "title": it.get("title", ""),
-            "sum": clean_summary,
-            "date": clean_date,
-            "where": where_val,
-            "badge": badge_val,
-            "city": it.get("city") or ("bengaluru" if "bengaluru" in badge_val.lower() else ("hyderabad" if "hyderabad" in badge_val.lower() else "online")),
-            "src": it.get("source") or "Legion Automation",
-            "link": u,
-            "posted": created_str,
-            "status": it.get("status", "pending"),
-            "experience_level": it.get("experience_level", "ALL"),
-            "compensation": it.get("compensation", ""),
-            "skill_tags": it.get("skill_tags", ""),
-            "eligibility": it.get("eligibility", ""),
-            "perks": it.get("perks", ""),
-            "relevance_score": int(it.get("relevance_score") or 0),
-            "whatsapp_draft": formatter.format_whatsapp_draft(it)
-        })
+        posts_list.append(_serialize_db_item_for_feed(it))
 
     # Preserve previous curated seed items only, never re-import rejected or deleted DB items
     if os.path.exists(actual_out):
@@ -635,8 +625,46 @@ class FeedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Key, Authorization")
         self.end_headers()
+
+    def _send_json(self, code: int, payload: Dict[str, Any]):
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Key, Authorization")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _check_admin_auth(self) -> bool:
+        expected = getattr(config, "ADMIN_API_KEY", "").strip()
+        if not expected:
+            return True
+        provided = (self.headers.get("X-Admin-Key") or "").strip()
+        if not provided:
+            auth_hdr = (self.headers.get("Authorization") or "").strip()
+            if auth_hdr.lower().startswith("bearer "):
+                provided = auth_hdr[7:].strip()
+        return provided == expected
+
+    def _send_health_response(self):
+        actual_db = self.db_path or config.DB_PATH
+        try:
+            stats = db.get_stats(db_path=actual_db)
+            sources = db.get_source_health(db_path=actual_db)
+            unhealthy = [s["source_name"] for s in sources if (s.get("consecutive_zero_runs") or 0) >= 3]
+            self._send_json(200, {
+                "status": "ok",
+                "stats": stats,
+                "unhealthy_sources_count": len(unhealthy),
+                "unhealthy_sources": unhealthy[:10],
+                "timestamp": config.now_ist().strftime("%Y-%m-%d %H:%M:%S"),
+            })
+        except Exception as e:
+            self._send_json(503, {"status": "error", "message": str(e)})
 
     def _send_refresh_response(self):
         try:
@@ -646,30 +674,107 @@ class FeedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 markdown_path=self.markdown_path,
                 html_path=self.html_path
             )
-            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_json(200, res)
         except Exception as e:
             logger.error(f"Error executing /api/refresh: {e}", exc_info=True)
-            err_data = {
+            self._send_json(500, {
                 "status": "error",
                 "message": str(e),
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
-            body = json.dumps(err_data, ensure_ascii=False).encode("utf-8")
-            self.send_response(500)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            })
+
+    def _handle_create_item(self, body_bytes: bytes):
+        if not self._check_admin_auth():
+            self._send_json(401, {"status": "error", "message": "Unauthorized"})
+            return
+        try:
+            data = json.loads(body_bytes.decode("utf-8") or "{}")
+        except Exception:
+            self._send_json(400, {"status": "error", "message": "Invalid JSON body"})
+            return
+
+        title = str(data.get("title") or "").strip()
+        if not title:
+            self._send_json(400, {"status": "error", "message": "Title is required"})
+            return
+
+        actual_db = self.db_path or config.DB_PATH
+        db.init_db(db_path=actual_db)
+        cat = config.normalize_category(data.get("type") or data.get("category") or "news")
+        link = str(data.get("link") or data.get("url") or "").strip()
+        if not link:
+            slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')[:32]
+            link = f"https://legion.community/manual/{slug}-{int(time.time())}"
+        where_val = str(data.get("where") or data.get("location") or "Online").strip()
+        city_val = config.normalize_city(where_val)
+        badge_val = "HYDERABAD - OFFLINE" if city_val == "hyderabad" else ("BENGALURU - OFFLINE" if city_val == "bengaluru" else "ONLINE")
+        item_dict = {
+            "source": str(data.get("src") or data.get("source") or "Admin").strip(),
+            "category": cat,
+            "type": cat,
+            "title": title,
+            "url": link,
+            "link": link,
+            "summary": str(data.get("sum") or data.get("summary") or title).strip()[:config.SUMMARY_MAX],
+            "deadline": str(data.get("date") or data.get("deadline") or "TBA / Open").strip(),
+            "event_start": str(data.get("date") or "").strip(),
+            "location": where_val,
+            "city": city_val,
+            "badge": badge_val,
+            "status": "approved",
+            "relevance_score": 80,
+        }
+        item_dict["draft_text"] = formatter.format_draft(item_dict)
+        row_id = db.insert_item(item_dict, db_path=actual_db)
+        if row_id is None:
+            self._send_json(409, {"status": "error", "message": "Duplicate opportunity URL or fingerprint"})
+            return
+
+        export_pending_markdown(db_path=actual_db, output_path=self.markdown_path)
+        export_posts_json(db_path=actual_db, output_path=self.posts_path)
+        created = db.get_item(row_id, db_path=actual_db)
+        self._send_json(201, {
+            "status": "ok",
+            "id": row_id,
+            "item": _serialize_db_item_for_feed(created) if created else item_dict
+        })
+
+    def _handle_status_update(self, raw_id: str, body_bytes: bytes):
+        if not self._check_admin_auth():
+            self._send_json(401, {"status": "error", "message": "Unauthorized"})
+            return
+        clean_id = raw_id[3:] if raw_id.startswith("db_") else raw_id
+        try:
+            item_id = int(clean_id)
+        except ValueError:
+            self._send_json(400, {"status": "error", "message": "Invalid item ID"})
+            return
+        try:
+            data = json.loads(body_bytes.decode("utf-8") or "{}")
+        except Exception:
+            self._send_json(400, {"status": "error", "message": "Invalid JSON body"})
+            return
+
+        new_status = str(data.get("status") or "").strip().lower()
+        if new_status not in ("approved", "rejected", "posted", "pending"):
+            self._send_json(400, {"status": "error", "message": "Invalid status value"})
+            return
+
+        actual_db = self.db_path or config.DB_PATH
+        ok = db.update_item_status(item_id, new_status, db_path=actual_db)
+        if not ok:
+            self._send_json(404, {"status": "error", "message": f"Item #{item_id} not found"})
+            return
+
+        export_pending_markdown(db_path=actual_db, output_path=self.markdown_path)
+        export_posts_json(db_path=actual_db, output_path=self.posts_path)
+        self._send_json(200, {"status": "ok", "id": item_id, "new_status": new_status})
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/health":
+            self._send_health_response()
+            return
         if parsed.path == "/api/refresh":
             self._send_refresh_response()
             return
@@ -695,14 +800,22 @@ class FeedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         content_len = int(self.headers.get("Content-Length", 0) or 0)
+        body_bytes = b""
         if content_len > 0:
             try:
-                self.rfile.read(content_len)
+                body_bytes = self.rfile.read(content_len)
             except Exception:
-                pass
+                body_bytes = b""
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/api/refresh":
             self._send_refresh_response()
+            return
+        if parsed.path == "/api/items":
+            self._handle_create_item(body_bytes)
+            return
+        m_status = re.match(r'^/api/items/([^/]+)/status$', parsed.path)
+        if m_status:
+            self._handle_status_update(m_status.group(1), body_bytes)
             return
         self.send_error(404, "Endpoint not found")
 
@@ -832,6 +945,80 @@ def serve_feed(
                 updater_thread.join(timeout=2.0)
 
 
+def reconcile_legacy_db_items(db_path: Optional[str] = None) -> Dict[str, int]:
+    """
+    Audits existing active DB rows against v4 rules:
+    - Extracts missed dates from FOSS United event titles
+    - Expires past events/hackathons
+    - Rejects legacy Reddit noise, senior roles, sales roles, and wrong-city leaks
+    - Recomputes canonical category, badge, skills, compensation, eligibility, perks, and relevance_score
+    """
+    actual_db = db_path or config.DB_PATH
+    counts = {"checked": 0, "expired": 0, "rejected": 0, "updated": 0}
+    date_re = re.compile(r'\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(20\d{2})\b', re.I)
+
+    import enricher
+    with db.get_db_connection(actual_db) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM items WHERE status IN ('pending', 'accepted', 'review', 'approved')")
+        rows = [dict(r) for r in cursor.fetchall()]
+
+    for row in rows:
+        counts["checked"] += 1
+        item_id = row["id"]
+        title = row.get("title") or ""
+        cat = config.normalize_category(row.get("category") or "news")
+
+        # Extract embedded date in title for FOSS United / scraped meetups if missing
+        if cat in ("event", "workshops", "hackathon") and not row.get("event_start") and not db.parse_date_ist(row.get("deadline")):
+            m_dt = date_re.search(title)
+            if m_dt:
+                try:
+                    dt_obj = datetime.strptime(f"{m_dt.group(1)} {m_dt.group(2)[:3]} {m_dt.group(3)}", "%d %b %Y")
+                    iso_dt = dt_obj.strftime("%Y-%m-%d")
+                    row["event_start"] = iso_dt
+                    row["deadline"] = iso_dt
+                except Exception:
+                    pass
+
+        # Re-run gate check (non-HTTP)
+        probe = dict(row, category=cat, type=cat, link=row.get("url", ""))
+        decision, reason, gated = quality_gate.gate(probe)
+        if decision == "reject":
+            db.update_item_status(item_id, "rejected", db_path=actual_db)
+            counts["rejected"] += 1
+            continue
+
+        # Enrich text-only metadata & re-score
+        ctx = f"{title} {gated.get('summary', '')}"
+        updates = {
+            "summary": gated.get("summary") or row.get("summary"),
+            "deadline": row.get("deadline"),
+            "event_start": row.get("event_start"),
+            "city": gated.get("city") or row.get("city"),
+            "location": gated.get("location") or row.get("location"),
+            "experience_level": gated.get("experience_level") or row.get("experience_level"),
+            "compensation": row.get("compensation") or enricher.extract_compensation(ctx),
+            "skill_tags": row.get("skill_tags") or enricher.extract_skill_tags(ctx),
+            "perks": row.get("perks") or enricher.extract_perks(ctx, cat),
+            "eligibility": row.get("eligibility") if (row.get("eligibility") and row.get("eligibility") != "Open to all" and not str(row.get("eligibility")).startswith("Review needed")) else enricher.extract_eligibility(ctx, cat),
+        }
+        updates_for_score = dict(row, **updates, category=gated.get("category", cat), badge=gated.get("badge") or row.get("badge"))
+        updates["relevance_score"] = quality_gate.compute_relevance_score(updates_for_score)
+
+        db.update_item(item_id, updates, db_path=actual_db)
+        with db.get_db_connection(actual_db) as conn:
+            with conn:
+                conn.execute("UPDATE items SET category = ? WHERE id = ?", (config.normalize_category(gated.get("category", cat)), item_id))
+        updated_row = db.get_item(item_id, db_path=actual_db)
+        if updated_row and updated_row.get("status") == "expired":
+            counts["expired"] += 1
+        else:
+            counts["updated"] += 1
+
+    return counts
+
+
 def run_pipeline(
     limit_per_feed: Optional[int] = None,
     export_only: bool = False,
@@ -908,9 +1095,12 @@ def run_pipeline(
         collected_count = len(raw_items)
         
         import enricher
+        candidates: List[Tuple[str, str, Dict[str, Any]]] = []
+        seen_batch_urls = set()
+
+        # Pass 1: Quality gate + pre-enrichment URL dedup (avoid fetching HTTP detail pages for existing URLs)
         for item in raw_items:
             try:
-                # Run quality gate on every item before formatter
                 decision, reason, gated = quality_gate.gate(item)
                 if decision == "reject":
                     discarded_count += 1
@@ -924,12 +1114,48 @@ def run_pipeline(
                 if not url:
                     continue
 
-                # Detail page enrichment (called after quality gate accept/review)
-                enriched = enricher.enrich_item(gated)
+                norm_u = db.normalize_url(url)
+                if norm_u in seen_batch_urls or db.item_exists(url, db_path=actual_db):
+                    duplicate_count += 1
+                    continue
+                seen_batch_urls.add(norm_u)
+                candidates.append((decision, reason, gated))
+            except Exception as e:
+                logger.warning(f"Error gating feed item: {e}")
 
-                # Date rule: If no parseable event_start/deadline for an event or hackathon -> status='review', reason='no date'
-                cat = enriched.get("category", "news").lower()
-                if cat in ("event", "hackathon"):
+        # Pass 2: Parallel detail page enrichment for net-new candidates
+        is_enricher_mocked = hasattr(enricher.enrich_item, "mock_calls") or hasattr(enricher.enrich_item, "return_value")
+        enriched_candidates: List[Tuple[str, str, Dict[str, Any]]] = []
+        if candidates:
+            def _run_enrich(entry):
+                dec, rsn, g = entry
+                enr = enricher.enrich_item(g) if is_enricher_mocked else enricher.enrich_item(g, db_path=actual_db)
+                return dec, rsn, enr
+
+            if len(candidates) <= 2 or is_enricher_mocked:
+                for entry in candidates:
+                    try:
+                        enriched_candidates.append(_run_enrich(entry))
+                    except Exception as e:
+                        logger.warning(f"Error enriching item: {e}")
+            else:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+                    futs = [pool.submit(_run_enrich, entry) for entry in candidates]
+                    for fut in concurrent.futures.as_completed(futs):
+                        try:
+                            enriched_candidates.append(fut.result())
+                        except Exception as e:
+                            logger.warning(f"Error enriching item future: {e}")
+
+        # Pass 3: Post-enrichment validation, fingerprint dedup, and SQLite persistence on main thread
+        for decision, reason, enriched in enriched_candidates:
+            try:
+                raw_url = enriched.get("url") or enriched.get("link") or ""
+                url = str(raw_url).strip()
+                cat = config.normalize_category(enriched.get("category", "news"))
+
+                # Date rule: If no parseable event_start/deadline for event/workshop/hackathon -> status='review', reason='no date'
+                if cat in ("event", "workshops", "hackathon"):
                     has_date = bool(
                         enriched.get("event_start") or enriched.get("deadline") or enriched.get("date_str")
                     )
@@ -944,7 +1170,7 @@ def run_pipeline(
                     discarded_count += 1
                     logger.info(f"Skipping disallowed city item: {enriched.get('title')} ({enriched.get('location')})")
                     continue
-                    
+
                 # Second dedup key: fingerprint = normalized(title) + start date + city
                 fp = enriched.get("fingerprint") or db.compute_fingerprint(
                     title=enriched.get("title", ""),
@@ -956,11 +1182,11 @@ def run_pipeline(
                 if db.item_exists(url, db_path=actual_db) or (fp and db.fingerprint_exists(fp, db_path=actual_db)):
                     duplicate_count += 1
                     continue
-                    
+
                 # Generate house style draft text using gate badge
                 draft = formatter.format_draft(enriched)
                 enriched["draft_text"] = draft
-                
+
                 if decision == "accept":
                     enriched["status"] = "pending"
                     row_id = db.insert_item(enriched, db_path=actual_db)
@@ -978,7 +1204,7 @@ def run_pipeline(
                     else:
                         duplicate_count += 1
             except Exception as e:
-                logger.warning(f"Error processing feed item: {e}")
+                logger.warning(f"Error processing enriched item: {e}")
                 
         if import_feed:
             feed_imported = import_legion_feed(html_path=actual_html, db_path=actual_db)
@@ -1033,6 +1259,7 @@ def main():
     parser.add_argument("--auto-update", type=int, default=getattr(config, "AUTO_UPDATE_INTERVAL_MINUTES", 30), help="Auto-update interval in minutes for background feed collector in serve mode (0 to disable)")
     parser.add_argument("--import-feed", type=str, nargs="?", const="default", help="Import curated items from Legion Feed HTML into database")
     parser.add_argument("--export-html", action="store_true", help="Export DB items to HTML feed dashboard")
+    parser.add_argument("--reconcile", action="store_true", help="Reconcile legacy DB rows (expire past dates, re-score, prune noise) and re-export")
     parser.add_argument("--serve", type=int, nargs="?", const=8000, help="Start local web server for Legion Feed dashboard (default port: 8000)")
     parser.add_argument("--open", action="store_true", help="Open Legion Feed dashboard in default browser")
     args = parser.parse_args()
@@ -1066,6 +1293,15 @@ def main():
         export_feed_html(db_path=args.db, output_path=args.html_out)
         export_posts_json(db_path=args.db, output_path=args.posts_out)
         print(f"✅ Updated Legion Feed HTML at: {args.html_out}")
+        return
+
+    if args.reconcile:
+        db.init_db(db_path=args.db)
+        rec = reconcile_legacy_db_items(db_path=args.db)
+        export_pending_markdown(db_path=args.db, output_path=args.out)
+        export_feed_html(db_path=args.db, output_path=args.html_out)
+        export_posts_json(db_path=args.db, output_path=args.posts_out)
+        print(f"✅ Reconciled DB: {rec}")
         return
 
     print("=" * 60)

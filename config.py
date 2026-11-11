@@ -64,8 +64,10 @@ CITIES: Dict[str, Dict[str, Any]] = {
     "hyderabad": {
         "name": "Hyderabad",
         "aliases": [
-            "hyderabad", "hyd", "secunderabad", "hitec city", "gachibowli",
-            "t-hub", "iiit hyderabad", "hicc"
+            "hyderabad", "hyd", "secunderabad", "hitec city", "hitec", "gachibowli",
+            "t-hub", "thub", "t-works", "iiit hyderabad", "iiit-h", "iiith", "hicc",
+            "hitex", "kondapur", "madhapur", "nanakramguda", "financial district",
+            "mindspace"
         ],
         "badge": "HYDERABAD - OFFLINE"
     },
@@ -73,11 +75,39 @@ CITIES: Dict[str, Dict[str, Any]] = {
         "name": "Bengaluru",
         "aliases": [
             "bengaluru", "bangalore", "blr", "koramangala", "indiranagar",
-            "whitefield", "hsr layout", "electronic city"
+            "whitefield", "hsr layout", "electronic city", "church street",
+            "mg road", "jayanagar", "marathahalli", "bellandur"
         ],
         "badge": "BENGALURU - OFFLINE"
     }
 }
+
+CANONICAL_CATEGORIES: Dict[str, str] = {
+    "job": "job",
+    "jobs": "job",
+    "internship": "job",
+    "internships": "job",
+    "hackathon": "hackathon",
+    "hackathons": "hackathon",
+    "event": "event",
+    "events": "event",
+    "meetup": "event",
+    "meetups": "event",
+    "workshop": "workshops",
+    "workshops": "workshops",
+    "course": "course",
+    "courses": "course",
+    "news": "news",
+}
+
+
+def normalize_category(category: Any) -> str:
+    """Normalizes singular/plural category variants into canonical category keys."""
+    if not category:
+        return "news"
+    key = str(category).strip().lower()
+    return CANONICAL_CATEGORIES.get(key, key)
+
 
 def normalize_city(city_or_text: Any) -> str:
     """
@@ -105,6 +135,7 @@ PENDING_DRAFTS_PATH = os.environ.get("PENDING_DRAFTS_PATH", os.path.join(BASE_DI
 LEGION_FEED_HTML_PATH = os.environ.get("LEGION_FEED_HTML_PATH", os.path.join(BASE_DIR, "legion_feed.html"))
 POSTS_JSON_PATH = os.environ.get("POSTS_JSON_PATH", os.path.join(BASE_DIR, "posts.json"))
 AUTO_UPDATE_INTERVAL_MINUTES = int(os.environ.get("AUTO_UPDATE_INTERVAL_MINUTES", "30"))
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "").strip()
 
 
 # Telegram Bot Settings
@@ -112,7 +143,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
 # Network & Collector Settings
-HTTP_TIMEOUT = int(os.environ.get("HTTP_TIMEOUT", "10"))
+HTTP_TIMEOUT = int(os.environ.get("HTTP_TIMEOUT", "12"))
 MAX_ITEMS_PER_FEED = int(os.environ.get("MAX_ITEMS_PER_FEED", "10"))
 HN_API_BASE = os.environ.get("HN_API_BASE", "https://hacker-news.firebaseio.com/v0")
 USER_AGENT = os.environ.get(

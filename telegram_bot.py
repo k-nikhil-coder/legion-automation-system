@@ -243,6 +243,17 @@ def push_pending_to_telegram(
     logger.info(f"Pushed {pushed} items to Telegram chat {chat_id}.")
     return pushed
 
+def _is_authorized_chat(chat_id: Any, allowed_chat_id: Optional[str] = None) -> bool:
+    """
+    Verifies chat_id against TELEGRAM_CHAT_ID when configured.
+    If TELEGRAM_CHAT_ID is unset (local dev/default tests), allows operation.
+    """
+    expected = (allowed_chat_id if allowed_chat_id is not None else getattr(config, "TELEGRAM_CHAT_ID", "")).strip()
+    if not expected:
+        return True
+    return str(chat_id or "").strip() == expected
+
+
 def handle_callback_query(bot: TelegramClient, query: Dict[str, Any], db_path: str = config.DB_PATH):
     """Processes callback button clicks (approve, reject, done, edit)."""
     query_id = query.get("id")
@@ -251,6 +262,11 @@ def handle_callback_query(bot: TelegramClient, query: Dict[str, Any], db_path: s
     chat_id = message.get("chat", {}).get("id")
     message_id = message.get("message_id")
     original_text = message.get("text", "")
+
+    if not _is_authorized_chat(chat_id):
+        logger.warning(f"Ignored unauthorized callback query from chat_id={chat_id}")
+        bot.answer_callback_query(query_id, text="Unauthorized chat", show_alert=True)
+        return
     
     if ":" not in data:
         bot.answer_callback_query(query_id, text="Invalid action")
@@ -331,6 +347,9 @@ def handle_callback_query(bot: TelegramClient, query: Dict[str, Any], db_path: s
 def handle_text_command(bot: TelegramClient, message: Dict[str, Any], db_path: str = config.DB_PATH):
     """Handles text commands from admin chat (/start, /status, /pending, /push, /edit)."""
     chat_id = message.get("chat", {}).get("id")
+    if not _is_authorized_chat(chat_id):
+        logger.warning(f"Ignored unauthorized command from chat_id={chat_id}")
+        return
     text = (message.get("text") or "").strip()
     
     if text in ("/start", "/help"):

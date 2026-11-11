@@ -18,9 +18,15 @@ if hasattr(sys.stdout, "reconfigure"):
 
 CATEGORY_GROUP_MAP = {
     "hackathon": "🏆 Hackathons",
+    "hackathons": "🏆 Hackathons",
     "event": "📅 Events & Workshops",
+    "events": "📅 Events & Workshops",
+    "workshop": "📅 Events & Workshops",
+    "workshops": "📅 Events & Workshops",
     "course": "📚 Courses and Resources",
+    "courses": "📚 Courses and Resources",
     "job": "💼 Jobs & Internships",
+    "jobs": "💼 Jobs & Internships",
     "news": "🌐 Tech Updates & NEWS"
 }
 
@@ -363,7 +369,7 @@ def format_draft(item: Dict[str, Any]) -> str:
     # Avoid duplicate badge if already present in title
     badge_suffix = f" {badge}" if badge not in title else ""
     
-    if category == "job":
+    if category in ("job", "jobs"):
         company = _safe_str(item.get("company"), "Tech Company")
         role = _safe_str(item.get("role"), title)
         exp = _safe_str(item.get("experience"), "Entry / Mid level")
@@ -371,7 +377,7 @@ def format_draft(item: Dict[str, Any]) -> str:
             loc = format_location_string(item)
         else:
             loc = _safe_str(item.get("location"), "Remote / Hybrid")
-        skills = _safe_str(item.get("skills"), "Software Engineering / Tech")
+        skills = _safe_str(item.get("skill_tags") or item.get("skills"), "Software Engineering / Tech")
         
         draft = (
             f"💼 {role} - {company}{badge_suffix}\n\n"
@@ -382,17 +388,19 @@ def format_draft(item: Dict[str, Any]) -> str:
         )
     else:
         icon = "🚀"
-        if category == "hackathon":
+        if category in ("hackathon", "hackathons"):
             icon = "⚡"
-        elif category == "course":
+        elif category in ("course", "courses"):
             icon = "🎓"
-        elif category == "event":
+        elif category in ("workshop", "workshops"):
+            icon = "🛠️"
+        elif category in ("event", "events"):
             icon = "🗓️"
         elif category == "news":
             icon = "💡"
             
         default_summary = f"New update from {_safe_str(item.get('source'), 'feed')}"
-        summary = clean_text(_safe_str(item.get("summary"), default_summary), 220)
+        summary = clean_text(_safe_str(item.get("summary"), default_summary), config.SUMMARY_MAX)
         date_deadline = _safe_str(item.get("deadline") or item.get("date_str"), "Check website")
         location = format_location_string(item)
         eligibility = _safe_str(item.get("eligibility"), "Open to all")

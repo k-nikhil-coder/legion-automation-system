@@ -1,0 +1,39 @@
+name: Legion Automation CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test runner dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest certifi
+
+      - name: Set up Node.js for dashboard JS syntax check
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate legion_feed.html embedded JS syntax
+        run: |
+          python -c "import re; s=re.search(r'<script>([\s\S]*?)</script>', open('legion_feed.html', encoding='utf-8').read()).group(1); open('check.js','w',encoding='utf-8').write(s)"
+          node --check check.js
+          rm -f check.js
+
+      - name: Run Python test suite
+        run: pytest -v

@@ -25,13 +25,41 @@ ARTICLE = re.compile(
     r"\b(complete guide|full guide|ultimate guide|breakdown|what you need to know|"
     r"dates, tickets|structured format|day-by-day)\b", re.I)
 
-ONLINE = re.compile(r"\b(online|virtual|webinar|remote|zoom|google meet)\b", re.I)
-HYD = re.compile(r"\b(hyderabad|hitec|gachibowli|t-hub|t-works|iiit|kondapur|"
+ONLINE = re.compile(r"\b(online|virtual|webinar|remote|zoom|google meet|work from home|wfh|pan[- ]india|anywhere)\b", re.I)
+HYD = re.compile(r"\b(hyderabad|hitec|gachibowli|t-hub|thub|t-works|iiit|kondapur|"
                  r"nanakramguda|madhapur|hicc|hitex|secunderabad)\b", re.I)
 OTHER_CITIES = re.compile(
     r"\b(bangalore|bengaluru|delhi|mumbai|pune|chennai|gurgaon|gurugram|noida|"
-    r"kolkata|ahmedabad|kochi|jaipur|london|new york|nyc|san francisco|dubai|"
-    r"singapore|berlin|paris|toronto|sydney|melbourne|tokyo|boston|los angeles)\b", re.I)
+    r"kolkata|ahmedabad|kochi|ernakulam|kottayam|lucknow|jaipur|chandigarh|indore|"
+    r"bhopal|nagpur|coimbatore|visakhapatnam|vijayawada|thiruvananthapuram|trivandrum|"
+    r"surat|patna|bhubaneswar|chimbote|peru|london|new york|nyc|san francisco|dubai|"
+    r"singapore|berlin|paris|toronto|sydney|melbourne|tokyo|boston|los angeles|austin|"
+    r"seattle|chicago|amsterdam|munich|zurich)\b", re.I)
+
+DISCUSSION_NOISE_REGEX = re.compile(
+    r"(^help!*\b|\bconfused whether\b|\bwhich laptop\b|\babout to buy a laptop\b|\brants?\b|"
+    r"\bai slop\b|\bdeserves better\b|\bshould i learn\b|\bworth learning\b|\bhow's the job market\b|"
+    r"\blooking for advice\b|\bcareer advice\b|^meet\s+[a-z]+\s+[a-z]+\s*:|^reasons to learn\b|"
+    r"\bwhy enterprise llms fail\b|\bstory time\b)",
+    re.I,
+)
+
+NON_TECH_ROLE_REGEX = re.compile(
+    r"\b(account executive|sales representative|\bsdr\b|\bbdr\b|business development|"
+    r"collections|accounts payable|renewals manager|telecaller|recruiter|talent acquisition|"
+    r"human resources|\bhr\b|registered nurse|accountant|legal counsel|customer support|"
+    r"consumer support|content reviewer|video annotation|digital marketing|marketing team|"
+    r"volunteering|\bcro\b|resume builder)\b",
+    re.I,
+)
+
+GEO_RESTRICTED_REMOTE_REGEX = re.compile(
+    r"(?:\b(us only|united states only|u\.s\. only|canada only|uk only|eu only|"
+    r"europe only|\bdach\b|\bemea\b|\blatam\b|boston, ma|san francisco, ca|new york, ny)\b|"
+    r"\bremote,?\s*(?:united states|\busa?\b|\bu\.s\.?\b|canada|uk|united kingdom|germany|france|spain|bulgaria|poland|brazil|mexico|argentina|colombia|australia|ireland|netherlands)\b|"
+    r"\bremote eligible in (?!india|apac|asia)[a-z]+)",
+    re.I,
+)
 
 TRUSTED = {
     "devpost.com", "kaggle.com", "hackculture.io", "unstop.com", "luma.com", "lu.ma",
@@ -41,6 +69,7 @@ TRUSTED = {
     "techcrunch.com", "lobste.rs", "stackoverflow.blog", "machinelearningmastery.com",
     "analyticsvidhya.com", "reddit.com", "community.dev", "gdg.community.dev",
     "github.blog", "example.com", "devfolio.co", "fossunited.org", "greenhouse.io", "lever.co",
+    "deeplearning.ai", "huggingface.co", "aws.amazon.com", "wellfound.com", "naukri.com", "internshala.com",
 }
 TRUSTED_DOMAINS = TRUSTED
 
@@ -53,7 +82,7 @@ WORKSHOP_REGEX = re.compile(
 )
 
 SENIOR_REJECT_REGEX = re.compile(
-    r"\b(senior|sr\.|staff|principal|lead|architect|manager|director|vp|head of|[5-9]\+\s*years|1[0-9]\+\s*years)\b",
+    r"(?:\b(?:senior|staff|principal|lead|architect|manager|director|vp|head of|[5-9]\+\s*years|1[0-9]\+\s*years)\b|\bsr\.?(?=\s|$|[,:-]))",
     re.I
 )
 
@@ -68,10 +97,13 @@ def _domain(url):
     return host[4:] if host.startswith("www.") else host
 
 
-def _is_trusted(url):
+def _is_trusted(url, source=""):
     host = _domain(url)
     if not host:
         return False
+    # Google News RSS job links from our vetted Search Jobs RSS collector pass if tech + non-senior + geo checks already passed
+    if host == "news.google.com" and str(source) == "Search Jobs RSS":
+        return True
     if host in TRUSTED:
         return True
     return any(host.endswith("." + t) for t in TRUSTED)
@@ -89,9 +121,11 @@ def _trim(text):
     return cut.rsplit(" ", 1)[0] + "…"
 
 
-def locate(text, city=None):
+def locate(text, city=None, explicit_text=""):
     """Return (badge, reason). badge: ONLINE | HYDERABAD - OFFLINE | BENGALURU - OFFLINE | None."""
-    if ONLINE.search(text):
+    content = explicit_text or text
+    # Explicit online/remote keyword in title or summary takes precedence over chapter defaults
+    if ONLINE.search(content):
         return "ONLINE", ""
     if city == "bengaluru":
         return "BENGALURU - OFFLINE", ""
@@ -102,69 +136,23 @@ def locate(text, city=None):
     m = OTHER_CITIES.search(text)
     if m:
         return None, f"offline in other city: {m.group(0)}"
+    if ONLINE.search(text):
+        return "ONLINE", ""
     return None, "location not stated"
 
 
-def gate(item):
-    title = item.get("title", "")
-    raw = item.get("summary", "")
-    loc = item.get("location") or item.get("where") or ""
-    city = item.get("city")
-    category = (item.get("category") or item.get("type") or "news").lower()
-    head = f"{title} {loc} {raw[:400]}"
-
-    # Check for senior job rejection
-    if category in ("job", "jobs"):
-        if SENIOR_REJECT_REGEX.search(title):
-            return "reject", "senior_role_filtered", item
-
-    if JUNK.search(title) or len(JUNK.findall(head)) >= 2:
-        return "reject", "off-topic (not tech)", item
-    if not TECH.search(head):
-        return "reject", "no tech keyword", item
-    if ARTICLE.search(title) or len(raw) > 1500:
-        return "reject", "article or listicle, not an opportunity", item
-
-    # Category routing: split events vs workshops
-    resolved_category = category
-    if category in ("event", "events", "workshop", "workshops"):
-        if WORKSHOP_REGEX.search(f"{title} {raw}"):
-            resolved_category = "workshops"
-        else:
-            resolved_category = "events"
-
-    # Experience level classification for jobs
-    experience_level = item.get("experience_level", "ALL")
-    if category in ("job", "jobs"):
-        if EARLY_CAREER_REGEX.search(f"{title} {raw}"):
-            experience_level = "FRESHER_INTERN"
-        else:
-            experience_level = "EARLY_MID"
-
-    badge, why = locate(head, city=city)
-    if badge is None and why.startswith("offline"):
-        return "reject", why, item
-
-    url = item.get("link") or item.get("url") or ""
-    clean = dict(
-        item,
-        summary=_trim(raw),
-        badge=badge,
-        link=url,
-        url=url,
-        category=resolved_category,
-        type=resolved_category,
-        experience_level=experience_level
-    )
-
-    # Compute relevance_score (0 to 100)
+def compute_relevance_score(item: dict) -> int:
+    """Computes relevance score (0-100) cleanly for both pre- and post-enrichment items."""
     score = 0
+    badge = item.get("badge") or ""
     if badge == "HYDERABAD - OFFLINE":
         score += 30
-    if experience_level == "FRESHER_INTERN" or clean.get("compensation"):
+    elif badge == "BENGALURU - OFFLINE":
         score += 25
-    
-    date_val = clean.get("deadline") or clean.get("event_start") or clean.get("date_str")
+    if item.get("experience_level") == "FRESHER_INTERN" or item.get("compensation") or item.get("stipend"):
+        score += 25
+
+    date_val = item.get("deadline") or item.get("event_start") or item.get("date_str")
     if date_val:
         try:
             import db
@@ -176,16 +164,111 @@ def gate(item):
                     score += 20
         except Exception:
             pass
-            
-    if _is_trusted(url):
+
+    url = item.get("url") or item.get("link") or ""
+    if _is_trusted(url, source=item.get("source", "")):
         score += 15
-    if clean.get("skill_tags"):
+    if item.get("skill_tags") or item.get("skills"):
         score += 10
-    clean["relevance_score"] = min(100, score)
+    return min(100, score)
+
+
+def gate(item):
+    title = item.get("title", "")
+    raw = item.get("summary", "")
+    loc = item.get("location") or item.get("where") or ""
+    city = item.get("city")
+    source = str(item.get("source") or "")
+    category = (item.get("category") or item.get("type") or "news").lower()
+    head = f"{title} {loc} {raw[:400]}"
+    content_only = f"{title} {raw[:400]}"
+
+    if re.match(r"^https?://", title.strip()):
+        return "reject", "raw URL as title", item
+
+    # Check for senior & non-tech/geo-restricted job rejection
+    if category in ("job", "jobs"):
+        if SENIOR_REJECT_REGEX.search(title):
+            return "reject", "senior_role_filtered", item
+        if NON_TECH_ROLE_REGEX.search(title):
+            return "reject", "non_tech_role_filtered", item
+        if GEO_RESTRICTED_REMOTE_REGEX.search(head) and not HYD.search(head) and city not in ("hyderabad", "bengaluru"):
+            return "reject", "offline in other city: geo-restricted remote", item
+
+    if JUNK.search(title) or len(JUNK.findall(head)) >= 2:
+        return "reject", "off-topic (not tech)", item
+    if DISCUSSION_NOISE_REGEX.search(title) or DISCUSSION_NOISE_REGEX.search(raw[:200]):
+        return "reject", "discussion or opinion noise, not an opportunity", item
+    if not TECH.search(head):
+        return "reject", "no tech keyword", item
+    if ARTICLE.search(title) or len(raw) > 1500:
+        return "reject", "article or listicle, not an opportunity", item
+
+    # Category routing: normalize & split events vs workshops
+    resolved_category = category
+    if category in ("event", "events", "workshop", "workshops"):
+        if WORKSHOP_REGEX.search(f"{title} {raw}"):
+            resolved_category = "workshops"
+        else:
+            resolved_category = "events"
+    elif category in ("job", "jobs"):
+        url_low = str(item.get("url") or item.get("link") or "").lower()
+        if "dev.to/" in url_low and not re.search(r"\b(hiring|apply now|job opening|internship at|engineer at|developer at|is hiring)\b", title, re.I):
+            resolved_category = "news"
+        else:
+            resolved_category = "job"
+    elif category in ("hackathon", "hackathons"):
+        resolved_category = "hackathon"
+    elif category in ("course", "courses"):
+        url_low = str(item.get("url") or item.get("link") or "").lower()
+        if "arxiv.org" in url_low or source.lower().startswith("arxiv"):
+            resolved_category = "news"
+        elif "reddit.com" in url_low or source.lower().startswith("reddit"):
+            resolved_category = "news"
+        elif WORKSHOP_REGEX.search(title):
+            resolved_category = "workshops"
+        else:
+            resolved_category = "course"
+
+    # Experience level classification for jobs
+    experience_level = item.get("experience_level", "ALL")
+    if resolved_category == "job":
+        if EARLY_CAREER_REGEX.search(f"{title} {raw}"):
+            experience_level = "FRESHER_INTERN"
+        else:
+            experience_level = "EARLY_MID"
+
+    badge, why = locate(head, city=city, explicit_text=content_only)
+    if badge is None and why.startswith("offline"):
+        return "reject", why, item
+
+    url = item.get("link") or item.get("url") or ""
+    resolved_city = city
+    if not resolved_city:
+        if badge == "HYDERABAD - OFFLINE":
+            resolved_city = "hyderabad"
+        elif badge == "BENGALURU - OFFLINE":
+            resolved_city = "bengaluru"
+        elif badge == "ONLINE":
+            resolved_city = "online"
+
+    clean = dict(
+        item,
+        summary=_trim(raw),
+        badge=badge,
+        city=resolved_city,
+        link=url,
+        url=url,
+        category=resolved_category,
+        type=resolved_category,
+        experience_level=experience_level
+    )
+
+    clean["relevance_score"] = compute_relevance_score(clean)
 
     if badge is None:
         return "review", why, clean
-    if not _is_trusted(url):
+    if not _is_trusted(url, source=source):
         return "review", f"untrusted domain: {_domain(url) or 'no link'}", clean
     return "accept", "ok", clean
 

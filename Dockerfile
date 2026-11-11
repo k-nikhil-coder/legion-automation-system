@@ -26,9 +26,9 @@ RUN mkdir -p /app/data
 # Default port
 EXPOSE 8000
 
-# Healthcheck hitting the live posts.json endpoint
+# Healthcheck hitting the lightweight /health endpoint
 HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:8000/posts.json || exit 1
+  CMD curl -f http://localhost:8000/health || exit 1
 
 # Launch pipeline in server mode with auto-updater daemon
 CMD ["python", "pipeline.py", "--serve", "8000", "--auto-update", "30"]
