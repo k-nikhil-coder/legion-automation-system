@@ -12,25 +12,28 @@ from urllib.parse import urlparse
 TECH = re.compile(
     r"\b(ai|ml|llm|agents?|agentic|python|java|javascript|typescript|react|rust|"
     r"cloud|aws|gcp|azure|devops|data|software|developers?|engineers?|engineering|"
-    r"coding|hackathon|cyber|security|blockchain|web3|api|kubernetes|docker|"
-    r"salesforce|\.net|qa|testing|startup|open source|programming|machine learning|"
+    r"coding|hackathon|cyber|security|blockchain|web3|api|kubernetes|docker|saas|genai|"
+    r"salesforce|\.net|qa|testing|startup|product management|open source|programming|machine learning|"
     r"intern(ship)?|hiring|workshop|bootcamp|course|certification)\b", re.I)
 
 JUNK = re.compile(
     r"\b(shopping|festival|rugby|sevens|7s|raffles?|concerts?|sale|discounts?|"
     r"cricket|football|fashion|wedding|real estate|casino|betting|horoscope|"
-    r"recipes?|holiday|tourists?|vat|jewellery|gold)\b", re.I)
+    r"recipes?|holiday|tourists?|vat|jewellery|gold|scholarship test|demo class|"
+    r"toastmasters|industrial pumps|street photography|sign india|grand worship|"
+    r"education expo|digital marketing|content creator|mid-career transition|"
+    r"summer camp)\b", re.I)
 
 ARTICLE = re.compile(
     r"\b(complete guide|full guide|ultimate guide|breakdown|what you need to know|"
     r"dates, tickets|structured format|day-by-day)\b", re.I)
 
 ONLINE = re.compile(r"\b(online|virtual|webinar|remote|zoom|google meet|work from home|wfh|pan[- ]india|anywhere)\b", re.I)
-HYD = re.compile(r"\b(hyderabad|hitec|gachibowli|t-hub|thub|t-works|iiit|kondapur|"
-                 r"nanakramguda|madhapur|hicc|hitex|secunderabad)\b", re.I)
+HYD = re.compile(r"\b(hyderabad|hitec|hi-tech|gachibowli|raidurg|t-hub|thub|t-works|iiit|iit hyderabad|kondapur|"
+                 r"nanakramguda|madhapur|hicc|hitex|secunderabad|cokarma|woxsen|mlrit|cmrcet)\b", re.I)
 OTHER_CITIES = re.compile(
     r"\b(bangalore|bengaluru|delhi|mumbai|pune|chennai|gurgaon|gurugram|noida|"
-    r"kolkata|ahmedabad|kochi|ernakulam|kottayam|lucknow|jaipur|chandigarh|indore|"
+    r"kolkata|ahmedabad|kochi|ernakulam|kottayam|kerala|lucknow|jaipur|chandigarh|indore|"
     r"bhopal|nagpur|coimbatore|visakhapatnam|vijayawada|thiruvananthapuram|trivandrum|"
     r"surat|patna|bhubaneswar|chimbote|peru|london|new york|nyc|san francisco|dubai|"
     r"singapore|berlin|paris|toronto|sydney|melbourne|tokyo|boston|los angeles|austin|"
@@ -70,6 +73,7 @@ TRUSTED = {
     "analyticsvidhya.com", "reddit.com", "community.dev", "gdg.community.dev",
     "github.blog", "example.com", "devfolio.co", "fossunited.org", "greenhouse.io", "lever.co",
     "deeplearning.ai", "huggingface.co", "aws.amazon.com", "wellfound.com", "naukri.com", "internshala.com",
+    "allevents.in", "aitinkerers.org", "konfhub.com", "townscript.com",
 }
 TRUSTED_DOMAINS = TRUSTED
 
@@ -186,6 +190,17 @@ def gate(item):
     if re.match(r"^https?://", title.strip()):
         return "reject", "raw URL as title", item
 
+    if re.search(r"\bcommunity calendar\b", title, re.I) or str(item.get("deadline") or "").strip().lower() == "check calendar":
+        return "reject", "calendar hub link, not an event", item
+
+    # Guard Indian city chapters against leaked foreign-timezone events (e.g. -05:00 Peru DevFests)
+    date_ctx = str(item.get("event_start") or item.get("date_str") or "").strip()
+    if (city in ("hyderabad", "bengaluru") or "gdg" in source.lower()) and date_ctx:
+        if re.search(r"[+-](?!05:30)\d{2}:\d{2}$", date_ctx) and not HYD.search(title) and not any(
+            k in title.lower() for k in ("hyderabad", "bengaluru", "bangalore")
+        ):
+            return "reject", "offline in other city: foreign timezone event", item
+
     # Check for senior & non-tech/geo-restricted job rejection
     if category in ("job", "jobs"):
         if SENIOR_REJECT_REGEX.search(title):
@@ -218,7 +233,14 @@ def gate(item):
         else:
             resolved_category = "job"
     elif category in ("hackathon", "hackathons"):
-        resolved_category = "hackathon"
+        url_low = str(item.get("url") or item.get("link") or "").lower()
+        if "dev.to/" in url_low and (
+            re.search(r"\b(is over|what the winners|i built|i turned|how we built|kinda hard)\b", title, re.I)
+            or not re.search(r"\b(announcing|register|submissions? open|prize pool|join the .* challenge|official challenge)\b", f"{title} {raw[:300]}", re.I)
+        ):
+            resolved_category = "news"
+        else:
+            resolved_category = "hackathon"
     elif category in ("course", "courses"):
         url_low = str(item.get("url") or item.get("link") or "").lower()
         if "arxiv.org" in url_low or source.lower().startswith("arxiv"):
@@ -244,7 +266,7 @@ def gate(item):
 
     url = item.get("link") or item.get("url") or ""
     resolved_city = city
-    if not resolved_city:
+    if not resolved_city or (resolved_city == "other" and badge in ("HYDERABAD - OFFLINE", "BENGALURU - OFFLINE", "ONLINE")):
         if badge == "HYDERABAD - OFFLINE":
             resolved_city = "hyderabad"
         elif badge == "BENGALURU - OFFLINE":

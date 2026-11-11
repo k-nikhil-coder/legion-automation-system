@@ -2964,6 +2964,222 @@ class TestLegionEnhancements(unittest.TestCase):
             server.shutdown()
             server.server_close()
 
+    def test_parse_date_ist_same_month_range_expires_past_hackathon(self):
+        """Compact ranges like 'Nov 07 - 08, 2020' parse the end date and expire immediately."""
+        dt = db.parse_date_ist("Nov 07 - 08, 2020")
+        self.assertIsNotNone(dt)
+        self.assertEqual(dt.strftime("%Y-%m-%d"), "2020-11-08")
+
+        dt_dmy = db.parse_date_ist("14 - 15 Oct 2021")
+        self.assertIsNotNone(dt_dmy)
+        self.assertEqual(dt_dmy.strftime("%Y-%m-%d"), "2021-10-15")
+
+        exp_str, status = db.compute_expires_at({
+            "category": "hackathon",
+            "title": "Past Range Hack",
+            "deadline": "Nov 07 - 08, 2020",
+            "date_str": "Nov 07 - 08, 2020",
+        })
+        self.assertEqual(status, "expired")
+        self.assertTrue(exp_str.startswith("2020-11-08"))
+
+    def test_update_item_preserves_existing_dates_and_expires_overdue(self):
+        """Partial update_item preserves existing date_str/category and reconciliation expires old events."""
+        past_iso = (config.now_ist() - timedelta(days=15)).strftime("%Y-%m-%dT09:00:00+05:30")
+        row_id = db.insert_item({
+            "source": "GDG Hyderabad",
+            "category": "event",
+            "title": "DevFest Hyderabad Legacy Test",
+            "url": "https://gdg.community.dev/e/devfest-legacy-test",
+            "summary": "Developer meetup in Hyderabad at T-Hub.",
+            "date_str": past_iso,
+            "deadline": "RSVP on Chapter Page",
+            "city": "hyderabad",
+            "location": "Hyderabad",
+            "badge": "HYDERABAD - OFFLINE",
+        }, db_path=self.db_path)
+        self.assertIsNotNone(row_id)
+
+        # Simulate stale TTL row before reconcile runs
+        future_ttl = (config.now_ist() + timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S")
+        with db.get_db_connection(self.db_path) as conn:
+            with conn:
+                conn.execute("UPDATE items SET status = 'pending', expires_at = ? WHERE id = ?", (future_ttl, row_id))
+
+        res = pipeline.reconcile_legacy_db_items(db_path=self.db_path)
+        self.assertGreaterEqual(res["expired"], 1)
+        self.assertEqual(db.get_item(row_id, db_path=self.db_path)["status"], "expired")
+
+    def test_serialize_feed_skips_rsvp_placeholder_deadline(self):
+        """Feed serialization ignores 'RSVP on Meetup' and extracts real event_start date."""
+        future_day = (config.now_ist() + timedelta(days=8)).strftime("%Y-%m-%d")
+        row = {
+            "id": 901,
+            "category": "events",
+            "title": "Agentic AI Meetup Hyderabad",
+            "summary": "Hands-on AI meetup at T-Hub.",
+            "deadline": "RSVP on Meetup",
+            "event_start": f"{future_day}T16:00:00+05:30",
+            "date_str": f"{future_day}T16:00:00+05:30",
+            "city": "hyderabad",
+            "location": "T-Hub, Hyderabad",
+            "url": "https://meetup.com/ai-hyd/events/901",
+            "status": "pending",
+        }
+        serialized = pipeline._serialize_db_item_for_feed(row)
+        self.assertEqual(serialized["date"], future_day)
+        self.assertEqual(serialized["badge"], "HYDERABAD - OFFLINE")
+
+    def test_parse_meetup_find_distinguishes_online_vs_hyderabad_physical(self):
+        """Meetup Find Apollo parser maps physical Hyderabad events to hyderabad and ONLINE groups to online."""
+        fut = (config.now_ist() + timedelta(days=6)).strftime("%Y-%m-%d")
+        past = (config.now_ist() - timedelta(days=5)).strftime("%Y-%m-%d")
+        next_payload = {
+            "props": {
+                "pageProps": {
+                    "__APOLLO_STATE__": {
+                        "Venue:v1": {"name": "T-Hub Phase 2", "city": "Hyderabad"},
+                        "Group:g1": {"name": "Hyderabad AI Society", "city": "Hyderabad"},
+                        "Group:g2": {"name": "Bangalore AI Group", "city": "Bengaluru"},
+                        "Event:e1": {
+                            "id": "e1",
+                            "title": "Agentic AI Developer Meet - Hyderabad",
+                            "eventUrl": "https://www.meetup.com/hyd-ai/events/101/",
+                            "dateTime": f"{fut}T16:00:00+05:30",
+                            "eventType": "PHYSICAL",
+                            "description": "Live AI builder meetup.",
+                            "venue": {"__ref": "Venue:v1"},
+                            "group": {"__ref": "Group:g1"},
+                        },
+                        "Event:e2": {
+                            "id": "e2",
+                            "title": "Google AI Deep Dive Online",
+                            "eventUrl": "https://www.meetup.com/blr-ai/events/102/",
+                            "dateTime": f"{fut}T20:00:00+05:30",
+                            "eventType": "ONLINE",
+                            "description": "Virtual AI session.",
+                            "group": {"__ref": "Group:g2"},
+                        },
+                        "Event:e_old": {
+                            "id": "e_old",
+                            "title": "Expired Meetup",
+                            "eventUrl": "https://www.meetup.com/hyd-ai/events/100/",
+                            "dateTime": f"{past}T10:00:00+05:30",
+                            "eventType": "PHYSICAL",
+                            "venue": {"__ref": "Venue:v1"},
+                        },
+                    }
+                }
+            }
+        }
+        html_doc = f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(next_payload)}</script></html>'
+        parsed = collectors2.parse_meetup_find(html_doc, "Meetup Hyderabad Tech", limit=10, city="hyderabad")
+        self.assertEqual(len(parsed), 2)
+        by_url = {it["url"]: it for it in parsed}
+        self.assertEqual(by_url["https://www.meetup.com/hyd-ai/events/101/"]["city"], "hyderabad")
+        self.assertIn("T-Hub", by_url["https://www.meetup.com/hyd-ai/events/101/"]["location"])
+        self.assertEqual(by_url["https://www.meetup.com/blr-ai/events/102/"]["city"], "online")
+
+    def test_parse_allevents_and_devfolio_dehydrated_state(self):
+        """AllEvents JSON-LD parses upcoming events cleanly, coaching spam is rejected, and Devfolio dehydratedState works."""
+        fut = (config.now_ist() + timedelta(days=7)).strftime("%Y-%m-%d")
+        ld_events = [
+            {
+                "@context": "https://schema.org",
+                "@type": "Event",
+                "name": "Agentic AI: Zero to Hero",
+                "url": "https://allevents.in/hyderabad/agentic-ai/1001",
+                "startDate": f"{fut}T10:00:00+05:30",
+                "location": {"@type": "Place", "name": "MUST AI Cafe"},
+                "description": "Hands-on LLM agents session.",
+            },
+            {
+                "@context": "https://schema.org",
+                "@type": "Event",
+                "name": "Free Scholarship Test for Python - Quality Thought",
+                "url": "https://allevents.in/hyderabad/scholarship/1002",
+                "startDate": f"{fut}T10:00:00+05:30",
+                "location": {"@type": "Place", "name": "Ameerpet"},
+                "description": "Coaching center test.",
+            },
+        ]
+        ae_html = f'<script type="application/ld+json">{json.dumps(ld_events)}</script>'
+        parsed_ae = collectors2.parse_allevents_jsonld(ae_html, "AllEvents Hyderabad Tech", limit=10, city="hyderabad")
+        self.assertEqual(len(parsed_ae), 2)
+        dec0, _, _ = quality_gate.gate(parsed_ae[0])
+        dec1, reason1, _ = quality_gate.gate(parsed_ae[1])
+        self.assertEqual(dec0, "accept")
+        self.assertEqual(dec1, "reject")
+        self.assertIn("off-topic", reason1)
+
+        # Devfolio modern dehydratedState mock
+        df_next = {
+            "props": {
+                "pageProps": {
+                    "dehydratedState": {
+                        "queries": [{
+                            "state": {
+                                "data": {
+                                    "open_hackathons": [{
+                                        "name": "Hyderabad Buildathon 2026",
+                                        "slug": "hyd-build-2026",
+                                        "starts_at": fut,
+                                        "ends_at": fut,
+                                        "is_online": False,
+                                        "city": "Hyderabad",
+                                        "desc": "AI & Web3 builder hackathon at T-Hub.",
+                                    }]
+                                }
+                            }
+                        }]
+                    }
+                }
+            }
+        }
+        df_html = f'<script id="__NEXT_DATA__" type="application/json">{json.dumps(df_next)}</script>'.encode("utf-8")
+        with patch.object(collectors2, "fetch_raw", side_effect=[(None, "404"), (df_html, None)]):
+            df_items = collectors2.collect_devfolio_hackathons()
+        self.assertEqual(len(df_items), 1)
+        self.assertEqual(df_items[0]["title"], "Hyderabad Buildathon 2026")
+        self.assertEqual(df_items[0]["city"], "hyderabad")
+
+    def test_unstop_hyderabad_past_event_filtering(self):
+        """Unstop Hyderabad parser drops past events and tags Hyderabad campus hackathons as hyderabad."""
+        fut = (config.now_ist() + timedelta(days=9)).strftime("%Y-%m-%d")
+        past = (config.now_ist() - timedelta(days=30)).strftime("%Y-%m-%d")
+        payload = {
+            "data": {
+                "data": [
+                    {
+                        "id": 1,
+                        "title": "HackIndia 2025 CBIT Old",
+                        "public_url": "hackathons/old-cbit-1",
+                        "end_date": f"{past}T18:00:00+05:30",
+                        "region": "offline",
+                        "organisation": {"name": "CBIT Hyderabad"},
+                    },
+                    {
+                        "id": 2,
+                        "title": "AGENTIC X 2.0 - AI Hackathon",
+                        "public_url": "hackathons/agentic-x-woxsen-hyderabad-2",
+                        "start_date": f"{fut}T09:00:00+05:30",
+                        "end_date": f"{fut}T18:00:00+05:30",
+                        "region": "hybrid",
+                        "organisation": {"name": "Woxsen University, Hyderabad"},
+                    },
+                ]
+            }
+        }
+        res = collectors2.parse_unstop_api(
+            json.dumps(payload).encode("utf-8"),
+            limit=10,
+            category="hackathon",
+            source_name="Unstop Hyderabad",
+        )
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]["title"], "AGENTIC X 2.0 - AI Hackathon")
+        self.assertEqual(res[0]["city"], "hyderabad")
+
 
 if __name__ == "__main__":
     unittest.main()

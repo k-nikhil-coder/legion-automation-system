@@ -77,14 +77,15 @@ import config
 from datetime import datetime, timedelta
 
 def parse_date_ist(val: Any) -> Optional[datetime]:
-    """Parses various date string formats to an Asia/Kolkata localized datetime."""
+    """Parses various date string formats (including compact date ranges) to Asia/Kolkata IST."""
     if not val:
         return None
     s = str(val).strip()
     if not s or s.lower() in (
         "tba / open", "check website", "ongoing", "open", "tba", "check link",
-        "rsvp on chapter page", "rsvp on meetup", "see details", "see article",
-        "until filled", "unknown"
+        "rsvp on chapter page", "rsvp on meetup", "rsvp on luma", "see details",
+        "see article", "see devpost", "check calendar", "check unstop",
+        "check event page", "until filled", "unknown"
     ):
         return None
     res_dt = None
@@ -105,30 +106,59 @@ def parse_date_ist(val: Any) -> Optional[datetime]:
             pass
     import re
     if not res_dt:
-        # YYYY-MM-DD
-        m = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', s)
-        if m:
+        # YYYY-MM-DD (prefer end date if range contains two ISO dates)
+        iso_matches = re.findall(r'(\d{4})-(\d{1,2})-(\d{1,2})', s)
+        if iso_matches:
+            yr, mo, dy = iso_matches[-1]
             try:
-                res_dt = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), 23, 59, 59, tzinfo=config.IST)
+                res_dt = datetime(int(yr), int(mo), int(dy), 23, 59, 59, tzinfo=config.IST)
             except Exception:
                 pass
     if not res_dt:
-        # DD Mon YYYY
-        m2 = re.search(r'(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\s+(\d{4})', s)
-        if m2:
+        # Compact same-month range: "Nov 07 - 08, 2026" -> use end day "08" + "Nov" + "2026"
+        m_rng1 = re.search(
+            r'([A-Za-z]{3,9})\s+\d{1,2}(?:st|nd|rd|th)?\s*[-–—to]+\s*(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})',
+            s,
+            re.I,
+        )
+        if m_rng1:
             try:
-                day, mon, yr = int(m2.group(1)), m2.group(2)[:3], int(m2.group(3))
+                mon, day, yr = m_rng1.group(1)[:3], int(m_rng1.group(2)), int(m_rng1.group(3))
                 dt = datetime.strptime(f"{day} {mon} {yr}", "%d %b %Y")
                 res_dt = dt.replace(hour=23, minute=59, second=59, tzinfo=config.IST)
             except Exception:
                 pass
     if not res_dt:
-        # Mon DD, YYYY
-        m3 = re.search(r'([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})', s)
-        if m3:
+        # Compact DD - DD Mon YYYY: "14 - 15 Nov 2026" -> "15 Nov 2026"
+        m_rng2 = re.search(
+            r'\d{1,2}(?:st|nd|rd|th)?\s*[-–—to]+\s*(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9}),?\s+(\d{4})',
+            s,
+            re.I,
+        )
+        if m_rng2:
             try:
-                mon, day, yr = m3.group(1)[:3], int(m3.group(2)), int(m3.group(3))
+                day, mon, yr = int(m_rng2.group(1)), m_rng2.group(2)[:3], int(m_rng2.group(3))
                 dt = datetime.strptime(f"{day} {mon} {yr}", "%d %b %Y")
+                res_dt = dt.replace(hour=23, minute=59, second=59, tzinfo=config.IST)
+            except Exception:
+                pass
+    if not res_dt:
+        # DD Mon YYYY (pick last match when a range has two full dates)
+        m2_list = re.findall(r'(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\s+(\d{4})', s)
+        if m2_list:
+            try:
+                d_str, m_str, y_str = m2_list[-1]
+                dt = datetime.strptime(f"{int(d_str)} {m_str[:3]} {int(y_str)}", "%d %b %Y")
+                res_dt = dt.replace(hour=23, minute=59, second=59, tzinfo=config.IST)
+            except Exception:
+                pass
+    if not res_dt:
+        # Mon DD, YYYY (pick last match when a range has two full dates e.g. "Jun 24 - Nov 15, 2026")
+        m3_list = re.findall(r'([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})', s)
+        if m3_list:
+            try:
+                m_str, d_str, y_str = m3_list[-1]
+                dt = datetime.strptime(f"{int(d_str)} {m_str[:3]} {int(y_str)}", "%d %b %Y")
                 res_dt = dt.replace(hour=23, minute=59, second=59, tzinfo=config.IST)
             except Exception:
                 pass
@@ -601,8 +631,12 @@ def update_item(item_id: int, item_data: Dict[str, Any], db_path: str = DB_PATH)
     first_seen_val = existing.get("first_seen") or existing.get("created_at")
     first_seen_dt = parse_date_ist(first_seen_val) or config.now_ist()
 
-    # Recompute expires_at and status
-    expires_at_str, computed_status = compute_expires_at(item_data, first_seen_dt=first_seen_dt)
+    # Merge existing metadata with incoming updates before recomputing expiry so partial updates preserve category & date_str
+    merged_for_expiry = dict(existing)
+    for k, v in item_data.items():
+        if v is not None and v != "":
+            merged_for_expiry[k] = v
+    expires_at_str, computed_status = compute_expires_at(merged_for_expiry, first_seen_dt=first_seen_dt)
     status_val = item_data.get("status") or existing.get("status") or "pending"
     if computed_status == "expired":
         status_val = "expired"
@@ -685,10 +719,13 @@ def get_stats(db_path: str = DB_PATH) -> Dict[str, int]:
 
 def expire_old_items(db_path: str = DB_PATH) -> int:
     """
-    Expiry job: UPDATE status='expired' WHERE expires_at < now.
+    Expiry job: UPDATE status='expired' WHERE expires_at < now, and also expire
+    active events/workshops/hackathons whose parsed event/deadline date is already past.
     Does NOT delete rows so that URLs remain for deduplication.
     """
-    now_str = config.now_ist().strftime("%Y-%m-%d %H:%M:%S")
+    now_dt = config.now_ist()
+    now_str = now_dt.strftime("%Y-%m-%d %H:%M:%S")
+    expired_count = 0
     with get_db_connection(db_path) as conn:
         with conn:
             cursor = conn.cursor()
@@ -699,7 +736,42 @@ def expire_old_items(db_path: str = DB_PATH) -> int:
                   AND expires_at < ? 
                   AND status != 'expired'
             """, (now_str,))
-            return cursor.rowcount
+            expired_count += cursor.rowcount
+
+            # Check active events/workshops/hackathons in case a date range or date_str already elapsed
+            cursor.execute("""
+                SELECT id, category, deadline, event_end, event_start, date_str
+                FROM items
+                WHERE status IN ('pending', 'accepted', 'review', 'approved')
+                  AND lower(category) IN ('event', 'events', 'workshop', 'workshops', 'hackathon', 'hackathons')
+            """)
+            overdue_updates = []
+            for row in cursor.fetchall():
+                for field in ("deadline", "event_end", "event_start", "date_str"):
+                    val = row[field]
+                    if not val:
+                        continue
+                    parsed = parse_date_ist(val)
+                    if parsed:
+                        end_of_day = parsed.replace(hour=23, minute=59, second=59)
+                        if end_of_day < now_dt:
+                            overdue_updates.append((end_of_day.strftime("%Y-%m-%d %H:%M:%S"), row["id"]))
+                        break
+
+            for exp_str, item_id in overdue_updates:
+                cursor.execute(
+                    "UPDATE items SET status = 'expired', expires_at = ? WHERE id = ?",
+                    (exp_str, item_id),
+                )
+                expired_count += cursor.rowcount
+                try:
+                    cursor.execute(
+                        "UPDATE opportunities SET status = 'expired', expires_at = ? WHERE id = ?",
+                        (exp_str, item_id),
+                    )
+                except Exception:
+                    pass
+    return expired_count
 
 def purge_old_expired_bodies(db_path: str = DB_PATH) -> int:
     """

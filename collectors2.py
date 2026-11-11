@@ -18,7 +18,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 import quality_gate
@@ -262,10 +262,26 @@ SOURCES: Dict[str, Dict[str, Any]] = {
         "category": "news",
         "headers": {"User-Agent": DEFAULT_USER_AGENT},
     },
-    # 10. Hyderabad Tech Communities (GDG, HydPy, React, AWS, AI)
+    # 10. Hyderabad Tech Communities (GDG, HydPy, React, AWS, AI, CNCF, Meetup Find, AllEvents)
     "gdg_hyderabad": {
         "name": "GDG Hyderabad",
-        "url": "https://gdg.community.dev/api/chapter/626/event/",
+        "url": "https://gdg.community.dev/api/chapter/626/event/?status=Live",
+        "type": "bevy_api",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "gdg_cloud_hyderabad": {
+        "name": "GDG Cloud Hyderabad",
+        "url": "https://gdg.community.dev/api/chapter/317/event/?status=Live",
+        "type": "bevy_api",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "cncf_hyderabad": {
+        "name": "CNCF Cloud Native Hyderabad",
+        "url": "https://community.cncf.io/api/chapter/624/event/?status=Live",
         "type": "bevy_api",
         "category": "event",
         "city": "hyderabad",
@@ -299,6 +315,46 @@ SOURCES: Dict[str, Dict[str, Any]] = {
         "name": "AI Community Hyderabad",
         "url": "https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/ical/",
         "type": "ical",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "hyderabad_ai_society": {
+        "name": "Hyderabad AI Society Meetup",
+        "url": "https://www.meetup.com/hyderabad-ai-society-meetup-group/events/ical/",
+        "type": "ical",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "producttank_hyderabad": {
+        "name": "ProductTank Hyderabad",
+        "url": "https://www.meetup.com/producttank-hyderabad/events/ical/",
+        "type": "ical",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "meetup_hyd_tech": {
+        "name": "Meetup Hyderabad Tech",
+        "url": "https://www.meetup.com/find/?location=in--Hyderabad&source=EVENTS&categoryId=546",
+        "type": "meetup_find",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "meetup_hyd_startups": {
+        "name": "Meetup Hyderabad Startups",
+        "url": "https://www.meetup.com/find/?location=in--Hyderabad&source=EVENTS&categoryId=405",
+        "type": "meetup_find",
+        "category": "event",
+        "city": "hyderabad",
+        "headers": {"User-Agent": DEFAULT_USER_AGENT},
+    },
+    "allevents_hyd_tech": {
+        "name": "AllEvents Hyderabad Tech",
+        "url": "https://allevents.in/hyderabad/technology",
+        "type": "allevents_jsonld",
         "category": "event",
         "city": "hyderabad",
         "headers": {"User-Agent": DEFAULT_USER_AGENT},
@@ -360,7 +416,7 @@ SOURCES: Dict[str, Dict[str, Any]] = {
     # 16. Bengaluru & Hyderabad Local Ecosystem Sources
     "gdg_bangalore": {
         "name": "GDG Bangalore",
-        "url": "https://gdg.community.dev/api/chapter/182/event/",
+        "url": "https://gdg.community.dev/api/chapter/182/event/?status=Live",
         "type": "bevy_api",
         "category": "event",
         "city": "bengaluru",
@@ -710,6 +766,31 @@ def parse_bevy_api(data: bytes, source_name: str, limit: int = 10, city: str = "
     return items
 
 
+def _extract_jsonld_events(html_text: str) -> List[Dict[str, Any]]:
+    """Extracts schema.org Event objects recursively from HTML JSON-LD script blocks."""
+    found: List[Dict[str, Any]] = []
+
+    def _walk(node: Any) -> None:
+        if isinstance(node, list):
+            for el in node:
+                _walk(el)
+        elif isinstance(node, dict):
+            ntype = str(node.get("@type", "")).lower()
+            if ntype == "event":
+                found.append(node)
+                return
+            for key in ("@graph", "itemListElement", "item"):
+                if key in node:
+                    _walk(node[key])
+
+    for raw_ld in re.findall(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>([\s\S]*?)</script>', html_text, re.I):
+        try:
+            _walk(json.loads(raw_ld.strip()))
+        except Exception:
+            pass
+    return found
+
+
 def parse_luma(html_text: str, source_name: str, limit: int = 10, city: str = "hyderabad") -> List[Dict[str, Any]]:
     """Parses Luma calendar page HTML via __NEXT_DATA__ or JSON-LD fallback."""
     items: List[Dict[str, Any]] = []
@@ -758,57 +839,229 @@ def parse_luma(html_text: str, source_name: str, limit: int = 10, city: str = "h
                     "posted": today_str,
                 })
 
-        # Fallback to JSON-LD Event blocks if __NEXT_DATA__ yields none
+        # Fallback to shared JSON-LD Event extraction if __NEXT_DATA__ yields none
         if not items:
-            ld_blocks = re.findall(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>([\s\S]*?)</script>', html_text, re.I)
-            for raw_ld in ld_blocks:
-                try:
-                    obj = json.loads(raw_ld.strip())
-                    objs = obj if isinstance(obj, list) else (obj.get("@graph", [obj]) if isinstance(obj, dict) else [])
-                    for o in objs:
-                        if isinstance(o, dict) and str(o.get("@type", "")).lower() == "event":
-                            title = o.get("name", "Tech Meetup")
-                            url = o.get("url") or "https://luma.com"
-                            start_at = str(o.get("startDate") or "")
-                            clean_date = start_at[:10] if len(start_at) >= 10 and "-" in start_at[:10] else ""
-                            if clean_date and clean_date < today_str:
-                                continue
-                            loc_val = city.capitalize() if city else "Online"
-                            items.append({
-                                "id": f"luma_{title[:16]}",
-                                "title": title,
-                                "summary": strip_html_tags(o.get("description") or "")[:800] or f"Event hosted by {source_name}: {title}.",
-                                "link": url,
-                                "url": url,
-                                "source": source_name,
-                                "category": "event",
-                                "type": "event",
-                                "city": city,
-                                "date": clean_date,
-                                "event_start": start_at,
-                                "date_str": start_at,
-                                "deadline": "RSVP on Luma",
-                                "location": loc_val,
-                                "where": loc_val,
-                                "posted": today_str,
-                            })
-                            if len(items) >= limit:
-                                break
-                except Exception:
-                    pass
+            for o in _extract_jsonld_events(html_text):
+                title = html.unescape(str(o.get("name") or "Tech Meetup")).strip()
+                url = o.get("url") or "https://luma.com"
+                start_at = str(o.get("startDate") or "")
+                clean_date = start_at[:10] if len(start_at) >= 10 and "-" in start_at[:10] else ""
+                if clean_date and clean_date < today_str:
+                    continue
+                loc_val = city.capitalize() if city else "Online"
+                items.append({
+                    "id": f"luma_{title[:16]}",
+                    "title": title,
+                    "summary": strip_html_tags(o.get("description") or "")[:800] or f"Event hosted by {source_name}: {title}.",
+                    "link": url,
+                    "url": url,
+                    "source": source_name,
+                    "category": "event",
+                    "type": "event",
+                    "city": city,
+                    "date": clean_date,
+                    "event_start": start_at,
+                    "date_str": start_at,
+                    "deadline": "RSVP on Luma",
+                    "location": loc_val,
+                    "where": loc_val,
+                    "posted": today_str,
+                })
+                if len(items) >= limit:
+                    break
     except Exception as e:
         logger.warning(f"Error parsing Luma page: {e}")
     return items
 
 
-def parse_unstop_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
-    """Parses Unstop public opportunity search JSON API into normalized hackathon dicts."""
+def _resolve_meetup_location(ev_type: str, venue_name: str, venue_city: str, title: str, default_city: str) -> Tuple[str, str]:
+    """Resolves city and display location for Meetup Find results without masking online talks as offline."""
+    if str(ev_type or "").upper() == "ONLINE" or quality_gate.ONLINE.search(title):
+        return "online", "Online"
+    ctx = f"{venue_city} {venue_name} {title}"
+    norm = config.normalize_city(ctx)
+    if norm in ("hyderabad", "bengaluru"):
+        loc = f"{venue_name}, {norm.capitalize()}" if venue_name and norm not in venue_name.lower() else (venue_name or norm.capitalize())
+        return norm, loc
+    if quality_gate.OTHER_CITIES.search(ctx):
+        return "other", venue_city or venue_name or "Other"
+    if default_city in ("hyderabad", "bengaluru"):
+        loc = venue_name or default_city.capitalize()
+        return default_city, loc
+    return "online", venue_name or "Online"
+
+
+def parse_meetup_find(html_text: str, source_name: str, limit: int = 15, city: str = "hyderabad") -> List[Dict[str, Any]]:
+    """Parses Meetup.com Find SSR Apollo state and JSON-LD Event schema."""
+    items: List[Dict[str, Any]] = []
+    seen_urls: set = set()
+    today_str = config.now_ist().strftime("%Y-%m-%d")
+    try:
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_text)
+        if m:
+            nd = json.loads(m.group(1))
+            ap = nd.get("props", {}).get("pageProps", {}).get("__APOLLO_STATE__", {}) or {}
+            for key, ev in ap.items():
+                if not key.startswith("Event:") or not isinstance(ev, dict):
+                    continue
+                title = html.unescape(str(ev.get("title") or "")).strip()
+                url = str(ev.get("eventUrl") or "").strip()
+                if not title or not url or url in seen_urls:
+                    continue
+                start_dt = str(ev.get("dateTime") or "")
+                end_dt = str(ev.get("endTime") or "")
+                cmp_date = (end_dt or start_dt)[:10]
+                if cmp_date and "-" in cmp_date and cmp_date < today_str:
+                    continue
+
+                vref = (ev.get("venue") or {}).get("__ref") if isinstance(ev.get("venue"), dict) else None
+                venue_obj = ap.get(vref, {}) if vref else {}
+                gref = (ev.get("group") or {}).get("__ref") if isinstance(ev.get("group"), dict) else None
+                group_obj = ap.get(gref, {}) if gref else {}
+
+                venue_name = str(venue_obj.get("name") or "").strip()
+                venue_city = str(venue_obj.get("city") or group_obj.get("city") or "").strip()
+                org_name = str(group_obj.get("name") or "").strip()
+                resolved_city, loc_val = _resolve_meetup_location(
+                    ev.get("eventType", ""), venue_name, venue_city, title, city
+                )
+                desc = strip_html_tags(str(ev.get("description") or ""))[:800]
+                seen_urls.add(url)
+                items.append({
+                    "id": f"meetupfind_{ev.get('id', title[:16])}",
+                    "title": title,
+                    "organizer": org_name,
+                    "summary": desc or f"Meetup{' hosted by ' + org_name if org_name else ''}: {title}.",
+                    "link": url,
+                    "url": url,
+                    "source": source_name,
+                    "category": "event",
+                    "type": "event",
+                    "city": resolved_city,
+                    "venue": venue_name,
+                    "date": start_dt[:10] if len(start_dt) >= 10 else "",
+                    "event_start": start_dt,
+                    "event_end": end_dt,
+                    "date_str": start_dt,
+                    "deadline": "RSVP on Meetup",
+                    "location": loc_val,
+                    "where": loc_val,
+                    "posted": today_str,
+                })
+                if len(items) >= limit:
+                    return items
+
+        # JSON-LD fallback if Apollo state absent or incomplete
+        for o in _extract_jsonld_events(html_text):
+            if len(items) >= limit:
+                break
+            title = html.unescape(re.sub(r'\s+', ' ', str(o.get("name") or ""))).strip()
+            url = str(o.get("url") or "").strip()
+            if not title or not url or url in seen_urls:
+                continue
+            start_dt = str(o.get("startDate") or "")
+            end_dt = str(o.get("endDate") or "")
+            cmp_date = (end_dt or start_dt)[:10]
+            if cmp_date and "-" in cmp_date and cmp_date < today_str:
+                continue
+            loc_obj = o.get("location") if isinstance(o.get("location"), dict) else {}
+            venue_name = str(loc_obj.get("name") or "").strip()
+            addr = loc_obj.get("address") if isinstance(loc_obj.get("address"), dict) else {}
+            venue_city = str(addr.get("addressLocality") or "").strip()
+            ev_mode = "ONLINE" if "VirtualLocation" in str(loc_obj.get("@type", "")) else "PHYSICAL"
+            resolved_city, loc_val = _resolve_meetup_location(ev_mode, venue_name, venue_city, title, city)
+            seen_urls.add(url)
+            items.append({
+                "id": f"meetupfind_ld_{title[:16]}",
+                "title": title,
+                "summary": strip_html_tags(str(o.get("description") or ""))[:800] or f"Community meetup: {title}.",
+                "link": url,
+                "url": url,
+                "source": source_name,
+                "category": "event",
+                "type": "event",
+                "city": resolved_city,
+                "venue": venue_name,
+                "date": start_dt[:10] if len(start_dt) >= 10 else "",
+                "event_start": start_dt,
+                "event_end": end_dt,
+                "date_str": start_dt,
+                "deadline": "RSVP on Meetup",
+                "location": loc_val,
+                "where": loc_val,
+                "posted": today_str,
+            })
+    except Exception as e:
+        logger.warning(f"Error parsing Meetup Find page: {e}")
+    return items
+
+
+def parse_allevents_jsonld(html_text: str, source_name: str, limit: int = 15, city: str = "hyderabad") -> List[Dict[str, Any]]:
+    """Parses schema.org Event JSON-LD blocks from AllEvents/event listing pages."""
+    items: List[Dict[str, Any]] = []
+    seen_urls: set = set()
+    today_str = config.now_ist().strftime("%Y-%m-%d")
+    try:
+        for o in _extract_jsonld_events(html_text):
+            title = html.unescape(re.sub(r'\s+', ' ', str(o.get("name") or ""))).strip()
+            url = str(o.get("url") or "").strip()
+            if not title or not url or url in seen_urls:
+                continue
+            start_dt = str(o.get("startDate") or "")
+            end_dt = str(o.get("endDate") or "")
+            cmp_date = (end_dt or start_dt)[:10]
+            if cmp_date and "-" in cmp_date and cmp_date < today_str:
+                continue
+
+            loc_obj = o.get("location") if isinstance(o.get("location"), dict) else {}
+            venue_name = html.unescape(str(loc_obj.get("name") or "")).strip()
+            addr = loc_obj.get("address") if isinstance(loc_obj.get("address"), dict) else {}
+            street = html.unescape(str(addr.get("streetAddress") or "")).strip()
+            city_cap = city.capitalize() if city else "Hyderabad"
+            is_online = "online" in title.lower() or "virtual" in str(loc_obj.get("@type", "")).lower()
+            loc_val = "Online" if is_online else (f"{venue_name}, {city_cap}" if venue_name and city not in venue_name.lower() else (venue_name or street or city_cap))
+            desc = strip_html_tags(str(o.get("description") or ""))[:800]
+            seen_urls.add(url)
+            items.append({
+                "id": f"ae_{title[:16]}",
+                "title": title,
+                "summary": desc or f"Local tech event in {city_cap}{' at ' + venue_name if venue_name else ''}: {title}.",
+                "link": url,
+                "url": url,
+                "source": source_name,
+                "category": "event",
+                "type": "event",
+                "city": "online" if is_online else city,
+                "venue": venue_name,
+                "date": start_dt[:10] if len(start_dt) >= 10 else "",
+                "event_start": start_dt,
+                "event_end": end_dt,
+                "date_str": start_dt,
+                "deadline": (end_dt or start_dt)[:10] or "Check event page",
+                "location": loc_val,
+                "where": loc_val,
+                "posted": today_str,
+            })
+            if len(items) >= limit:
+                break
+    except Exception as e:
+        logger.warning(f"Error parsing AllEvents JSON-LD: {e}")
+    return items
+
+
+def parse_unstop_api(
+    data: bytes,
+    limit: int = 10,
+    category: str = "hackathon",
+    source_name: str = "Unstop Hackathons",
+) -> List[Dict[str, Any]]:
+    """Parses Unstop public opportunity search JSON API into normalized dicts."""
     items: List[Dict[str, Any]] = []
     today_str = config.now_ist().strftime("%Y-%m-%d")
     try:
         j = json.loads(data.decode("utf-8", errors="ignore"))
         rows = j.get("data", {}).get("data", [])
-        for r in rows[:limit * 2]:
+        for r in rows[:limit * 3]:
             title = str(r.get("title") or "").strip()
             pub_url = str(r.get("public_url") or "").strip()
             if not title or not pub_url:
@@ -822,20 +1075,44 @@ def parse_unstop_api(data: bytes, limit: int = 10) -> List[Dict[str, Any]]:
             region = str(r.get("region") or "online").lower()
             details = strip_html_tags(str(r.get("details") or ""))[:800]
             org_name = str((r.get("organisation") or {}).get("name") or "")
+            full_ctx = f"{title} {org_name} {details} {url}".lower()
+            is_hyd = any(k in full_ctx for k in ("hyderabad", "woxsen", "mlrit", "cmrcet", "cbit", "iiit-h", "t-hub"))
+            is_blr = any(k in full_ctx for k in ("bengaluru", "bangalore"))
+
+            if "online" in region and not ("offline" in region or "hybrid" in region):
+                city_val = "online"
+                loc_val = "Online"
+                mode_val = "ONLINE"
+            elif is_hyd:
+                city_val = "hyderabad"
+                loc_val = "Hyderabad"
+                mode_val = "HYBRID" if "hybrid" in region else "OFFLINE"
+            elif is_blr:
+                city_val = "bengaluru"
+                loc_val = "Bengaluru"
+                mode_val = "HYBRID" if "hybrid" in region else "OFFLINE"
+            else:
+                city_val = None
+                loc_val = "India"
+                mode_val = "HYBRID" if "hybrid" in region else "OFFLINE"
+
             items.append({
                 "id": f"unstop_{r.get('id', title[:16])}",
                 "title": title,
                 "organizer": org_name,
-                "summary": details or f"Tech hackathon on Unstop{' by ' + org_name if org_name else ''}: {title}.",
+                "summary": details or f"Tech opportunity on Unstop{' by ' + org_name if org_name else ''}: {title}.",
                 "link": url,
                 "url": url,
-                "source": "Unstop Hackathons",
-                "category": "hackathon",
-                "type": "hackathon",
-                "mode": "ONLINE" if "online" in region else "OFFLINE",
-                "location": "Online" if "online" in region else "India",
+                "source": source_name,
+                "category": category,
+                "type": category,
+                "city": city_val,
+                "mode": mode_val,
+                "location": loc_val,
+                "where": loc_val,
                 "date": clean_date,
                 "event_start": start_date,
+                "event_end": end_date,
                 "deadline": end_date or start_date or "Check Unstop",
                 "posted": today_str,
             })
@@ -1059,28 +1336,61 @@ def collect_devfolio_hackathons() -> List[Dict[str, Any]]:
             m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_txt)
             if m:
                 d = json.loads(m.group(1))
-                hacks = d.get("props", {}).get("pageProps", {}).get("hackathons", []) or d.get("props", {}).get("pageProps", {}).get("openHackathons", [])
-                for h in hacks[:10]:
+                page_props = d.get("props", {}).get("pageProps", {}) or {}
+                hacks: List[Dict[str, Any]] = []
+                # Modern Devfolio Next.js dehydrated React Query state
+                for q in (page_props.get("dehydratedState") or {}).get("queries", []):
+                    qdata = (q.get("state") or {}).get("data") or {}
+                    if isinstance(qdata, dict):
+                        for k in ("open_hackathons", "upcoming_hackathons", "featured_hackathons"):
+                            arr = qdata.get(k)
+                            if isinstance(arr, list):
+                                hacks.extend(arr)
+                # Legacy key path fallback
+                if not hacks:
+                    hacks = page_props.get("hackathons", []) or page_props.get("openHackathons", [])
+
+                seen_slugs: set = set()
+                for h in hacks:
+                    if not isinstance(h, dict):
+                        continue
                     title = h.get("name") or "Devfolio Hackathon"
-                    slug = h.get("slug", "")
+                    slug = str(h.get("slug") or "")
+                    if slug and slug in seen_slugs:
+                        continue
+                    if slug:
+                        seen_slugs.add(slug)
                     url = f"https://{slug}.devfolio.co" if slug else "https://devfolio.co/hackathons"
                     s_date = str(h.get("starts_at") or "")[:10]
-                    if s_date and s_date < today_str:
+                    e_date = str(h.get("ends_at") or "")[:10]
+                    cmp_date = e_date or s_date
+                    if cmp_date and cmp_date < today_str:
                         continue
+                    city_raw = str(h.get("city") or h.get("location") or "")
+                    is_online = bool(h.get("is_online", True)) and not city_raw
+                    norm_c = config.normalize_city(city_raw) if city_raw else ("online" if is_online else "other")
+                    loc_val = city_raw or ("Online" if norm_c == "online" else "India")
                     items.append({
                         "id": f"devfolio_{slug or title[:16]}",
                         "title": title,
-                        "summary": strip_html_tags(h.get("desc") or "")[:800] or "Devfolio Indian developer hackathon",
+                        "summary": strip_html_tags(h.get("desc") or h.get("tagline") or "")[:800] or "Devfolio Indian developer hackathon",
                         "link": url,
                         "url": url,
                         "source": "Devfolio",
                         "category": "hackathon",
                         "type": "hackathon",
-                        "date": s_date,
+                        "city": norm_c if norm_c in ("hyderabad", "bengaluru", "online") else ("online" if is_online else None),
+                        "location": loc_val,
+                        "where": loc_val,
+                        "date": e_date or s_date,
                         "event_start": s_date,
-                        "deadline": str(h.get("ends_at") or s_date or "Open")[:10],
+                        "event_end": e_date,
+                        "date_str": e_date or s_date,
+                        "deadline": e_date or s_date or "Open",
                         "posted": today_str,
                     })
+                    if len(items) >= 15:
+                        break
     except Exception as e:
         logger.warning(f"Error in collect_devfolio_hackathons: {e}")
     return items
@@ -1389,10 +1699,127 @@ def collect_courses_and_certs() -> List[Dict[str, Any]]:
     return items
 
 
+def collect_unstop_hyderabad() -> List[Dict[str, Any]]:
+    """
+    Fetches upcoming Hyderabad-specific hackathons, workshops, and tech competitions from Unstop.
+    Filters out expired records and retains local campus/city opportunities.
+    """
+    items: List[Dict[str, Any]] = []
+    seen_urls: set = set()
+    targets = [
+        ("hackathons", "hackathon"),
+        ("workshops", "workshops"),
+        ("competitions", "hackathon"),
+    ]
+    for opp, cat in targets:
+        url = (
+            "https://unstop.com/api/public/opportunity/search-result"
+            f"?opportunity={opp}&page=1&per_page=15&searchTerm=Hyderabad"
+        )
+        try:
+            raw, _ = fetch_raw(url, headers={"User-Agent": DEFAULT_USER_AGENT, "Accept": "application/json"}, timeout=DEFAULT_TIMEOUT)
+            if not raw:
+                continue
+            for it in parse_unstop_api(raw, limit=12, category=cat, source_name="Unstop Hyderabad"):
+                u = it.get("url", "")
+                if u and u not in seen_urls:
+                    seen_urls.add(u)
+                    items.append(it)
+        except Exception as e:
+            logger.warning(f"Error in collect_unstop_hyderabad({opp}): {e}")
+    return items
+
+
+def collect_ai_tinkerers_hyderabad() -> List[Dict[str, Any]]:
+    """
+    Fetches upcoming AI builder meetups and hackathons from AI Tinkerers Hyderabad via schema.org JSON-LD.
+    """
+    items: List[Dict[str, Any]] = []
+    today_str = config.now_ist().strftime("%Y-%m-%d")
+    try:
+        raw, _ = fetch_raw("https://hyderabad.aitinkerers.org/", headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+        if not raw:
+            return items
+        html_txt = raw.decode("utf-8", errors="ignore")
+        for o in _extract_jsonld_events(html_txt):
+            title = html.unescape(re.sub(r'\s+', ' ', str(o.get("name") or ""))).strip()
+            url = str(o.get("url") or "").strip()
+            if not title or not url:
+                continue
+            start_dt = str(o.get("startDate") or "")
+            end_dt = str(o.get("endDate") or "")
+            cmp_date = (end_dt or start_dt)[:10]
+            if cmp_date and "-" in cmp_date and cmp_date < today_str:
+                continue
+            items.append({
+                "id": f"aitink_{title[:16]}",
+                "title": title,
+                "summary": strip_html_tags(str(o.get("description") or ""))[:800] or f"AI Tinkerers Hyderabad event: {title}.",
+                "link": url,
+                "url": url,
+                "source": "AI Tinkerers Hyderabad",
+                "category": "event",
+                "type": "event",
+                "city": "hyderabad",
+                "location": "Hyderabad",
+                "where": "Hyderabad",
+                "date": start_dt[:10] if len(start_dt) >= 10 else "",
+                "event_start": start_dt,
+                "event_end": end_dt,
+                "date_str": start_dt,
+                "deadline": (end_dt or start_dt)[:10] or "RSVP on AI Tinkerers",
+                "posted": today_str,
+            })
+    except Exception as e:
+        logger.warning(f"Error in collect_ai_tinkerers_hyderabad: {e}")
+    return items
+
+
+def collect_hyderabad_event_discovery_rss() -> List[Dict[str, Any]]:
+    """
+    Broadens local Hyderabad discovery across Luma, KonfHub, Townscript, and Devfolio
+    via site-targeted Google News India RSS queries, dropping old archive articles.
+    """
+    items: List[Dict[str, Any]] = []
+    cutoff_dt = (config.now_ist() - timedelta(days=30)).date()
+    query = (
+        '(site:luma.com OR site:lu.ma OR site:konfhub.com OR site:townscript.com OR site:devfolio.co) '
+        '("Hyderabad" OR "T-Hub" OR "Gachibowli" OR "HITEC City" OR "IIIT Hyderabad") '
+        '(AI OR Tech OR Hackathon OR Meetup OR Workshop OR Summit) when:30d'
+    )
+    rss_url = f"https://news.google.com/rss/search?q={urllib.parse.quote(query)}&hl=en-IN&gl=IN&ceid=IN:en"
+    try:
+        raw, _ = fetch_raw(rss_url, headers={"User-Agent": DEFAULT_USER_AGENT}, timeout=DEFAULT_TIMEOUT)
+        if not raw:
+            return items
+        parsed = parse_xml_feed(raw, "Hyderabad Event Discovery RSS", "event", limit=12, default_location="Hyderabad")
+        for it in parsed:
+            pub_raw = it.get("date_str") or ""
+            if pub_raw:
+                try:
+                    from email.utils import parsedate_to_datetime
+                    pub_dt = parsedate_to_datetime(pub_raw).date()
+                    if pub_dt < cutoff_dt:
+                        continue
+                except Exception:
+                    pass
+            # Clear article pubDate so event expiry waits for landing-page event date enrichment
+            it["date_str"] = ""
+            it["date"] = ""
+            it["city"] = "hyderabad"
+            items.append(it)
+    except Exception as e:
+        logger.warning(f"Error in collect_hyderabad_event_discovery_rss: {e}")
+    return items
+
+
 ALL_COLLECTORS = [
     collect_luma_events,
     collect_devfolio_hackathons,
     collect_foss_united,
+    collect_unstop_hyderabad,
+    collect_ai_tinkerers_hyderabad,
+    collect_hyderabad_event_discovery_rss,
     collect_ats_jobs,
     collect_search_rss_jobs,
     collect_jobspy_sidecar,
@@ -1432,11 +1859,20 @@ def _fetch_single_source(cfg: Dict[str, Any], limit: int) -> Tuple[Dict[str, Any
                 items = parse_remoteok_api(raw, limit=limit)
             elif stype == "bevy_api":
                 items = parse_bevy_api(raw, name, limit=limit, city=source_city)
+                if not items and b'"results"' in raw:
+                    health_status = "EMPTY_OK"
             elif stype == "luma":
                 decoded_luma = raw.decode("utf-8", errors="ignore")
                 items = parse_luma(decoded_luma, name, limit=limit, city=source_city)
                 if not items and "__NEXT_DATA__" in decoded_luma:
                     health_status = "EMPTY_OK"
+            elif stype == "meetup_find":
+                decoded_mf = raw.decode("utf-8", errors="ignore")
+                items = parse_meetup_find(decoded_mf, name, limit=limit, city=source_city)
+                if not items and "__NEXT_DATA__" in decoded_mf:
+                    health_status = "EMPTY_OK"
+            elif stype == "allevents_jsonld":
+                items = parse_allevents_jsonld(raw.decode("utf-8", errors="ignore"), name, limit=limit, city=source_city)
             elif stype == "commudle":
                 items = parse_commudle(raw, name, city=source_city, limit=limit)
             elif stype == "hn_api":
@@ -1518,7 +1954,11 @@ def collect(source: Optional[Any] = None, limit: int = 10) -> List[Dict[str, Any
             try:
                 fn_items = fut.result()
                 if fn_items:
-                    collected.extend(fn_items)
+                    for it in fn_items:
+                        it_date = it.get("date") or ""
+                        if it_date and it_date < today:
+                            continue
+                        collected.append(it)
             except Exception as e:
                 logger.warning(f"Error executing collector {fn_name}: {e}")
 

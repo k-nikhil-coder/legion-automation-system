@@ -64,10 +64,12 @@ CITIES: Dict[str, Dict[str, Any]] = {
     "hyderabad": {
         "name": "Hyderabad",
         "aliases": [
-            "hyderabad", "hyd", "secunderabad", "hitec city", "hitec", "gachibowli",
-            "t-hub", "thub", "t-works", "iiit hyderabad", "iiit-h", "iiith", "hicc",
-            "hitex", "kondapur", "madhapur", "nanakramguda", "financial district",
-            "mindspace"
+            "hyderabad", "hyd", "secunderabad", "hitec city", "hi-tech city", "hitec",
+            "gachibowli", "raidurg", "t-hub", "thub", "t-works", "iiit hyderabad",
+            "iiit-h", "iiith", "iit hyderabad", "iit-h", "hicc", "hitex", "kondapur",
+            "madhapur", "nanakramguda", "financial district", "mindspace", "woxsen",
+            "mlrit", "cmrcet", "cokarma", "must ai", "jubilee hills", "banjara hills",
+            "begumpet"
         ],
         "badge": "HYDERABAD - OFFLINE"
     },
@@ -299,27 +301,38 @@ COMMUDLE_COMMUNITY_SLUGS = [
 HYDERABAD_VENUES = [
     "T-Hub",
     "T-Hub Phase 2",
+    "Raidurg",
     "IIIT Hyderabad",
     "IIIT-H",
+    "IIT Hyderabad",
     "Hitec City",
     "HITEC City",
+    "Hi-Tech City",
     "Gachibowli",
     "Kondapur",
     "Madhapur",
     "Nanakramguda",
     "Financial District",
     "DevX",
+    "CoKarma",
+    "MUST AI",
     "WeWork Kondapur",
     "WeWork Nanakramguda",
     "EPAM",
     "People Tech",
     "CBIT",
+    "Woxsen",
+    "MLRIT",
+    "CMRCET",
     "T-Works",
     "HICC",
     "HITEX",
     "Mindspace",
     "Knowledge City",
-    "Cyber Towers"
+    "Cyber Towers",
+    "Jubilee Hills",
+    "Banjara Hills",
+    "Begumpet"
 ]
 
 

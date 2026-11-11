@@ -219,13 +219,21 @@ def _serialize_db_item_for_feed(it: Dict[str, Any]) -> Dict[str, Any]:
     u = str(it.get("url") or "").strip()
     norm_cat = config.normalize_category(it.get("category", "news"))
 
-    raw_date = it.get("deadline") or it.get("event_start") or (it.get("date_str") if norm_cat in ("hackathon", "event", "workshops") else "") or ""
-    date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(raw_date))
-    clean_date = date_match.group(0) if date_match else ""
-    if not clean_date and raw_date:
-        parsed_dt = db.parse_date_ist(raw_date)
+    clean_date = ""
+    date_candidates = [it.get("deadline"), it.get("event_end"), it.get("event_start")]
+    if norm_cat in ("hackathon", "event", "workshops"):
+        date_candidates.append(it.get("date_str"))
+    for cand in date_candidates:
+        if not cand:
+            continue
+        parsed_dt = db.parse_date_ist(cand)
         if parsed_dt:
             clean_date = parsed_dt.strftime("%Y-%m-%d")
+            break
+        date_match = re.search(r'\d{4}-\d{2}-\d{2}', str(cand))
+        if date_match:
+            clean_date = date_match.group(0)
+            break
 
     created_str = str(it.get("created_at") or "")[:10]
     if not re.match(r'^\d{4}-\d{2}-\d{2}$', created_str):
@@ -969,7 +977,7 @@ def reconcile_legacy_db_items(db_path: Optional[str] = None) -> Dict[str, int]:
         title = row.get("title") or ""
         cat = config.normalize_category(row.get("category") or "news")
 
-        # Extract embedded date in title for FOSS United / scraped meetups if missing
+        # Extract embedded date in title/date_str for FOSS United / scraped meetups if missing
         if cat in ("event", "workshops", "hackathon") and not row.get("event_start") and not db.parse_date_ist(row.get("deadline")):
             m_dt = date_re.search(title)
             if m_dt:
@@ -980,6 +988,13 @@ def reconcile_legacy_db_items(db_path: Optional[str] = None) -> Dict[str, int]:
                     row["deadline"] = iso_dt
                 except Exception:
                     pass
+            elif row.get("date_str"):
+                parsed_ds = db.parse_date_ist(row.get("date_str"))
+                if parsed_ds:
+                    iso_ds = parsed_ds.strftime("%Y-%m-%d")
+                    row["event_start"] = iso_ds
+                    if not db.parse_date_ist(row.get("deadline")):
+                        row["deadline"] = iso_ds
 
         # Re-run gate check (non-HTTP)
         probe = dict(row, category=cat, type=cat, link=row.get("url", ""))
@@ -992,9 +1007,12 @@ def reconcile_legacy_db_items(db_path: Optional[str] = None) -> Dict[str, int]:
         # Enrich text-only metadata & re-score
         ctx = f"{title} {gated.get('summary', '')}"
         updates = {
+            "category": config.normalize_category(gated.get("category", cat)),
             "summary": gated.get("summary") or row.get("summary"),
             "deadline": row.get("deadline"),
             "event_start": row.get("event_start"),
+            "event_end": row.get("event_end"),
+            "date_str": row.get("date_str"),
             "city": gated.get("city") or row.get("city"),
             "location": gated.get("location") or row.get("location"),
             "experience_level": gated.get("experience_level") or row.get("experience_level"),
@@ -1003,7 +1021,7 @@ def reconcile_legacy_db_items(db_path: Optional[str] = None) -> Dict[str, int]:
             "perks": row.get("perks") or enricher.extract_perks(ctx, cat),
             "eligibility": row.get("eligibility") if (row.get("eligibility") and row.get("eligibility") != "Open to all" and not str(row.get("eligibility")).startswith("Review needed")) else enricher.extract_eligibility(ctx, cat),
         }
-        updates_for_score = dict(row, **updates, category=gated.get("category", cat), badge=gated.get("badge") or row.get("badge"))
+        updates_for_score = {**row, **updates, "category": gated.get("category", cat), "badge": gated.get("badge") or row.get("badge")}
         updates["relevance_score"] = quality_gate.compute_relevance_score(updates_for_score)
 
         db.update_item(item_id, updates, db_path=actual_db)
@@ -1154,16 +1172,26 @@ def run_pipeline(
                 url = str(raw_url).strip()
                 cat = config.normalize_category(enriched.get("category", "news"))
 
-                # Date rule: If no parseable event_start/deadline for event/workshop/hackathon -> status='review', reason='no date'
+                # Date rule: If no parseable date across deadline/event_end/event_start/date_str for event/workshop/hackathon -> status='review', reason='no date'
                 if cat in ("event", "workshops", "hackathon"):
-                    has_date = bool(
-                        enriched.get("event_start") or enriched.get("deadline") or enriched.get("date_str")
+                    parsed_any_dt = next(
+                        (
+                            dt for dt in (
+                                db.parse_date_ist(enriched.get(k))
+                                for k in ("deadline", "event_end", "event_start", "date_str")
+                            )
+                            if dt is not None
+                        ),
+                        None,
                     )
-                    if not has_date or not db.parse_date_ist(enriched.get("deadline") or enriched.get("event_start") or enriched.get("date_str")):
+                    if parsed_any_dt is None:
                         decision = "review"
                         reason = "no date"
                         enriched["status"] = "review"
                         enriched["eligibility"] = "Review needed: no date"
+                    elif decision == "review" and str(enriched.get("eligibility") or "").strip().lower() == "review needed: no date":
+                        decision = "accept"
+                        enriched["eligibility"] = "Open to all"
 
                 # Location routing
                 if not formatter.is_location_allowed(enriched):

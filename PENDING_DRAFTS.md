@@ -1,7 +1,7 @@
 # 🛡️ Legion Community - Pending Content Review Queue
 
-> **Generated at**: `2026-11-11 10:11:36`  
-> **Database Stats**: ⏳ Pending: `167` | ✅ Approved: `0` | ❌ Rejected: `78` | 🚀 Posted: `0`
+> **Generated at**: `2026-11-11 14:56:36`  
+> **Database Stats**: ⏳ Pending: `261` | ✅ Approved: `0` | ❌ Rejected: `92` | 🚀 Posted: `0`
 
 ## 📌 Workflow Guide
 - **Option A (Telegram Bot)**: Run `python telegram_bot.py --push` to push unreviewed items to your Telegram chat with inline Approve / Reject / Done buttons.
@@ -11,7 +11,169 @@
 ---
 
 ## 🏆 Hackathons
-*Target WhatsApp Group: `🏆 Hackathons`* | *Pending: 15*
+*Target WhatsApp Group: `🏆 Hackathons`* | *Pending: 17*
+
+### [#463] PromptWars Hyderabad 2026 - AI & Prompt Engineering Competition [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/promptwars-hyderabad-2026-ai-prompt-engineering-competition-st-peters-engineering-college-spec-hyderabad-tela-1765597](https://unstop.com/hackathons/promptwars-hyderabad-2026-ai-prompt-engineering-competition-st-peters-engineering-college-spec-hyderabad-tela-1765597)
+- **Quick Commands**: `python telegram_bot.py --approve 463` | `python telegram_bot.py --reject 463` | `python telegram_bot.py --edit 463`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ PromptWars Hyderabad 2026 - AI & Prompt Engineering Competition [HYDERABAD - OFFLINE]
+
+📌 What: PromptWars 2026 — Guidelines, Format & Rules About the Competition PromptWars 2026 is a hands-on AI & Prompt Engineering Competition conducted by InnoTech Hub in collaboration with Hack2Skills Google for Developers & Build with AI. The competition is designed to test participants on their ability to understand problems, engineer effective prompts, work with Generative AI, experiment with different approaches, and develop creative solutions.
+📅 Date / Deadline: 2026-12-10
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/promptwars-hyderabad-2026-ai-prompt-engineering-competition-st-peters-engineering-college-spec-hyderabad-tela-1765597
+```
+
+---
+
+### [#464] AGENTIC X 2.0 – AI & Robotics Hackathon [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/agentic-x-20-ai-robotics-hackathon-woxsen-university-hyderabad-1779479](https://unstop.com/hackathons/agentic-x-20-ai-robotics-hackathon-woxsen-university-hyderabad-1779479)
+- **Quick Commands**: `python telegram_bot.py --approve 464` | `python telegram_bot.py --reject 464` | `python telegram_bot.py --edit 464`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ AGENTIC X 2.0 – AI & Robotics Hackathon [HYDERABAD - OFFLINE]
+
+📌 What: All You Need to Know About Agentic X 2.0 – AI & Robotics Hackathon | Future Tech Summit ’26 Agentic X 2.0 is an AI & Robotics Hackathon held as part of Future Tech Summit ’26, organized by the AI Research Centre (AIRC), Woxsen University, in collaboration with Gentricks and TruScholar.
+📅 Date / Deadline: 2026-12-09
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/agentic-x-20-ai-robotics-hackathon-woxsen-university-hyderabad-1779479
+```
+
+---
+
+### [#465] Zenith'26 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/zenith26-mlr-institute-of-technology-mlrit-hyderabad-1790028](https://unstop.com/hackathons/zenith26-mlr-institute-of-technology-mlrit-hyderabad-1790028)
+- **Quick Commands**: `python telegram_bot.py --approve 465` | `python telegram_bot.py --reject 465` | `python telegram_bot.py --edit 465`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ Zenith'26 [HYDERABAD - OFFLINE]
+
+📌 What: Overview Welcome to ZENITH’26, a national-level technical event featuring Aws Student Community Day followed by a 2-Day Hackathon, organized by Scope Club, MLRIT, Hyderabad. Day 1 – Aws Student Community Day Experience a series of high-impact technical workshops and insightful speaker sessions conducted by the Aws Student Builder Group under Scope Club, MLRIT.
+📅 Date / Deadline: 2026-12-04
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/zenith26-mlr-institute-of-technology-mlrit-hyderabad-1790028
+```
+
+---
+
+### [#466] CMR HACKFEST 4.0 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/cmr-hackfest-40-cmr-college-of-engineering-and-technology-cmrcet-hyderabad-1782514](https://unstop.com/hackathons/cmr-hackfest-40-cmr-college-of-engineering-and-technology-cmrcet-hyderabad-1782514)
+- **Quick Commands**: `python telegram_bot.py --approve 466` | `python telegram_bot.py --reject 466` | `python telegram_bot.py --edit 466`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ CMR HACKFEST 4.0 [HYDERABAD - OFFLINE]
+
+📌 What: We are excited to announce the Cmr Hackfest 4.0 (36 Hours National Level Hackathon) after the overwhelming success of our previous national-level hackathons. Our previous editions attracted nearly 15,000+ registrations out of which 450+ teams were invited to participate in the offline hackathon, resulting in around 2500+ participants from 23 different states across India.
+📅 Date / Deadline: 2026-11-25
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/cmr-hackfest-40-cmr-college-of-engineering-and-technology-cmrcet-hyderabad-1782514
+```
+
+---
+
+### [#470] DataNyx'26 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/datanyx26-muffakham-jah-college-of-engineering-and-technology-mjcet-hyderabad-1771537](https://unstop.com/hackathons/datanyx26-muffakham-jah-college-of-engineering-and-technology-mjcet-hyderabad-1771537)
+- **Quick Commands**: `python telegram_bot.py --approve 470` | `python telegram_bot.py --reject 470` | `python telegram_bot.py --edit 470`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ DataNyx'26 [HYDERABAD - OFFLINE]
+
+📌 What: DATANYX'26 is Telangana’s flagship 24-hour datathon, now in its third national edition, organized by Aws Student Builder Group Mjcet and Ieee Smc MJCET. This intense 24-hour offline competition challenges you to take raw datasets and turn them into impactful, working prototypes aligned with the UN Sustainable Development Goals (SDGs).
+📅 Date / Deadline: 2026-11-19
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/datanyx26-muffakham-jah-college-of-engineering-and-technology-mjcet-hyderabad-1771537
+```
+
+---
+
+### [#472] Innovasia 2026 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/innovasia-2026-vasavi-college-of-engineering-vce-hyderabad-1772753](https://unstop.com/hackathons/innovasia-2026-vasavi-college-of-engineering-vce-hyderabad-1772753)
+- **Quick Commands**: `python telegram_bot.py --approve 472` | `python telegram_bot.py --reject 472` | `python telegram_bot.py --edit 472`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ Innovasia 2026 [HYDERABAD - OFFLINE]
+
+📌 What: Innovasia is the official annual hackathon organized by the Department of Computer Science and Engineering, Vasavi College of Engineering, Hyderabad. Participants get an opportunity to innovate and develop solutions across diverse technology domains.
+📅 Date / Deadline: 2026-11-13
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/innovasia-2026-vasavi-college-of-engineering-vce-hyderabad-1772753
+```
+
+---
+
+### [#456] hackodisha-6.0 [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Devfolio | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://hackodisha-6a.devfolio.co](https://hackodisha-6a.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 456` | `python telegram_bot.py --reject 456` | `python telegram_bot.py --edit 456`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ hackodisha-6.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-12-13
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://hackodisha-6a.devfolio.co
+```
+
+---
+
+### [#468] National Research & Cloud Innovation Challenge Season 4 by 3SVK — Powered by Adaption Labs | 4.8K+ Registrations [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/hackathons/cloud-innovation-challenge-jawaharlal-nehru-technological-university-jntuh-hyderabad-1652247](https://unstop.com/hackathons/cloud-innovation-challenge-jawaharlal-nehru-technological-university-jntuh-hyderabad-1652247)
+- **Quick Commands**: `python telegram_bot.py --approve 468` | `python telegram_bot.py --reject 468` | `python telegram_bot.py --edit 468`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ National Research & Cloud Innovation Challenge Season 4 by 3SVK — Powered by Adaption Labs | 4.8K+ Registrations [ONLINE]
+
+📌 What: Powered By: 3SVK- “National Research & Cloud Innovation Challenge Season 4 by 3SVK | Adaption Labs ” Hosted by 3SVK Ecosystem Platform Following an incredible response with over 4,800+ registered builders across previous cohorts, the 3SVK ecosystem continues to scale. Season 3 evaluation and code audit workflows have concluded, and final results and merit listings are being processed for announcement.
+📅 Date / Deadline: 2026-12-20
+📍 Where: [ONLINE] Online
+🎯 Who: Students
+🔗 https://unstop.com/hackathons/cloud-innovation-challenge-jawaharlal-nehru-technological-university-jntuh-hyderabad-1652247
+```
+
+---
+
+### [#478] Cogentix [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/competitions/cogentix-impelz-120-institute-of-management-technology-imt-hyderabad-1792023](https://unstop.com/competitions/cogentix-impelz-120-institute-of-management-technology-imt-hyderabad-1792023)
+- **Quick Commands**: `python telegram_bot.py --approve 478` | `python telegram_bot.py --reject 478` | `python telegram_bot.py --edit 478`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+⚡ Cogentix [ONLINE]
+
+📌 What: Event: The objective is to “transform data into knowledge and knowledge into insight.” Cogentix, brought to you by Insightix, is more than just a data competition. It's a journey to transform raw data into valuable knowledge that can drive meaningful business decisions.
+📅 Date / Deadline: 2026-12-05
+📍 Where: [ONLINE] Online
+🎯 Who: Students
+🔗 https://unstop.com/competitions/cogentix-impelz-120-institute-of-management-technology-imt-hyderabad-1792023
+```
+
+---
 
 ### [#334] Code to Cart: AI x E-commerce Hackathon | KartAI X CodeXcelerate [ONLINE]
 - **Location**: [ONLINE] Online | **Source**: Unstop Hackathons | **Created**: `2026-11-11 04:37:18`
@@ -157,165 +319,226 @@
 
 ---
 
-### [#108] HackUTD 2026: ZeroDay [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://hackutd-zeroday.devpost.com/](https://hackutd-zeroday.devpost.com/)
-- **Quick Commands**: `python telegram_bot.py --approve 108` | `python telegram_bot.py --reject 108` | `python telegram_bot.py --edit 108`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ HackUTD 2026: ZeroDay [ONLINE]
-
-📌 What: Online developer hackathon on Devpost. Themes: Open Ended, Beginner Friendly, Social Good. University of Texas at Dallas - ECSW.
-📅 Date / Deadline: Nov 07 - 08, 2026
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://hackutd-zeroday.devpost.com/
-```
-
----
-
-### [#92] Kiroween 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 18:08:22`
-- **Original Link**: [https://kiroween.devpost.com/](https://kiroween.devpost.com/)
-- **Quick Commands**: `python telegram_bot.py --approve 92` | `python telegram_bot.py --reject 92` | `python telegram_bot.py --edit 92`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ Kiroween 2026 [ONLINE]
-
-📌 What: Online developer hackathon on Devpost. Themes: Beginner Friendly, Machine Learning/AI, Open Ended. Online.
-📅 Date / Deadline: Oct 30 - Dec 04, 2026
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://kiroween.devpost.com/
-```
-
----
-
-### [#75] How Do You Stop an AI Agent from Publishing Claims Your Repo Cannot Support? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Dev.to API | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://dev.to/waynevivek/how-do-you-stop-an-ai-agent-from-publishing-claims-your-repo-cannot-support-of](https://dev.to/waynevivek/how-do-you-stop-an-ai-agent-from-publishing-claims-your-repo-cannot-support-of)
-- **Quick Commands**: `python telegram_bot.py --approve 75` | `python telegram_bot.py --reject 75` | `python telegram_bot.py --edit 75`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ How Do You Stop an AI Agent from Publishing Claims Your Repo Cannot Support? [ONLINE]
-
-📌 What: Inside Switch Studio: how we combined multi-agent drafting in Switch with a deterministic Python...
-📅 Date / Deadline: See article
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://dev.to/waynevivek/how-do-you-stop-an-ai-agent-from-publishing-claims-your-repo-cannot-support-of
-```
-
----
-
-### [#65] HackGlobal by Polaris School of Technology [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: HackCulture | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://hackculture.io](https://hackculture.io)
-- **Quick Commands**: `python telegram_bot.py --approve 65` | `python telegram_bot.py --reject 65` | `python telegram_bot.py --edit 65`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ HackGlobal by Polaris School of Technology
-
-📌 What: A global online hackathon with builders from five countries. Register on HackCulture.
-📅 Date / Deadline: 2026-11-14
-📍 Where: Online
-🎯 Who: Open to all
-🔗 https://hackculture.io
-```
-
----
-
-### [#66] Gemma 4 Developer Agent Paper Track [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Kaggle | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://www.kaggle.com/competitions/gemma-4-developer-agent-paper](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper)
-- **Quick Commands**: `python telegram_bot.py --approve 66` | `python telegram_bot.py --reject 66` | `python telegram_bot.py --edit 66`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ Gemma 4 Developer Agent Paper Track
-
-📌 What: Submit a research paper that advances agentic software engineering.
-📅 Date / Deadline: See announcement
-📍 Where: Online
-🎯 Who: Open to all
-🔗 https://www.kaggle.com/competitions/gemma-4-developer-agent-paper
-```
-
----
-
-### [#68] Meta VR Start Developer Competition 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://devpost.com](https://devpost.com)
-- **Quick Commands**: `python telegram_bot.py --approve 68` | `python telegram_bot.py --reject 68` | `python telegram_bot.py --edit 68`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ Meta VR Start Developer Competition 2026
-
-📌 What: Build VR apps with Meta VR Start. Cash prizes total $1M.
-📅 Date / Deadline: See announcement
-📍 Where: Online
-🎯 Who: Open to all
-🔗 https://devpost.com
-```
-
----
-
-### [#69] AWS MSP AI Hackathon [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Devpost | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://share.google/YUIvbsyKn93aeDHFG](https://share.google/YUIvbsyKn93aeDHFG)
-- **Quick Commands**: `python telegram_bot.py --approve 69` | `python telegram_bot.py --reject 69` | `python telegram_bot.py --edit 69`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-⚡ AWS MSP AI Hackathon
-
-📌 What: Build the AI-first MSP. Run smarter and deliver more.
-📅 Date / Deadline: See announcement
-📍 Where: Online
-🎯 Who: Open to all
-🔗 https://share.google/YUIvbsyKn93aeDHFG
-```
-
----
-
 ## 💼 Jobs & Internships
-*Target WhatsApp Group: `💼 Jobs & Internships`* | *Pending: 18*
+*Target WhatsApp Group: `💼 Jobs & Internships`* | *Pending: 28*
 
-### [#72] Walk-in drive at Ksquare Group: Salesforce and Data Engineering [HYDERABAD - OFFLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad (Nanakramguda) | **Source**: Community admin | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://legion.community/feed/s9](https://legion.community/feed/s9)
-- **Quick Commands**: `python telegram_bot.py --approve 72` | `python telegram_bot.py --reject 72` | `python telegram_bot.py --edit 72`
+### [#404] Upgrade: AI Experience Engineer (Conversational AI) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely Back-End | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://weworkremotely.com/remote-jobs/upgrade-ai-experience-engineer-conversational-ai](https://weworkremotely.com/remote-jobs/upgrade-ai-experience-engineer-conversational-ai)
+- **Quick Commands**: `python telegram_bot.py --approve 404` | `python telegram_bot.py --reject 404` | `python telegram_bot.py --edit 404`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-💼 Walk-in drive - Ksquare Group: Salesforce and Data Engineering
+💼 Upgrade: AI Experience Engineer (Conversational AI) - Tech Company [ONLINE]
 
-📌 Experience: Open / See post
-📍 Location: Nanakramguda, Hyderabad
-🎯 Skills: Tech / Engineering
-🔗 Apply: https://legion.community/feed/s9
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://weworkremotely.com/remote-jobs/upgrade-ai-experience-engineer-conversational-ai
 ```
 
 ---
 
-### [#73] Software Engineer (C#, .NET, WPF) at Medtronic [HYDERABAD - OFFLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: LinkedIn | **Created**: `2026-11-07 09:52:47`
-- **Original Link**: [https://lnkd.in/p/dG8pVZs7](https://lnkd.in/p/dG8pVZs7)
-- **Quick Commands**: `python telegram_bot.py --approve 73` | `python telegram_bot.py --reject 73` | `python telegram_bot.py --edit 73`
+### [#407] Ignition, Inc.: MSP Mac Help Desk Guru (work from home) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely DevOps | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://weworkremotely.com/remote-jobs/ignition-inc-msp-mac-help-desk-guru-work-from-home](https://weworkremotely.com/remote-jobs/ignition-inc-msp-mac-help-desk-guru-work-from-home)
+- **Quick Commands**: `python telegram_bot.py --approve 407` | `python telegram_bot.py --reject 407` | `python telegram_bot.py --edit 407`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-💼 Software Engineer (C#, .NET, WPF) - Medtronic
+💼 Ignition, Inc.: MSP Mac Help Desk Guru (work from home) - Tech Company [ONLINE]
 
-📌 Experience: Open / See post
-📍 Location: Hyderabad
-🎯 Skills: Tech / Engineering
-🔗 Apply: https://lnkd.in/p/dG8pVZs7
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://weworkremotely.com/remote-jobs/ignition-inc-msp-mac-help-desk-guru-work-from-home
+```
+
+---
+
+### [#410] Upstart: DevOps Engineer II, Cloud Platform [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely DevOps | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://weworkremotely.com/remote-jobs/upstart-devops-engineer-ii-cloud-platform](https://weworkremotely.com/remote-jobs/upstart-devops-engineer-ii-cloud-platform)
+- **Quick Commands**: `python telegram_bot.py --approve 410` | `python telegram_bot.py --reject 410` | `python telegram_bot.py --edit 410`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Upstart: DevOps Engineer II, Cloud Platform - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://weworkremotely.com/remote-jobs/upstart-devops-engineer-ii-cloud-platform
+```
+
+---
+
+### [#413] Toptal: CAD scripting Expert [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely All Jobs | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://weworkremotely.com/remote-jobs/toptal-cad-scripting-expert](https://weworkremotely.com/remote-jobs/toptal-cad-scripting-expert)
+- **Quick Commands**: `python telegram_bot.py --approve 413` | `python telegram_bot.py --reject 413` | `python telegram_bot.py --edit 413`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Toptal: CAD scripting Expert - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://weworkremotely.com/remote-jobs/toptal-cad-scripting-expert
+```
+
+---
+
+### [#398] Software Development Work From Home Internship at Bennufly Technology - Internshala [ONLINE]
+- **Location**: [ONLINE] Remote / Work From Home | **Source**: Search Jobs RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://news.google.com/rss/articles/CBMivgFBVV95cUxNRVZxczhRanpKcXpkZXczQzBTZXlpSGtpTC05bEpUZXQ2UGYtYnFnVUFtQm5CVW1zS0JvMEg1dmphVmlmaGJaa2c0SzBDbl9RQnJfd1VxQTAwM0VnYXItZTJYMkZPSDVzYk9sbHRRWUN3anVNa0pVMEkxT24xM0t0cDBJQ3B4OThQMXRVMGlOU0RFQnVhTzBrdVFxMVFfVUExdUZpalFINmtsYnBaS3E4blNBNW9aZUR2THMxQzlB?oc=5](https://news.google.com/rss/articles/CBMivgFBVV95cUxNRVZxczhRanpKcXpkZXczQzBTZXlpSGtpTC05bEpUZXQ2UGYtYnFnVUFtQm5CVW1zS0JvMEg1dmphVmlmaGJaa2c0SzBDbl9RQnJfd1VxQTAwM0VnYXItZTJYMkZPSDVzYk9sbHRRWUN3anVNa0pVMEkxT24xM0t0cDBJQ3B4OThQMXRVMGlOU0RFQnVhTzBrdVFxMVFfVUExdUZpalFINmtsYnBaS3E4blNBNW9aZUR2THMxQzlB?oc=5)
+- **Quick Commands**: `python telegram_bot.py --approve 398` | `python telegram_bot.py --reject 398` | `python telegram_bot.py --edit 398`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Software Development Work From Home Internship at Bennufly Technology - Internshala - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Remote / Work From Home
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://news.google.com/rss/articles/CBMivgFBVV95cUxNRVZxczhRanpKcXpkZXczQzBTZXlpSGtpTC05bEpUZXQ2UGYtYnFnVUFtQm5CVW1zS0JvMEg1dmphVmlmaGJaa2c0SzBDbl9RQnJfd1VxQTAwM0VnYXItZTJYMkZPSDVzYk9sbHRRWUN3anVNa0pVMEkxT24xM0t0cDBJQ3B4OThQMXRVMGlOU0RFQnVhTzBrdVFxMVFfVUExdUZpalFINmtsYnBaS3E4blNBNW9aZUR2THMxQzlB?oc=5
+```
+
+---
+
+### [#402] Front End Development Work From Home Internship at Sankar Group - Internshala [ONLINE]
+- **Location**: [ONLINE] Remote / Work From Home | **Source**: Search Jobs RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://news.google.com/rss/articles/CBMitgFBVV95cUxOZHowTnpsRW5Wb0xsTFpKOUhjMVp2amkyS0lveDVYWWJoTlpSSmxOUzFqX0xxU2lnS0xkX2VuQTczb3FBWEhBQl9VSUF0Y0V3c0RsamRoQ3ZmUWE3SWdMenVBNW5xTDlHaWxhdFo1WTZUMUtxcTRrWGJKSDJhTk1QUzQ2OFJBTnlFcXpwNE40MkhFLVZjVnlYV0hjdk83Z1RSNWZBNXFCNkhFX1ZwT2wzWUZtbjNudw?oc=5](https://news.google.com/rss/articles/CBMitgFBVV95cUxOZHowTnpsRW5Wb0xsTFpKOUhjMVp2amkyS0lveDVYWWJoTlpSSmxOUzFqX0xxU2lnS0xkX2VuQTczb3FBWEhBQl9VSUF0Y0V3c0RsamRoQ3ZmUWE3SWdMenVBNW5xTDlHaWxhdFo1WTZUMUtxcTRrWGJKSDJhTk1QUzQ2OFJBTnlFcXpwNE40MkhFLVZjVnlYV0hjdk83Z1RSNWZBNXFCNkhFX1ZwT2wzWUZtbjNudw?oc=5)
+- **Quick Commands**: `python telegram_bot.py --approve 402` | `python telegram_bot.py --reject 402` | `python telegram_bot.py --edit 402`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Front End Development Work From Home Internship at Sankar Group - Internshala - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Remote / Work From Home
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://news.google.com/rss/articles/CBMitgFBVV95cUxOZHowTnpsRW5Wb0xsTFpKOUhjMVp2amkyS0lveDVYWWJoTlpSSmxOUzFqX0xxU2lnS0xkX2VuQTczb3FBWEhBQl9VSUF0Y0V3c0RsamRoQ3ZmUWE3SWdMenVBNW5xTDlHaWxhdFo1WTZUMUtxcTRrWGJKSDJhTk1QUzQ2OFJBTnlFcXpwNE40MkhFLVZjVnlYV0hjdk83Z1RSNWZBNXFCNkhFX1ZwT2wzWUZtbjNudw?oc=5
+```
+
+---
+
+### [#387] Software Developer Work From Home Fresher Job - Internshala [ONLINE]
+- **Location**: [ONLINE] Remote / Work From Home | **Source**: Search Jobs RSS | **Created**: `2026-11-11 07:15:45`
+- **Original Link**: [https://news.google.com/rss/articles/CBMiogFBVV95cUxObjhWUFRvYmpqZ21oYzBtRFlNRjk2amVpeGhFbWxWQmYwSDN0XzNkLWM3TmZnX1hrN1NaTE03S3BFUDFnMnJGMkZsZTNtX3ZEekpoaGNjQkU1dXZRRUtXblZ0b3hDcUF1TUw3U3VTY2lMdEpYWC1YQ3dOVUlpQVlhTWJzUXZxLWhtR0psaEtOV1lhakRBelpONlZuX2Z4M2stRkE?oc=5](https://news.google.com/rss/articles/CBMiogFBVV95cUxObjhWUFRvYmpqZ21oYzBtRFlNRjk2amVpeGhFbWxWQmYwSDN0XzNkLWM3TmZnX1hrN1NaTE03S3BFUDFnMnJGMkZsZTNtX3ZEekpoaGNjQkU1dXZRRUtXblZ0b3hDcUF1TUw3U3VTY2lMdEpYWC1YQ3dOVUlpQVlhTWJzUXZxLWhtR0psaEtOV1lhakRBelpONlZuX2Z4M2stRkE?oc=5)
+- **Quick Commands**: `python telegram_bot.py --approve 387` | `python telegram_bot.py --reject 387` | `python telegram_bot.py --edit 387`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Software Developer Work From Home Fresher Job - Internshala - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Remote / Work From Home
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://news.google.com/rss/articles/CBMiogFBVV95cUxObjhWUFRvYmpqZ21oYzBtRFlNRjk2amVpeGhFbWxWQmYwSDN0XzNkLWM3TmZnX1hrN1NaTE03S3BFUDFnMnJGMkZsZTNtX3ZEekpoaGNjQkU1dXZRRUtXblZ0b3hDcUF1TUw3U3VTY2lMdEpYWC1YQ3dOVUlpQVlhTWJzUXZxLWhtR0psaEtOV1lhakRBelpONlZuX2Z4M2stRkE?oc=5
+```
+
+---
+
+### [#351] Dropbox: Backend Product Software Engineer [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: WeWorkRemotely Back-End | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://weworkremotely.com/remote-jobs/dropbox-backend-product-software-engineer-1](https://weworkremotely.com/remote-jobs/dropbox-backend-product-software-engineer-1)
+- **Quick Commands**: `python telegram_bot.py --approve 351` | `python telegram_bot.py --reject 351` | `python telegram_bot.py --edit 351`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Dropbox: Backend Product Software Engineer - Tech Company [ONLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Online
+🎯 Skills: Software Engineering / Tech
+🔗 Apply: https://weworkremotely.com/remote-jobs/dropbox-backend-product-software-engineer-1
+```
+
+---
+
+### [#360] Benefits Analyst at Gitlab [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Greenhouse (Gitlab) | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://job-boards.greenhouse.io/gitlab/jobs/8864819002](https://job-boards.greenhouse.io/gitlab/jobs/8864819002)
+- **Quick Commands**: `python telegram_bot.py --approve 360` | `python telegram_bot.py --reject 360` | `python telegram_bot.py --edit 360`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Benefits Analyst - Gitlab [BENGALURU - OFFLINE]
+
+📌 Experience: Senior
+📍 Location: Bangalore, India
+🎯 Skills: Go
+🔗 Apply: https://job-boards.greenhouse.io/gitlab/jobs/8864819002
+```
+
+---
+
+### [#363] Intermediate Backend Engineer, Authorization at Gitlab [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Greenhouse (Gitlab) | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://job-boards.greenhouse.io/gitlab/jobs/8905402002](https://job-boards.greenhouse.io/gitlab/jobs/8905402002)
+- **Quick Commands**: `python telegram_bot.py --approve 363` | `python telegram_bot.py --reject 363` | `python telegram_bot.py --edit 363`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Intermediate Backend Engineer, Authorization - Gitlab [BENGALURU - OFFLINE]
+
+📌 Experience: senior
+📍 Location: Bangalore, India
+🎯 Skills: Rust, Go, PostgreSQL, GraphQL
+🔗 Apply: https://job-boards.greenhouse.io/gitlab/jobs/8905402002
+```
+
+---
+
+### [#366] Intermediate Backend Engineer, India at Gitlab [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Greenhouse (Gitlab) | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://job-boards.greenhouse.io/gitlab/jobs/8775507002](https://job-boards.greenhouse.io/gitlab/jobs/8775507002)
+- **Quick Commands**: `python telegram_bot.py --approve 366` | `python telegram_bot.py --reject 366` | `python telegram_bot.py --edit 366`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Intermediate Backend Engineer, India - Gitlab [BENGALURU - OFFLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Bangalore, India
+🎯 Skills: Docker, Rust, Go, Kubernetes, PostgreSQL
+🔗 Apply: https://job-boards.greenhouse.io/gitlab/jobs/8775507002
+```
+
+---
+
+### [#368] Intermediate Backend Engineer , Security Factory at Gitlab [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Greenhouse (Gitlab) | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://job-boards.greenhouse.io/gitlab/jobs/8890971002](https://job-boards.greenhouse.io/gitlab/jobs/8890971002)
+- **Quick Commands**: `python telegram_bot.py --approve 368` | `python telegram_bot.py --reject 368` | `python telegram_bot.py --edit 368`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Intermediate Backend Engineer , Security Factory - Gitlab [BENGALURU - OFFLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Bangalore, India
+🎯 Skills: Python, Docker, LLM, Rust, Go
+🔗 Apply: https://job-boards.greenhouse.io/gitlab/jobs/8890971002
+```
+
+---
+
+### [#369] Intermediate Data Engineer at Gitlab [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Greenhouse (Gitlab) | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://job-boards.greenhouse.io/gitlab/jobs/8924923002](https://job-boards.greenhouse.io/gitlab/jobs/8924923002)
+- **Quick Commands**: `python telegram_bot.py --approve 369` | `python telegram_bot.py --reject 369` | `python telegram_bot.py --edit 369`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💼 Intermediate Data Engineer - Gitlab [BENGALURU - OFFLINE]
+
+📌 Experience: Entry / Mid level
+📍 Location: Bangalore, India
+🎯 Skills: Python, SQL, Docker, GCP, Go
+🔗 Apply: https://job-boards.greenhouse.io/gitlab/jobs/8924923002
 ```
 
 ---
@@ -576,112 +799,383 @@
 
 ---
 
-### [#77] Junior Market Analyst at MEYA HOLDINGS [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: RemoteOK | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://remoteok.com/remote-jobs/remote-junior-market-analyst-meya-holdings-1137700](https://remoteok.com/remote-jobs/remote-junior-market-analyst-meya-holdings-1137700)
-- **Quick Commands**: `python telegram_bot.py --approve 77` | `python telegram_bot.py --reject 77` | `python telegram_bot.py --edit 77`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💼 Junior Market Analyst - MEYA HOLDINGS [ONLINE]
-
-📌 Experience: Entry / Mid level
-📍 Location: Remote
-🎯 Skills: other, crypto, finance, remote work
-🔗 Apply: https://remoteOK.com/remote-jobs/remote-junior-market-analyst-meya-holdings-1137700
-```
-
----
-
 ## 📅 Events & Workshops
-*Target WhatsApp Group: `📅 Events & Workshops`* | *Pending: 10*
+*Target WhatsApp Group: `📅 Events & Workshops`* | *Pending: 26*
 
-### [#82] DevFest Hyderabad 2026 [HYDERABAD - OFFLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: GDG Hyderabad | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-devfest-hyderabad-2026](https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-devfest-hyderabad-2026)
-- **Quick Commands**: `python telegram_bot.py --approve 82` | `python telegram_bot.py --reject 82` | `python telegram_bot.py --edit 82`
+### [#441] AI DHAMAKA 2026 – Free AI Hackathon in Hyderabad | No Coding Required [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AllEvents Hyderabad Tech | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://allevents.in/hyderabad/ai-dhamaka-2026-free-ai-hackathon-in-hyderabad-no-coding-required/80005952756417](https://allevents.in/hyderabad/ai-dhamaka-2026-free-ai-hackathon-in-hyderabad-no-coding-required/80005952756417)
+- **Quick Commands**: `python telegram_bot.py --approve 441` | `python telegram_bot.py --reject 441` | `python telegram_bot.py --edit 441`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-🗓️ DevFest Hyderabad 2026 [HYDERABAD - OFFLINE]
+🗓️ AI DHAMAKA 2026 – Free AI Hackathon in Hyderabad | No Coding Required [HYDERABAD - OFFLINE]
 
-📌 What: Developer meetup organized by GDG Hyderabad: DevFest Hyderabad 2026.
-📅 Date / Deadline: RSVP on Chapter Page
+📌 What: Local tech event in Hyderabad at SkillCircle Hyderabad: AI Dhamaka 2026 – Free AI Hackathon in Hyderabad | No Coding Required.
+📅 Date / Deadline: 2026-11-14
 📍 Where: [HYDERABAD - OFFLINE] Hyderabad
-🎯 Who: Open to all
-🔗 https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-devfest-hyderabad-2026/
+🎯 Who: Students
+🔗 https://allevents.in/hyderabad/ai-dhamaka-2026-free-ai-hackathon-in-hyderabad-no-coding-required/80005952756417
 ```
 
 ---
 
-### [#83] Google DeepMind Hyderabad Hackathon [HYDERABAD - OFFLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: GDG Hyderabad | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-google-deepmind-hyderabad-hackathon](https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-google-deepmind-hyderabad-hackathon)
-- **Quick Commands**: `python telegram_bot.py --approve 83` | `python telegram_bot.py --reject 83` | `python telegram_bot.py --edit 83`
+### [#444] AI FinOps: Managing LLM, GPU and Agentic AI Costs [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AllEvents Hyderabad Tech | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://allevents.in/hyderabad/ai-finops-managing-llm-gpu-and-agentic-ai-costs/100002003559273722](https://allevents.in/hyderabad/ai-finops-managing-llm-gpu-and-agentic-ai-costs/100002003559273722)
+- **Quick Commands**: `python telegram_bot.py --approve 444` | `python telegram_bot.py --reject 444` | `python telegram_bot.py --edit 444`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-🗓️ Google DeepMind Hyderabad Hackathon [HYDERABAD - OFFLINE]
+🗓️ AI FinOps: Managing LLM, GPU and Agentic AI Costs [HYDERABAD - OFFLINE]
 
-📌 What: Developer meetup organized by GDG Hyderabad: Google DeepMind Hyderabad Hackathon.
-📅 Date / Deadline: RSVP on Chapter Page
+📌 What: Local tech event in Hyderabad at NP Venue - Hyderabad: AI FinOps: Managing LLM, Gpu and Agentic AI Costs.
+📅 Date / Deadline: 2026-11-28
 📍 Where: [HYDERABAD - OFFLINE] Hyderabad
-🎯 Who: Open to all
-🔗 https://gdg.community.dev/events/details/google-gdg-hyderabad-presents-google-deepmind-hyderabad-hackathon/
+🎯 Who: Students
+🔗 https://allevents.in/hyderabad/ai-finops-managing-llm-gpu-and-agentic-ai-costs/100002003559273722
 ```
 
 ---
 
-### [#84] React Hyderabad Community Calendar [HYDERABAD - OFFLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: React Hyderabad | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://lu.ma/reacthyderabad](https://lu.ma/reacthyderabad)
-- **Quick Commands**: `python telegram_bot.py --approve 84` | `python telegram_bot.py --reject 84` | `python telegram_bot.py --edit 84`
+### [#419] Agentic AI Developer Meet – Hyderabad [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Hyderabad AI Society Meetup | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/hyderabad-ai-society-meetup-group/events/317268247](https://www.meetup.com/hyderabad-ai-society-meetup-group/events/317268247)
+- **Quick Commands**: `python telegram_bot.py --approve 419` | `python telegram_bot.py --reject 419` | `python telegram_bot.py --edit 419`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-🗓️ React Hyderabad Community Calendar [HYDERABAD - OFFLINE]
+🗓️ Agentic AI Developer Meet – Hyderabad [HYDERABAD - OFFLINE]
 
-📌 What: Official active events and meetup registrations for React Hyderabad.
-📅 Date / Deadline: Check calendar
-📍 Where: [HYDERABAD - OFFLINE] Hyderabad
-🎯 Who: Open to all
-🔗 https://lu.ma/reacthyderabad
-```
-
----
-
-### [#85] Agentversity AI Hackathon: Build the Agentic Future [ONLINE]
-- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AI Community Hyderabad | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/317316035](https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/317316035)
-- **Quick Commands**: `python telegram_bot.py --approve 85` | `python telegram_bot.py --reject 85` | `python telegram_bot.py --edit 85`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🗓️ Agentversity AI Hackathon: Build the Agentic Future [ONLINE]
-
-📌 What: Hyderabad Artificial Intelligence Group # Agentversity AI Hackathon: Build the Agentic Future Join us for a one-day, fully virtual AI Hackathon focused on building real AI applications and intelligent agents. Build, expe
+📌 What: Hyderabad AI & Society Meetup Group Registration on our event page is required to attend. Seats are approval-based, and Rsvp on Meetup alone does not guarantee a spot.
 📅 Date / Deadline: RSVP on Meetup
 📍 Where: [HYDERABAD - OFFLINE] Hyderabad
-🎯 Who: Open to all
-🔗 https://www.meetup.com/hyderabad-artificial-intelligence-meetup-group/events/317316035/
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/hyderabad-ai-society-meetup-group/events/317268247/
 ```
 
 ---
 
-### [#241] DevFest Chimbote 2026 [BENGALURU - OFFLINE]
-- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: GDG Bangalore | **Created**: `2026-11-10 06:05:40`
-- **Original Link**: [https://gdg.community.dev/events/details/google-gdg-chimbote-presents-devfest-chimbote-2026](https://gdg.community.dev/events/details/google-gdg-chimbote-presents-devfest-chimbote-2026)
-- **Quick Commands**: `python telegram_bot.py --approve 241` | `python telegram_bot.py --reject 241` | `python telegram_bot.py --edit 241`
+### [#422] GLOBAL STARTUPS CLUB l STARTUP NETWORKING HYDERABAD 2026 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Startups | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317146552](https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317146552)
+- **Quick Commands**: `python telegram_bot.py --approve 422` | `python telegram_bot.py --reject 422` | `python telegram_bot.py --edit 422`
 
 **Formatted Legion Draft (Ready to Copy):**
 ```text
-🚀 DevFest Chimbote 2026 [BENGALURU - OFFLINE]
+🗓️ GLOBAL STARTUPS CLUB l STARTUP NETWORKING HYDERABAD 2026 [HYDERABAD - OFFLINE]
 
-📌 What: Developer meetup organized by Gdg Bangalore: DevFest Chimbote 2026.
-📅 Date / Deadline: RSVP on Chapter Page
+📌 What: **Note: This is a paid event** **Registration Link:** [https://hyderabad.globalstartups.club/](https://hyderabad.globalstartups.club/) **GLOBAL Startups Club l Startup Networking Hyderabad 2026** Innovate. Network.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317146552/
+```
+
+---
+
+### [#430] GLOBAL STARTUPS CLUB l STARTUP NETWORKING HYDERABAD 2026 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Startups | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317188730](https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317188730)
+- **Quick Commands**: `python telegram_bot.py --approve 430` | `python telegram_bot.py --reject 430` | `python telegram_bot.py --edit 430`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ GLOBAL STARTUPS CLUB l STARTUP NETWORKING HYDERABAD 2026 [HYDERABAD - OFFLINE]
+
+📌 What: **Note: This is a paid event** **Registration Link:** [https://hyderabad.globalstartups.club/](https://hyderabad.globalstartups.club/) Global Startups Club l Startup Networking Hyderabad 2026 Innovate. Network.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/mumbai-startup-businesses-meetup-group/events/317188730/
+```
+
+---
+
+### [#432] 🍔 AWS Buns & Bytes [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/aws-sbg-at-sreenidhi-institute-of-science-and-technology/events/317365713](https://www.meetup.com/aws-sbg-at-sreenidhi-institute-of-science-and-technology/events/317365713)
+- **Quick Commands**: `python telegram_bot.py --approve 432` | `python telegram_bot.py --reject 432` | `python telegram_bot.py --edit 432`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ 🍔 AWS Buns & Bytes [HYDERABAD - OFFLINE]
+
+📌 What: **AWS Buns & Bytes — Hyderabad** **Good Burgers, Great Ideas, and Even Better Connections!** Aws Buns & Bytes is a vibrant community gathering where technology enthusiasts and student builders come together to connect, share ideas, and explore their passion for innovation.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/aws-sbg-at-sreenidhi-institute-of-science-and-technology/events/317365713/
+```
+
+---
+
+### [#433] ThinkSprint3.0 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/review-ai-tech-and-solutions/events/317166208](https://www.meetup.com/review-ai-tech-and-solutions/events/317166208)
+- **Quick Commands**: `python telegram_bot.py --approve 433` | `python telegram_bot.py --reject 433` | `python telegram_bot.py --edit 433`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ ThinkSprint3.0 [HYDERABAD - OFFLINE]
+
+📌 What: # ThinkSprint 3.0 — 24-Hour Offline Hackathon ** Think Fast. Innovate Smart.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/review-ai-tech-and-solutions/events/317166208/
+```
+
+---
+
+### [#434] AWS Builder Meetup: Build, Experiment & Play [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/aws-sbg-at-matrusri-engineering-college/events/317369041](https://www.meetup.com/aws-sbg-at-matrusri-engineering-college/events/317369041)
+- **Quick Commands**: `python telegram_bot.py --approve 434` | `python telegram_bot.py --reject 434` | `python telegram_bot.py --edit 434`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🛠️ AWS Builder Meetup: Build, Experiment & Play [HYDERABAD - OFFLINE]
+
+📌 What: # Aws Builder Meetup: Build, Experiment & Play The **AWS Student Builder Group at MECS** presents an interactive Aws community meetup designed for developers, builders, and cloud enthusiasts. This isn't going to be another sit-back-and-listen session.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/aws-sbg-at-matrusri-engineering-college/events/317369041/
+```
+
+---
+
+### [#436] Agentic AI: Zero to Hero - From LLM Fundamentals to Autonomous AI Agents [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AllEvents Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://allevents.in/hyderabad/agentic-ai-zero-to-hero-from-llm-fundamentals-to-autonomous-ai-agents/100002004116109232](https://allevents.in/hyderabad/agentic-ai-zero-to-hero-from-llm-fundamentals-to-autonomous-ai-agents/100002004116109232)
+- **Quick Commands**: `python telegram_bot.py --approve 436` | `python telegram_bot.py --reject 436` | `python telegram_bot.py --edit 436`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Agentic AI: Zero to Hero - From LLM Fundamentals to Autonomous AI Agents [HYDERABAD - OFFLINE]
+
+📌 What: Local tech event in Hyderabad at Must AI Café: Agentic AI: Zero to Hero - From Llm Fundamentals to Autonomous AI Agents.
+📅 Date / Deadline: 2026-11-14
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Students
+🔗 https://allevents.in/hyderabad/agentic-ai-zero-to-hero-from-llm-fundamentals-to-autonomous-ai-agents/100002004116109232
+```
+
+---
+
+### [#437] Ethical Hacking with AI – 3-Hour Hands-on Workshop | Hi-Tech City | ₹49 [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: AllEvents Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://allevents.in/hyderabad/ethical-hacking-with-ai-3-hour-hands-on-workshop-hi-tech-city-₹49/100002004513702444](https://allevents.in/hyderabad/ethical-hacking-with-ai-3-hour-hands-on-workshop-hi-tech-city-₹49/100002004513702444)
+- **Quick Commands**: `python telegram_bot.py --approve 437` | `python telegram_bot.py --reject 437` | `python telegram_bot.py --edit 437`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🛠️ Ethical Hacking with AI – 3-Hour Hands-on Workshop | Hi-Tech City | ₹49 [HYDERABAD - OFFLINE]
+
+📌 What: Local tech event in Hyderabad at Capital Park: Ethical Hacking with AI – 3-Hour Hands-on Workshop | Hi-Tech City | ₹49.
+📅 Date / Deadline: 2026-11-15
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Open to all
+🔗 https://allevents.in/hyderabad/ethical-hacking-with-ai-3-hour-hands-on-workshop-hi-tech-city-₹49/100002004513702444
+```
+
+---
+
+### [#439] Agentic AI: Zero to Hero - From LLM Fundamentals to Autonomous AI Agents [HYDERABAD - OFFLINE]
+- **Location**: [HYDERABAD - OFFLINE] Hyderabad | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/hyderabad-development-meetup-group/events/317237242](https://www.meetup.com/hyderabad-development-meetup-group/events/317237242)
+- **Quick Commands**: `python telegram_bot.py --approve 439` | `python telegram_bot.py --reject 439` | `python telegram_bot.py --edit 439`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🛠️ Agentic AI: Zero to Hero - From LLM Fundamentals to Autonomous AI Agents [HYDERABAD - OFFLINE]
+
+📌 What: Artificial Intelligence is transforming the financial services industry. From fraud detection and credit scoring to intelligent automation and autonomous AI agents, AI is changing how banks, financial institutions, and FinTech companies operate.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [HYDERABAD - OFFLINE] Hyderabad
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/hyderabad-development-meetup-group/events/317237242/
+```
+
+---
+
+### [#442] AWS Certificate Preparation [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://www.meetup.com/aws-sbg-at-priyadarshini-college-of-engineering/events/317250308](https://www.meetup.com/aws-sbg-at-priyadarshini-college-of-engineering/events/317250308)
+- **Quick Commands**: `python telegram_bot.py --approve 442` | `python telegram_bot.py --reject 442` | `python telegram_bot.py --edit 442`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ AWS Certificate Preparation [ONLINE]
+
+📌 What: Ready to take your first step toward an Aws Certification? Aws Student Builder Group at Priyadarshini College of Engineering is hosting an insightful session on **AWS Certification Preparation**, designed especially for students who are new to Aws and cloud computing.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [ONLINE] Online
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/aws-sbg-at-priyadarshini-college-of-engineering/events/317250308/
+```
+
+---
+
+### [#467] Symphony: India's Flagship Voice AI Summit [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Luma Bengaluru | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://luma.com/670rdx1k](https://luma.com/670rdx1k)
+- **Quick Commands**: `python telegram_bot.py --approve 467` | `python telegram_bot.py --reject 467` | `python telegram_bot.py --edit 467`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Symphony: India's Flagship Voice AI Summit [BENGALURU - OFFLINE]
+
+📌 What: Event hosted by Luma Bengaluru: Symphony: India's Flagship Voice AI Summit.
+📅 Date / Deadline: RSVP on Luma
 📍 Where: [BENGALURU - OFFLINE] Bengaluru
-🎯 Who: 2026 Batch
-🔗 https://gdg.community.dev/events/details/google-gdg-chimbote-presents-devfest-chimbote-2026/
+🎯 Who: Review needed: no date
+🔗 https://luma.com/670rdx1k
+```
+
+---
+
+### [#469] Build with Agora - Bengaluru 2026 | Voice AI Hackathon [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Luma Bengaluru | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://luma.com/2g5vcgrr](https://luma.com/2g5vcgrr)
+- **Quick Commands**: `python telegram_bot.py --approve 469` | `python telegram_bot.py --reject 469` | `python telegram_bot.py --edit 469`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Build with Agora - Bengaluru 2026 | Voice AI Hackathon [BENGALURU - OFFLINE]
+
+📌 What: Event hosted by Luma Bengaluru: Build with Agora - Bengaluru 2026 | Voice AI Hackathon.
+📅 Date / Deadline: RSVP on Luma
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Review needed: no date
+🔗 https://luma.com/2g5vcgrr
+```
+
+---
+
+### [#471] Cashfree × Sarvam AI Buildathon [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Luma Bengaluru | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://luma.com/azuhrzuj](https://luma.com/azuhrzuj)
+- **Quick Commands**: `python telegram_bot.py --approve 471` | `python telegram_bot.py --reject 471` | `python telegram_bot.py --edit 471`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Cashfree × Sarvam AI Buildathon [BENGALURU - OFFLINE]
+
+📌 What: Event hosted by Luma Bengaluru: Cashfree × Sarvam AI Buildathon.
+📅 Date / Deadline: RSVP on Luma
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Review needed: no date
+🔗 https://luma.com/azuhrzuj
+```
+
+---
+
+### [#473] AI Tools that Earn: a hackathon by Apify [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru (Whitefield) | **Source**: Luma Bengaluru | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://luma.com/apify-yc12](https://luma.com/apify-yc12)
+- **Quick Commands**: `python telegram_bot.py --approve 473` | `python telegram_bot.py --reject 473` | `python telegram_bot.py --edit 473`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ AI Tools that Earn: a hackathon by Apify [BENGALURU - OFFLINE]
+
+📌 What: Event hosted by Luma Bengaluru: AI Tools that Earn: a hackathon by Apify.
+📅 Date / Deadline: RSVP on Luma
+📍 Where: [BENGALURU - OFFLINE] Bengaluru (Whitefield)
+🎯 Who: Review needed: no date
+🔗 https://luma.com/apify-yc12
+```
+
+---
+
+### [#475] The Agentic Room [BENGALURU - OFFLINE]
+- **Location**: [BENGALURU - OFFLINE] Bengaluru | **Source**: Luma Bengaluru | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://luma.com/m3trcf1y](https://luma.com/m3trcf1y)
+- **Quick Commands**: `python telegram_bot.py --approve 475` | `python telegram_bot.py --reject 475` | `python telegram_bot.py --edit 475`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ The Agentic Room [BENGALURU - OFFLINE]
+
+📌 What: Event hosted by Luma Bengaluru: The Agentic Room.
+📅 Date / Deadline: RSVP on Luma
+📍 Where: [BENGALURU - OFFLINE] Bengaluru
+🎯 Who: Review needed: no date
+🔗 https://luma.com/m3trcf1y
+```
+
+---
+
+### [#476] Free Cyber Security with AI Workshop in Hyderabad | 11 November 2026 [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Unstop Hyderabad | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://unstop.com/workshops-webinars/free-cyber-security-with-ai-workshop-in-hyderabad-11-november-2026-quality-thought-info-systems-1799774](https://unstop.com/workshops-webinars/free-cyber-security-with-ai-workshop-in-hyderabad-11-november-2026-quality-thought-info-systems-1799774)
+- **Quick Commands**: `python telegram_bot.py --approve 476` | `python telegram_bot.py --reject 476` | `python telegram_bot.py --edit 476`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🛠️ Free Cyber Security with AI Workshop in Hyderabad | 11 November 2026 [ONLINE]
+
+📌 What: Are you interested in Cyber Security and Artificial Intelligence? Want to explore how AI is transforming the cybersecurity industry?
+📅 Date / Deadline: 2026-11-11
+📍 Where: [ONLINE] Online
+🎯 Who: Students
+🔗 https://unstop.com/workshops-webinars/free-cyber-security-with-ai-workshop-in-hyderabad-11-november-2026-quality-thought-info-systems-1799774
+```
+
+---
+
+### [#426] Founders Session [ONLINE] [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Meetup Hyderabad Startups | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/foundersnagri/events/316893617](https://www.meetup.com/foundersnagri/events/316893617)
+- **Quick Commands**: `python telegram_bot.py --approve 426` | `python telegram_bot.py --reject 426` | `python telegram_bot.py --edit 426`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Founders Session [ONLINE]
+
+📌 What: Please complete the form - [https://forms.gle/HADKJUiRME2gD3sZ7](https://forms.gle/HADKJUiRME2gD3sZ7) \- to get added to Founders and Business Owners WA group \(only \+91 country code allowed\) **Drop in for a founder session with people from the startup / business world.** **What happens in the session:** * Introductions * Open floor for asks * WA posting by session participants
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [ONLINE] Online
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/foundersnagri/events/316893617/
+```
+
+---
+
+### [#435] Google AI Deep Dive (Ep 5) - Discriminative (Jev/DiffusionGemma) models [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/bangalore-ai-tech-talks/events/317059923](https://www.meetup.com/bangalore-ai-tech-talks/events/317059923)
+- **Quick Commands**: `python telegram_bot.py --approve 435` | `python telegram_bot.py --reject 435` | `python telegram_bot.py --edit 435`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🛠️ Google AI Deep Dive (Ep 5) - Discriminative (Jev/DiffusionGemma) models [ONLINE]
+
+📌 What: **Important**: Register on the [event website](https://www.aicamp.ai/event/eventdetails/W2026111109) to receive the joining link. (rsvp on meetup will Not receive anything).
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [ONLINE] Online
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/bangalore-ai-tech-talks/events/317059923/
+```
+
+---
+
+### [#438] Primewise Founders Club Networking Event- Hyderabad (Online) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Meetup Hyderabad Tech | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.meetup.com/primewise-founders-club-hyderabad/events/317249629](https://www.meetup.com/primewise-founders-club-hyderabad/events/317249629)
+- **Quick Commands**: `python telegram_bot.py --approve 438` | `python telegram_bot.py --reject 438` | `python telegram_bot.py --edit 438`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🗓️ Primewise Founders Club Networking Event- Hyderabad (Online) [ONLINE]
+
+📌 What: **Primewise Founders Club \| Founder Networking Event** Join an exclusive networking session with **25-40 carefully selected founders and investors** who are actively building, hiring, investing, collaborating, and looking for meaningful business connections.
+📅 Date / Deadline: RSVP on Meetup
+📍 Where: [ONLINE] Online
+🎯 Who: Review needed: no date
+🔗 https://www.meetup.com/primewise-founders-club-hyderabad/events/317249629/
 ```
 
 ---
@@ -777,7 +1271,25 @@
 ---
 
 ## 📚 Courses & Resources
-*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 22*
+*Target WhatsApp Group: `📚 Courses and Resources`* | *Pending: 3*
+
+### [#365] BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Hugging Face Blog & Courses | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://huggingface.co/blog/qvac/botpsy](https://huggingface.co/blog/qvac/botpsy)
+- **Quick Commands**: `python telegram_bot.py --approve 365` | `python telegram_bot.py --reject 365` | `python telegram_bot.py --edit 365`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+🎓 BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model [ONLINE]
+
+📌 What: Update from Hugging Face Blog & Courses: BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2025, 2026 Batch)
+🔗 https://huggingface.co/blog/qvac/botpsy
+```
+
+---
 
 ### [#344] Pay for Hugging Face Hub with your Google Cloud Account [ONLINE]
 - **Location**: [ONLINE] Online | **Source**: Hugging Face Blog & Courses | **Created**: `2026-11-11 04:37:19`
@@ -815,368 +1327,1016 @@
 
 ---
 
-### [#123] How to Automate Docker Image Creation for Postgres Using Shell Commands [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.freecodecamp.org/news/how-to-automate-docker-image-creation-for-postgres-using-shell](https://www.freecodecamp.org/news/how-to-automate-docker-image-creation-for-postgres-using-shell)
-- **Quick Commands**: `python telegram_bot.py --approve 123` | `python telegram_bot.py --reject 123` | `python telegram_bot.py --edit 123`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 How to Automate Docker Image Creation for Postgres Using Shell Commands [ONLINE]
-
-📌 What: If you have certain lines of code that repeat over and over again in a project, there's a pretty standard solution for it: using a function. But what about when you have the same project file setup th
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.freecodecamp.org/news/how-to-automate-docker-image-creation-for-postgres-using-shell/
-```
-
----
-
-### [#124] How to Partner with Design Studios on Client Builds: A Freelance Developer's Guide [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.freecodecamp.org/news/freelance-developer-design-studios](https://www.freecodecamp.org/news/freelance-developer-design-studios)
-- **Quick Commands**: `python telegram_bot.py --approve 124` | `python telegram_bot.py --reject 124` | `python telegram_bot.py --edit 124`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 How to Partner with Design Studios on Client Builds: A Freelance Developer's Guide [ONLINE]
-
-📌 What: Let's say a design studio gets a new client project. The branding is ready, the wireframes are approved, the Figma file is polished, and every screen looks pretty much perfect. Then the developer join
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.freecodecamp.org/news/freelance-developer-design-studios/
-```
-
----
-
-### [#125] Learn Vector Databases for Beginners – Embeddings, Similarity Search & ChromaDB [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.freecodecamp.org/news/learn-vector-databases-for-beginners-embeddings-similarity-search-chromadb](https://www.freecodecamp.org/news/learn-vector-databases-for-beginners-embeddings-similarity-search-chromadb)
-- **Quick Commands**: `python telegram_bot.py --approve 125` | `python telegram_bot.py --reject 125` | `python telegram_bot.py --edit 125`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Learn Vector Databases for Beginners – Embeddings, Similarity Search & ChromaDB [ONLINE]
-
-📌 What: A vector database stores data as lists of numbers called embeddings, which lets it search by meaning instead of matching exact keywords. It's the piece behind a lot of recommendation systems, RAG apps
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.freecodecamp.org/news/learn-vector-databases-for-beginners-embeddings-similarity-search-chromadb/
-```
-
----
-
-### [#143] Free AI and Data Courses with 365 Data Science: 100% Unlimited Access until Nov 20 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/free-ai-and-data-courses-with-365-data-science-100-unlimited-access-until-nov-20](https://machinelearningmastery.com/free-ai-and-data-courses-with-365-data-science-100-unlimited-access-until-nov-20)
-- **Quick Commands**: `python telegram_bot.py --approve 143` | `python telegram_bot.py --reject 143` | `python telegram_bot.py --edit 143`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Free AI and Data Courses with 365 Data Science: 100% Unlimited Access until Nov 20 [ONLINE]
-
-📌 What: Sponsored Content From November 5 to November 20, 2026 (starting at 8:00 a.m. UTC), 365 Data Science will grant free access to...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/free-ai-and-data-courses-with-365-data-science-100-unlimited-access-until-nov-20/
-```
-
----
-
-### [#144] Decorators for Timing, Retries, Caching, and Validation in Python [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/decorators-for-timing-retries-caching-and-validation-in-python](https://machinelearningmastery.com/decorators-for-timing-retries-caching-and-validation-in-python)
-- **Quick Commands**: `python telegram_bot.py --approve 144` | `python telegram_bot.py --reject 144` | `python telegram_bot.py --edit 144`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Decorators for Timing, Retries, Caching, and Validation in Python [ONLINE]
-
-📌 What: In this article, you will learn how Python decorators work under the hood and how to build reliable ones for timing, retries, caching, and input...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/decorators-for-timing-retries-caching-and-validation-in-python/
-```
-
----
-
-### [#145] Choosing an LLM Inference Optimization Technique: A Decision-Tree Approach [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/choosing-an-llm-inference-optimization-technique-a-decision-tree-approach](https://machinelearningmastery.com/choosing-an-llm-inference-optimization-technique-a-decision-tree-approach)
-- **Quick Commands**: `python telegram_bot.py --approve 145` | `python telegram_bot.py --reject 145` | `python telegram_bot.py --edit 145`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Choosing an LLM Inference Optimization Technique: A Decision-Tree Approach [ONLINE]
-
-📌 What: In this article, you will learn how to match an LLM inference optimization technique to the actual bottleneck in your workload by working through a...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/choosing-an-llm-inference-optimization-technique-a-decision-tree-approach/
-```
-
----
-
-### [#146] The AI Agent Memory Stack: Building Blocks, Patterns, and Frameworks [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/the-ai-agent-memory-stack-building-blocks-patterns-and-frameworks](https://machinelearningmastery.com/the-ai-agent-memory-stack-building-blocks-patterns-and-frameworks)
-- **Quick Commands**: `python telegram_bot.py --approve 146` | `python telegram_bot.py --reject 146` | `python telegram_bot.py --edit 146`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 The AI Agent Memory Stack: Building Blocks, Patterns, and Frameworks [ONLINE]
-
-📌 What: In this article, you will learn how agent memory works, what types of memory exist, and how different frameworks approach storage, retrieval, and memory management...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/the-ai-agent-memory-stack-building-blocks-patterns-and-frameworks/
-```
-
----
-
-### [#147] 7 Ways Your AI Agent Is Wasting Tokens (And What to Do Instead) [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/7-ways-your-ai-agent-is-wasting-tokens-and-what-to-do-instead](https://machinelearningmastery.com/7-ways-your-ai-agent-is-wasting-tokens-and-what-to-do-instead)
-- **Quick Commands**: `python telegram_bot.py --approve 147` | `python telegram_bot.py --reject 147` | `python telegram_bot.py --edit 147`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 7 Ways Your AI Agent Is Wasting Tokens (And What to Do Instead) [ONLINE]
-
-📌 What: In this article, you will learn seven common token-waste patterns in production AI agent systems, and the architectural fixes that address each one. Topics we...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/7-ways-your-ai-agent-is-wasting-tokens-and-what-to-do-instead/
-```
-
----
-
-### [#148] Fine-Tuning vs. Frozen Embeddings: When to Adapt the LLM vs. the Sklearn Head [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/fine-tuning-vs-frozen-embeddings-when-to-adapt-the-llm-vs-the-sklearn-head](https://machinelearningmastery.com/fine-tuning-vs-frozen-embeddings-when-to-adapt-the-llm-vs-the-sklearn-head)
-- **Quick Commands**: `python telegram_bot.py --approve 148` | `python telegram_bot.py --reject 148` | `python telegram_bot.py --edit 148`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Fine-Tuning vs. Frozen Embeddings: When to Adapt the LLM vs. the Sklearn Head [ONLINE]
-
-📌 What: In this article, you will learn how to compare two strategies for adapting a large language model to a specific domain: fine-tuning with LoRA versus...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/fine-tuning-vs-frozen-embeddings-when-to-adapt-the-llm-vs-the-sklearn-head/
-```
-
----
-
-### [#149] Context Managers Beyond Opening Files in Python [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Machine Learning Mastery RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://machinelearningmastery.com/context-managers-beyond-opening-files](https://machinelearningmastery.com/context-managers-beyond-opening-files)
-- **Quick Commands**: `python telegram_bot.py --approve 149` | `python telegram_bot.py --reject 149` | `python telegram_bot.py --edit 149`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Context Managers Beyond Opening Files in Python [ONLINE]
-
-📌 What: The stopwatch in the opening script is the smallest case of the pattern.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://machinelearningmastery.com/context-managers-beyond-opening-files/
-```
-
----
-
-### [#150] Top 5 Local AI Models and How to Get Them [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/11/local-ai-models](https://www.analyticsvidhya.com/blog/2026/11/local-ai-models)
-- **Quick Commands**: `python telegram_bot.py --approve 150` | `python telegram_bot.py --reject 150` | `python telegram_bot.py --edit 150`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Top 5 Local AI Models and How to Get Them [ONLINE]
-
-📌 What: Proprietary models are amazing! But sometimes what is of importance is configurability rather than raw power. This has led to the emergence of locally hosted models.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/11/local-ai-models/
-```
-
----
-
-### [#151] Harness²: Improving AI Agent Performance Without Model Upgrades [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/10/harness2-improving-ai-agent-performance](https://www.analyticsvidhya.com/blog/2026/10/harness2-improving-ai-agent-performance)
-- **Quick Commands**: `python telegram_bot.py --approve 151` | `python telegram_bot.py --reject 151` | `python telegram_bot.py --edit 151`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Harness²: Improving AI Agent Performance Without Model Upgrades [ONLINE]
-
-📌 What: When an AI agent fails to complete a task, upgrading the model can seem like the obvious next step. Yet an agent’s performance also depends on how it receives instructions, uses tools, and manages its work.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/10/harness2-improving-ai-agent-performance/
-```
-
----
-
-### [#152] FDE vs AI Engineer: Roles, Skills, and Career Paths Explained [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/10/fde-vs-ai-engineer-roles-skills](https://www.analyticsvidhya.com/blog/2026/10/fde-vs-ai-engineer-roles-skills)
-- **Quick Commands**: `python telegram_bot.py --approve 152` | `python telegram_bot.py --reject 152` | `python telegram_bot.py --edit 152`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 FDE vs AI Engineer: Roles, Skills, and Career Paths Explained [ONLINE]
-
-📌 What: Python, APIs, cloud deployment. You’ll find these skills in both forward deployed engineer and AI engineer job descriptions. Yet the two jobs can lead to very different working days.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/10/fde-vs-ai-engineer-roles-skills/
-```
-
----
-
-### [#153] GPT-6.1 Terra: An Economical Model with Flagship Performance [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/10/gpt-6-1-terra-review](https://www.analyticsvidhya.com/blog/2026/10/gpt-6-1-terra-review)
-- **Quick Commands**: `python telegram_bot.py --approve 153` | `python telegram_bot.py --reject 153` | `python telegram_bot.py --edit 153`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 GPT-6.1 Terra: An Economical Model with Flagship Performance [ONLINE]
-
-📌 What: GPT-6.1 Terra is designed for coding and practical work, but how well does it handle tasks beyond writing code? From spreadsheets and presentations to calendar files, these jobs require more than a convincing response.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/10/gpt-6-1-terra-review/
-```
-
----
-
-### [#154] GPT-6 Astra vs Gemini 4 Argon vs Claude Opus 5.5: Full Comparsion [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/10/astra-vs-argon-vs-opus](https://www.analyticsvidhya.com/blog/2026/10/astra-vs-argon-vs-opus)
-- **Quick Commands**: `python telegram_bot.py --approve 154` | `python telegram_bot.py --reject 154` | `python telegram_bot.py --edit 154`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 GPT-6 Astra vs Gemini 4 Argon vs Claude Opus 5.5: Full Comparsion [ONLINE]
-
-📌 What: GPT-6 Astra, Gemini 4 Argon, and Claude Opus 5.5 are three powerful AI models, but which one performs better when given actual work? To find out, we put them through four practical tasks involving project reporting,…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/10/astra-vs-argon-vs-opus/
-```
-
----
-
-### [#155] Kimi K3.1 Pro Review: Near-Opus Quality at 1/5th the Cost [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/10/kimi-k3-1-pro-review](https://www.analyticsvidhya.com/blog/2026/10/kimi-k3-1-pro-review)
-- **Quick Commands**: `python telegram_bot.py --approve 155` | `python telegram_bot.py --reject 155` | `python telegram_bot.py --edit 155`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Kimi K3.1 Pro Review: Near-Opus Quality at 1/5th the Cost [ONLINE]
-
-📌 What: Claude Opus 5.5 and GPT-6 Astra are strong performers in coding and complex reasoning.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/10/kimi-k3-1-pro-review/
-```
-
----
-
-### [#88] 7 Best AI Agent Collaboration Platforms in 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Analytics Vidhya RSS | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://www.analyticsvidhya.com/blog/2026/11/best-ai-agent-collaboration-platforms](https://www.analyticsvidhya.com/blog/2026/11/best-ai-agent-collaboration-platforms)
-- **Quick Commands**: `python telegram_bot.py --approve 88` | `python telegram_bot.py --reject 88` | `python telegram_bot.py --edit 88`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 7 Best AI Agent Collaboration Platforms in 2026 [ONLINE]
-
-📌 What: Building an AI agent is one thing. Making it available to an entire team is another.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.analyticsvidhya.com/blog/2026/11/best-ai-agent-collaboration-platforms/
-```
-
----
-
-### [#17] How to Use shadcn/ui in React Native Applications [Full Handbook] [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:48:53`
-- **Original Link**: [https://www.freecodecamp.org/news/how-to-use-shadcn-ui-in-react-native-applications-full-handbook/](https://www.freecodecamp.org/news/how-to-use-shadcn-ui-in-react-native-applications-full-handbook/)
-- **Quick Commands**: `python telegram_bot.py --approve 17` | `python telegram_bot.py --reject 17` | `python telegram_bot.py --edit 17`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 How to Use shadcn/ui in React Native Applications [Full Handbook]
-
-📌 What: If you've built a couple of React Native apps, the following probably feels familiar. You start with a colors.ts file and a simple Button component. Everythi...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.freecodecamp.org/news/how-to-use-shadcn-ui-in-react-native-applications-full-handbook/
-```
-
----
-
-### [#5] How to Build a PDF Storyboard Generator Using JavaScript [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
-- **Original Link**: [https://www.freecodecamp.org/news/build-pdf-storyboard-generator-javascript/](https://www.freecodecamp.org/news/build-pdf-storyboard-generator-javascript/)
-- **Quick Commands**: `python telegram_bot.py --approve 5` | `python telegram_bot.py --reject 5` | `python telegram_bot.py --edit 5`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 How to Build a PDF Storyboard Generator Using JavaScript
-
-📌 What: PDF files are commonly used to share presentations, scripts, reports, lesson materials, comic pages, and other visual documents. But reviewing a long PDF pag...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.freecodecamp.org/news/build-pdf-storyboard-generator-javascript/
-```
-
----
-
-### [#6] Godot 4 Roguelike Course – Build a Complete Top-Down Action Game [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: FreeCodeCamp News | **Created**: `2026-11-07 08:44:03`
-- **Original Link**: [https://www.freecodecamp.org/news/godot-4-roguelike-course-build-a-complete-top-down-action-game/](https://www.freecodecamp.org/news/godot-4-roguelike-course-build-a-complete-top-down-action-game/)
-- **Quick Commands**: `python telegram_bot.py --approve 6` | `python telegram_bot.py --reject 6` | `python telegram_bot.py --edit 6`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Godot 4 Roguelike Course – Build a Complete Top-Down Action Game
-
-📌 What: A top-down action roguelite only works when combat feels sharp, rooms feel connected, and every run asks you to trade power for risk. Godot 4 has the tools f...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.freecodecamp.org/news/godot-4-roguelike-course-build-a-complete-top-down-action-game/
-```
-
----
-
 ## 🌐 Tech Updates & News
-*Target WhatsApp Group: `🌐 Tech Updates & NEWS`* | *Pending: 102*
+*Target WhatsApp Group: `🌐 Tech Updates & NEWS`* | *Pending: 126*
+
+### [#443] The Regression Tests Nobody Writes: Capturing How Software Actually Behaves [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://stackoverflow.blog/2026/10/22/the-regression-tests-nobody-writes-capturing-how-software-actually-behaves](https://stackoverflow.blog/2026/10/22/the-regression-tests-nobody-writes-capturing-how-software-actually-behaves)
+- **Quick Commands**: `python telegram_bot.py --approve 443` | `python telegram_bot.py --reject 443` | `python telegram_bot.py --edit 443`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 The Regression Tests Nobody Writes: Capturing How Software Actually Behaves [ONLINE]
+
+📌 What: Update from StackOverflow Blog RSS: The Regression Tests Nobody Writes: Capturing How Software Actually Behaves
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://stackoverflow.blog/2026/10/22/the-regression-tests-nobody-writes-capturing-how-software-actually-behaves/
+```
+
+---
+
+### [#446] Is AI really reshaping the developer market? [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-11 09:25:24`
+- **Original Link**: [https://stackoverflow.blog/2026/10/22/is-ai-really-reshaping-the-developer-market](https://stackoverflow.blog/2026/10/22/is-ai-really-reshaping-the-developer-market)
+- **Quick Commands**: `python telegram_bot.py --approve 446` | `python telegram_bot.py --reject 446` | `python telegram_bot.py --edit 446`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Is AI really reshaping the developer market? [ONLINE]
+
+📌 What: Update from StackOverflow Blog RSS: Is AI really reshaping the developer market?
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2025, 2026 Batch)
+🔗 https://stackoverflow.blog/2026/10/22/is-ai-really-reshaping-the-developer-market/
+```
+
+---
+
+### [#408] What beginners get wrong in quality assurance training in Kathmandu [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://dev.to/saarathi_academy/what-beginners-get-wrong-in-quality-assurance-training-in-kathmandu-2gfc](https://dev.to/saarathi_academy/what-beginners-get-wrong-in-quality-assurance-training-in-kathmandu-2gfc)
+- **Quick Commands**: `python telegram_bot.py --approve 408` | `python telegram_bot.py --reject 408` | `python telegram_bot.py --edit 408`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 What beginners get wrong in quality assurance training in Kathmandu [ONLINE]
+
+📌 What: Most beginners in software QA test what the screen shows and stop there. The bugs that matter hide at the edges of a form, in the Api behind the screen, and in the database.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Students
+🔗 https://dev.to/saarathi_academy/what-beginners-get-wrong-in-quality-assurance-training-in-kathmandu-2gfc
+```
+
+---
+
+### [#409] Agent Architecture Cost-Success Trade-offs: A Controlled Evaluation across Enterprise-Style SOPs [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.12953](https://arxiv.org/abs/2611.12953)
+- **Quick Commands**: `python telegram_bot.py --approve 409` | `python telegram_bot.py --reject 409` | `python telegram_bot.py --edit 409`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Agent Architecture Cost-Success Trade-offs: A Controlled Evaluation across Enterprise-Style SOPs [ONLINE]
+
+📌 What: arXiv:2611.12953v1 Announce Type: new Abstract: Enterprises increasingly use large language model agents to execute standard operating procedures (SOPs): long, branching, tool-intensive workflows. Yet there is little controlled evidence for choosing among competing agentic architectures.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://arxiv.org/abs/2611.12953
+```
+
+---
+
+### [#411] Physics2Weight: Direct Neural Network Architecture and Weight Generation from Physical Laws Using Large Language Models [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.12954](https://arxiv.org/abs/2611.12954)
+- **Quick Commands**: `python telegram_bot.py --approve 411` | `python telegram_bot.py --reject 411` | `python telegram_bot.py --edit 411`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Physics2Weight: Direct Neural Network Architecture and Weight Generation from Physical Laws Using Large Language Models [ONLINE]
+
+📌 What: arXiv:2611.12954v1 Announce Type: new Abstract: Recent advances in large language models (LLMs) have enabled weight-space programming (WSP), which directly generates neural network weights without gradient-based optimization. However, extending Wsp to physical problems remains challenging, particularly in achieving both solution accuracy and physical consistency.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12954
+```
+
+---
+
+### [#412] SPIN Selling for Engineers and Founders: Discovery Questions and a Sales Call Checklist That Uncover Real Pain [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://dev.to/kulissa/spin-selling-for-engineers-and-founders-discovery-questions-and-a-sales-call-checklist-that-4ce](https://dev.to/kulissa/spin-selling-for-engineers-and-founders-discovery-questions-and-a-sales-call-checklist-that-4ce)
+- **Quick Commands**: `python telegram_bot.py --approve 412` | `python telegram_bot.py --reject 412` | `python telegram_bot.py --edit 412`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 SPIN Selling for Engineers and Founders: Discovery Questions and a Sales Call Checklist That Uncover Real Pain [ONLINE]
+
+📌 What: If you're an engineer, a solutions engineer or a founder doing founder-led sales, discovery questions are probably the part of the sales call that feels least natural. You know the product cold, so the instinct is to explain it.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/kulissa/spin-selling-for-engineers-and-founders-discovery-questions-and-a-sales-call-checklist-that-4ce
+```
+
+---
+
+### [#414] Embodied Science Agents: Making Embodied Experimental Design Learnable [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.12958](https://arxiv.org/abs/2611.12958)
+- **Quick Commands**: `python telegram_bot.py --approve 414` | `python telegram_bot.py --reject 414` | `python telegram_bot.py --edit 414`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Embodied Science Agents: Making Embodied Experimental Design Learnable [ONLINE]
+
+📌 What: arXiv:2611.12958v1 Announce Type: new Abstract: Recent advances in large models have accelerated AI for Science toward agentic science, where AI agents autonomously conduct scientific discovery. Realising this vision requires closing the loop between computational reasoning and physical experimentation, positioning self-driving laboratories (SDLs) as critical enablers.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12958
+```
+
+---
+
+### [#416] Repository for ml books [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtchk6/repository_for_ml_books](https://www.reddit.com/r/learnmachinelearning/comments/1xtchk6/repository_for_ml_books)
+- **Quick Commands**: `python telegram_bot.py --approve 416` | `python telegram_bot.py --reject 416` | `python telegram_bot.py --edit 416`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Repository for ml books [ONLINE]
+
+📌 What: Hey everyone, Finding the right books to build solid foundations in Machine Learning can be noisy given how quickly the field moves. I put together a structured repository collecting essential reading across core ML, Deep Learning, Mathematics, and related fundamentals : Repo: Repo link What’s inside: Math Foundations: Linear algebra, multivariable calculus, probability, and optimization basics.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtchk6/repository_for_ml_books/
+```
+
+---
+
+### [#417] Monitoring One Channel Is Not Communication Control: Causal Evidence for Adaptive Reallocation of Joint Message--Route Codes [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.12959](https://arxiv.org/abs/2611.12959)
+- **Quick Commands**: `python telegram_bot.py --approve 417` | `python telegram_bot.py --reject 417` | `python telegram_bot.py --edit 417`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Monitoring One Channel Is Not Communication Control: Causal Evidence for Adaptive Reallocation of Joint Message--Route Codes [ONLINE]
+
+📌 What: arXiv:2611.12959v1 Announce Type: new Abstract: Monitoring a visible channel can change how learned agents communicate without removing why communication is useful. We test this distinction in an end-to-end game where a sender and receiver learn a discrete protocol and route policy without communication supervision.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12959
+```
+
+---
+
+### [#418] Found my 2022 Machine Learning notes. Still haven't finished them. [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtdams/found_my_2022_machine_learning_notes_still_havent](https://www.reddit.com/r/learnmachinelearning/comments/1xtdams/found_my_2022_machine_learning_notes_still_havent)
+- **Quick Commands**: `python telegram_bot.py --approve 418` | `python telegram_bot.py --reject 418` | `python telegram_bot.py --edit 418`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Found my 2022 Machine Learning notes. Still haven't finished them. [ONLINE]
+
+📌 What: I was cleaning up some old stuff today and stumbled upon my Machine Learning notes from 2022. Funny thing is, I still haven't completed them.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtdams/found_my_2022_machine_learning_notes_still_havent/
+```
+
+---
+
+### [#420] Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.LG RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.13003](https://arxiv.org/abs/2611.13003)
+- **Quick Commands**: `python telegram_bot.py --approve 420` | `python telegram_bot.py --reject 420` | `python telegram_bot.py --edit 420`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute [ONLINE]
+
+📌 What: arXiv:2611.13003v1 Announce Type: new Abstract: Reinforcement learning agents are often deployed with policies that cannot be retrained or modified. In digital environments whose states can be copied and resumed, an operator has another option: sample several continuations from the current state, evaluate them, and continue from the endpoint of the selected branch.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://arxiv.org/abs/2611.13003
+```
+
+---
+
+### [#421] Wrote a 12 week classical ML roadmap (NumPy first, sklearn second) tell me what is wrong with it [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtd15r/wrote_a_12_week_classical_ml_roadmap_numpy_first](https://www.reddit.com/r/learnmachinelearning/comments/1xtd15r/wrote_a_12_week_classical_ml_roadmap_numpy_first)
+- **Quick Commands**: `python telegram_bot.py --approve 421` | `python telegram_bot.py --reject 421` | `python telegram_bot.py --edit 421`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Wrote a 12 week classical ML roadmap (NumPy first, sklearn second) tell me what is wrong with it [ONLINE]
+
+📌 What: So I'm a frontend dev moving into ML at work, and I ended up writing the roadmap I wanted to exist. The idea is simple: you write the algorithm yourself in NumPy, then check your numbers against scikit-learn.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtd15r/wrote_a_12_week_classical_ml_roadmap_numpy_first/
+```
+
+---
+
+### [#423] The Shape of a Program: Path Signatures for Trace-to-Program Induction [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.LG RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.13005](https://arxiv.org/abs/2611.13005)
+- **Quick Commands**: `python telegram_bot.py --approve 423` | `python telegram_bot.py --reject 423` | `python telegram_bot.py --edit 423`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 The Shape of a Program: Path Signatures for Trace-to-Program Induction [ONLINE]
+
+📌 What: arXiv:2611.13005v1 Announce Type: new Abstract: Synthesizing programs from execution traces is a fundamental challenge in algorithmic interpretability and the reverse engineering of complex systems.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.13005
+```
+
+---
+
+### [#424] ML interview prep for an internship [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtcqec/ml_interview_prep_for_an_internship](https://www.reddit.com/r/learnmachinelearning/comments/1xtcqec/ml_interview_prep_for_an_internship)
+- **Quick Commands**: `python telegram_bot.py --approve 424` | `python telegram_bot.py --reject 424` | `python telegram_bot.py --edit 424`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 ML interview prep for an internship [ONLINE]
+
+📌 What: Hi everyone, I have an upcoming ML internship interview focused primarily on fundamentals and core basics. While I understand the general concepts, I wouldn't say I'm completely rock-solid on everything yet, and I want to make sure I'm well-prepared.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtcqec/ml_interview_prep_for_an_internship/
+```
+
+---
+
+### [#425] Nvidia CEO Jensen Huang’s affair with alleged Chinese spy: a timeline [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: TechCrunch RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://techcrunch.com/2026/11/10/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline](https://techcrunch.com/2026/11/10/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline)
+- **Quick Commands**: `python telegram_bot.py --approve 425` | `python telegram_bot.py --reject 425` | `python telegram_bot.py --edit 425`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Nvidia CEO Jensen Huang’s affair with alleged Chinese spy: a timeline [ONLINE]
+
+📌 What: The affair could have ramifications for national security as the U.S. and China race to develop the most advanced AI infrastructure.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2025, 2026, 2027 Batch)
+🔗 https://techcrunch.com/2026/11/10/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline/
+```
+
+---
+
+### [#427] FaST: Factored Synthesis of Transitions for Offline Reinforcement Learning [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.LG RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://arxiv.org/abs/2611.13013](https://arxiv.org/abs/2611.13013)
+- **Quick Commands**: `python telegram_bot.py --approve 427` | `python telegram_bot.py --reject 427` | `python telegram_bot.py --edit 427`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 FaST: Factored Synthesis of Transitions for Offline Reinforcement Learning [ONLINE]
+
+📌 What: arXiv:2611.13013v1 Announce Type: new Abstract: Synthetic data augmentation promises to scale offline reinforcement learning beyond fixed logged datasets, but leading diffusion-based generators model the transition tuple (state, action, next state, reward, terminal) as a monolith: no single factor can be natively redrawn in isolation.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://arxiv.org/abs/2611.13013
+```
+
+---
+
+### [#428] Sundrop turns your endless baby photos into recaps, time lapses, and more — without AI [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: TechCrunch RSS | **Created**: `2026-11-11 09:25:23`
+- **Original Link**: [https://techcrunch.com/2026/11/10/sundrop-turns-your-endless-baby-photos-into-recaps-time-lapses-and-more-without-ai](https://techcrunch.com/2026/11/10/sundrop-turns-your-endless-baby-photos-into-recaps-time-lapses-and-more-without-ai)
+- **Quick Commands**: `python telegram_bot.py --approve 428` | `python telegram_bot.py --reject 428` | `python telegram_bot.py --edit 428`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Sundrop turns your endless baby photos into recaps, time lapses, and more — without AI [ONLINE]
+
+📌 What: Sundrop is a new iPhone app that uses Apple's on-device AI to help parents rediscover their favorite photos and create keepsakes without uploading images to the cloud.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026, 2027 Batch)
+🔗 https://techcrunch.com/2026/11/10/sundrop-turns-your-endless-baby-photos-into-recaps-time-lapses-and-more-without-ai/
+```
+
+---
+
+### [#391] Tuesday Daily Thread: Advanced questions [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/Python | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://www.reddit.com/r/Python/comments/1xs81uc/tuesday_daily_thread_advanced_questions](https://www.reddit.com/r/Python/comments/1xs81uc/tuesday_daily_thread_advanced_questions)
+- **Quick Commands**: `python telegram_bot.py --approve 391` | `python telegram_bot.py --reject 391` | `python telegram_bot.py --edit 391`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Tuesday Daily Thread: Advanced questions [ONLINE]
+
+📌 What: Weekly Wednesday Thread: Advanced Questions Dive deep into Python with our Advanced Questions thread! This space is reserved for questions about more advanced Python topics, frameworks, and best practices.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/Python/comments/1xs81uc/tuesday_daily_thread_advanced_questions/
+```
+
+---
+
+### [#392] We Keep Hearing About AI Productivity. The QA Group Chat Told a Different Story. [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://dev.to/xulingfeng/we-keep-hearing-about-ai-productivity-the-qa-group-chat-told-a-different-story-2nma](https://dev.to/xulingfeng/we-keep-hearing-about-ai-productivity-the-qa-group-chat-told-a-different-story-2nma)
+- **Quick Commands**: `python telegram_bot.py --approve 392` | `python telegram_bot.py --reject 392` | `python telegram_bot.py --edit 392`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 We Keep Hearing About AI Productivity. The QA Group Chat Told a Different Story. [ONLINE]
+
+📌 What: An anonymous poll, a debate about multimodal testing, and some uncomfortable questions about who benefits from the AI rush. Recently, I published an article on DEV.to about our company's AI testing practices and the organizational changes that followed.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/xulingfeng/we-keep-hearing-about-ai-productivity-the-qa-group-chat-told-a-different-story-2nma
+```
+
+---
+
+### [#394] What Skills Are Required to Build a Career in Cryptocurrency? [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://dev.to/georgiaweston/what-skills-are-required-to-build-a-career-in-cryptocurrency-j07](https://dev.to/georgiaweston/what-skills-are-required-to-build-a-career-in-cryptocurrency-j07)
+- **Quick Commands**: `python telegram_bot.py --approve 394` | `python telegram_bot.py --reject 394` | `python telegram_bot.py --edit 394`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 What Skills Are Required to Build a Career in Cryptocurrency? [ONLINE]
+
+📌 What: The cryptocurrency industry has evolved significantly, creating career opportunities across finance, technology, cybersecurity, blockchain development, and digital asset management. As businesses increasingly explore cryptocurrency and blockchain-based solutions, professionals with relevant industry knowledge are becoming valuable.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/georgiaweston/what-skills-are-required-to-build-a-career-in-cryptocurrency-j07
+```
+
+---
+
+### [#395] PyPI's redesigned project pages with clearer security signals are now live [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/Python | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://www.reddit.com/r/Python/comments/1xr49cg/pypis_redesigned_project_pages_with_clearer](https://www.reddit.com/r/Python/comments/1xr49cg/pypis_redesigned_project_pages_with_clearer)
+- **Quick Commands**: `python telegram_bot.py --approve 395` | `python telegram_bot.py --reject 395` | `python telegram_bot.py --edit 395`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 PyPI's redesigned project pages with clearer security signals are now live [ONLINE]
+
+📌 What: https://blog.pypi.org/posts/2026-11-06-ui-updates-complete/ In July, we announced a series of planned updates to the PyPI user interface. Shaped by user research with members of the Python community, the updates aim to improve how we surface security signals and display package details.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/Python/comments/1xr49cg/pypis_redesigned_project_pages_with_clearer/
+```
+
+---
+
+### [#396] Your First Bug-Fix Job on Upwork or Fiverr: Reading the Post, Getting Access Safely and Quoting a Fix You Haven't Seen Yet [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://dev.to/abidali671/your-first-bug-fix-job-on-upwork-or-fiverr-reading-the-post-getting-access-safely-and-quoting-a-1o85](https://dev.to/abidali671/your-first-bug-fix-job-on-upwork-or-fiverr-reading-the-post-getting-access-safely-and-quoting-a-1o85)
+- **Quick Commands**: `python telegram_bot.py --approve 396` | `python telegram_bot.py --reject 396` | `python telegram_bot.py --edit 396`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Your First Bug-Fix Job on Upwork or Fiverr: Reading the Post, Getting Access Safely and Quoting a Fix You Haven't Seen Yet [ONLINE]
+
+📌 What: A lot of developers get their first freelance job the same way: not with a big build, but with a broken thing. A contact form that stopped sending.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/abidali671/your-first-bug-fix-job-on-upwork-or-fiverr-reading-the-post-getting-access-safely-and-quoting-a-1o85
+```
+
+---
+
+### [#397] Mysterious Lazy Imports [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/Python | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://www.reddit.com/r/Python/comments/1xqblqi/mysterious_lazy_imports](https://www.reddit.com/r/Python/comments/1xqblqi/mysterious_lazy_imports)
+- **Quick Commands**: `python telegram_bot.py --approve 397` | `python telegram_bot.py --reject 397` | `python telegram_bot.py --edit 397`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Mysterious Lazy Imports [ONLINE]
+
+📌 What: Run this on Python 3.15: >>> lazy import json >>> type(globals()['json']) Now try separating that into an innocent variable: >>> lazy import json >>> x = globals()['json'] >>> type(x) Looks like the same code, but what?! The output changes!
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/Python/comments/1xqblqi/mysterious_lazy_imports/
+```
+
+---
+
+### [#399] Building a Developer Portfolio: Turning Technical Skills into a Professional Online Presence [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://dev.to/sanni_kumar_bb9c9372bca9f/building-a-developer-portfolio-turning-technical-skills-into-a-professional-online-presence-2n4l](https://dev.to/sanni_kumar_bb9c9372bca9f/building-a-developer-portfolio-turning-technical-skills-into-a-professional-online-presence-2n4l)
+- **Quick Commands**: `python telegram_bot.py --approve 399` | `python telegram_bot.py --reject 399` | `python telegram_bot.py --edit 399`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Building a Developer Portfolio: Turning Technical Skills into a Professional Online Presence [ONLINE]
+
+📌 What: Building a Developer Portfolio: Turning Technical Skills into a Professional Online Presence A personal portfolio website is more than just an online introduction. It is a platform where developers can demonstrate their technical abilities, share their projects, and build a professional identity.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/sanni_kumar_bb9c9372bca9f/building-a-developer-portfolio-turning-technical-skills-into-a-professional-online-presence-2n4l
+```
+
+---
+
+### [#400] Sunday Daily Thread: What's everyone working on this week? [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/Python | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://www.reddit.com/r/Python/comments/1xqknnl/sunday_daily_thread_whats_everyone_working_on](https://www.reddit.com/r/Python/comments/1xqknnl/sunday_daily_thread_whats_everyone_working_on)
+- **Quick Commands**: `python telegram_bot.py --approve 400` | `python telegram_bot.py --reject 400` | `python telegram_bot.py --edit 400`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Sunday Daily Thread: What's everyone working on this week? [ONLINE]
+
+📌 What: Weekly Thread: What's Everyone Working On This Week? Hello r/Python!
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/Python/comments/1xqknnl/sunday_daily_thread_whats_everyone_working_on/
+```
+
+---
+
+### [#401] Python 3.15 Is Out: 5 New Features You'll Actually Use (Tested) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://dev.to/refactorly/python-315-is-out-5-new-features-youll-actually-use-tested-gm6](https://dev.to/refactorly/python-315-is-out-5-new-features-youll-actually-use-tested-gm6)
+- **Quick Commands**: `python telegram_bot.py --approve 401` | `python telegram_bot.py --reject 401` | `python telegram_bot.py --edit 401`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Python 3.15 Is Out: 5 New Features You'll Actually Use (Tested) [ONLINE]
+
+📌 What: Python 3.15 is out, with a new keyword, a new built-in dictionary type, and a profiler that can look inside a running program. I tested every feature below on Python 3.15.2, and the outputs are real.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/refactorly/python-315-is-out-5-new-features-youll-actually-use-tested-gm6
+```
+
+---
+
+### [#403] Internals of Asyncio [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/Python | **Created**: `2026-11-11 08:45:16`
+- **Original Link**: [https://www.reddit.com/r/Python/comments/1xq2x06/internals_of_asyncio](https://www.reddit.com/r/Python/comments/1xq2x06/internals_of_asyncio)
+- **Quick Commands**: `python telegram_bot.py --approve 403` | `python telegram_bot.py --reject 403` | `python telegram_bot.py --edit 403`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Internals of Asyncio [ONLINE]
+
+📌 What: This article is a deep dive into the internals of the asyncio Python standard library. It is written from a debugging perspective, stepping through the code line by line.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/Python/comments/1xq2x06/internals_of_asyncio/
+```
+
+---
+
+### [#388] How can someone start an AI career without a computer science degree? [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 07:46:04`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtbll6/how_can_someone_start_an_ai_career_without_a](https://www.reddit.com/r/learnmachinelearning/comments/1xtbll6/how_can_someone_start_an_ai_career_without_a)
+- **Quick Commands**: `python telegram_bot.py --approve 388` | `python telegram_bot.py --reject 388` | `python telegram_bot.py --edit 388`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 How can someone start an AI career without a computer science degree? [ONLINE]
+
+📌 What: I have been exploring career opportunities in Artificial Intelligence, and one thing I have noticed is that many AI-related job descriptions mention a computer science, engineering, or technical degree. I am curious whether a formal CS degree is actually necessary to enter this field, or whether someone from a non-CS background can build the right skills and transition into AI.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtbll6/how_can_someone_start_an_ai_career_without_a/
+```
+
+---
+
+### [#389] AI Digest: Wednesday — 3 Stories That Matter (November 11, 2026) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 07:46:04`
+- **Original Link**: [https://dev.to/rpgbyters/ai-digest-wednesday-3-stories-that-matter-november-11-2026-54ac](https://dev.to/rpgbyters/ai-digest-wednesday-3-stories-that-matter-november-11-2026-54ac)
+- **Quick Commands**: `python telegram_bot.py --approve 389` | `python telegram_bot.py --reject 389` | `python telegram_bot.py --edit 389`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 AI Digest: Wednesday — 3 Stories That Matter (November 11, 2026) [ONLINE]
+
+📌 What: AI Digest: Wednesday Morning Quick read: the 3 AI stories that matter this week so far. In “A Message to Our Company,” Jensen Huang makes an infidelity disclosure a company-wide governance problem, then adds an independent national-security investigation.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2025, 2026 Batch
+🔗 https://dev.to/rpgbyters/ai-digest-wednesday-3-stories-that-matter-november-11-2026-54ac
+```
+
+---
+
+### [#390] Cognizant GenC Interview Questions for Freshers (2026): Test Pattern, SQL, Java, Coding and HR [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 07:46:04`
+- **Original Link**: [https://dev.to/brevis_dewald_c67c3dedbf7/cognizant-genc-interview-questions-for-freshers-2026-test-pattern-sql-java-coding-and-hr-mdl](https://dev.to/brevis_dewald_c67c3dedbf7/cognizant-genc-interview-questions-for-freshers-2026-test-pattern-sql-java-coding-and-hr-mdl)
+- **Quick Commands**: `python telegram_bot.py --approve 390` | `python telegram_bot.py --reject 390` | `python telegram_bot.py --edit 390`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Cognizant GenC Interview Questions for Freshers (2026): Test Pattern, SQL, Java, Coding and HR [ONLINE]
+
+📌 What: Cognizant hires most of its freshers through GenC drives. The process has one round that catches many candidates off guard: a spoken communication assessment that is reported as an elimination stage.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Freshers
+🔗 https://dev.to/brevis_dewald_c67c3dedbf7/cognizant-genc-interview-questions-for-freshers-2026-test-pattern-sql-java-coding-and-hr-mdl
+```
+
+---
+
+### [#381] Taiwan-Based Hacker Used BOSSAI AI Agents to Steal Taipei Emergency Dispatch Records [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 07:15:45`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xt3uu8/taiwanbased_hacker_used_bossai_ai_agents_to_steal](https://www.reddit.com/r/learnmachinelearning/comments/1xt3uu8/taiwanbased_hacker_used_bossai_ai_agents_to_steal)
+- **Quick Commands**: `python telegram_bot.py --approve 381` | `python telegram_bot.py --reject 381` | `python telegram_bot.py --edit 381`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Taiwan-Based Hacker Used BOSSAI AI Agents to Steal Taipei Emergency Dispatch Records [ONLINE]
+
+📌 What: A Taiwan-based hacker used Bossai AI agents to exfiltrate emergency dispatch records from Taipei's public safety infrastructure. The agents operated autonomously, chaining tool calls across systems without any per-action authorization check.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xt3uu8/taiwanbased_hacker_used_bossai_ai_agents_to_steal/
+```
+
+---
+
+### [#382] Negotiating Level From Evidence: Mapping Proof to Staff vs Senior [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 07:15:45`
+- **Original Link**: [https://dev.to/muhammadalimughal/negotiating-level-from-evidence-mapping-proof-to-staff-vs-senior-4c4n](https://dev.to/muhammadalimughal/negotiating-level-from-evidence-mapping-proof-to-staff-vs-senior-4c4n)
+- **Quick Commands**: `python telegram_bot.py --approve 382` | `python telegram_bot.py --reject 382` | `python telegram_bot.py --edit 382`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Negotiating Level From Evidence: Mapping Proof to Staff vs Senior [ONLINE]
+
+📌 What: A few years ago I sat in a debrief where four interviewers agreed a candidate was "strong senior, maybe staff." The hiring manager asked one question: "What did they change that was bigger than their own team?" Nobody could answer from the notes.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/muhammadalimughal/negotiating-level-from-evidence-mapping-proof-to-staff-vs-senior-4c4n
+```
+
+---
+
+### [#385] What are books for building and understanding ai? [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-11 07:15:45`
+- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xtb7b4/what_are_books_for_building_and_understanding_ai](https://www.reddit.com/r/learnmachinelearning/comments/1xtb7b4/what_are_books_for_building_and_understanding_ai)
+- **Quick Commands**: `python telegram_bot.py --approve 385` | `python telegram_bot.py --reject 385` | `python telegram_bot.py --edit 385`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 What are books for building and understanding ai? [ONLINE]
+
+📌 What: submitted by /u/Minimum_Hour519 [link] [comments]
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xtb7b4/what_are_books_for_building_and_understanding_ai/
+```
+
+---
+
+### [#386] One Evening, One Job Posting: A Test Plan for AI Resume Builders [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 07:15:45`
+- **Original Link**: [https://dev.to/aifinderplus/one-evening-one-job-posting-a-test-plan-for-ai-resume-builders-4n8g](https://dev.to/aifinderplus/one-evening-one-job-posting-a-test-plan-for-ai-resume-builders-4n8g)
+- **Quick Commands**: `python telegram_bot.py --approve 386` | `python telegram_bot.py --reject 386` | `python telegram_bot.py --edit 386`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 One Evening, One Job Posting: A Test Plan for AI Resume Builders [ONLINE]
+
+📌 What: Most people choose a resume tool the way they choose a phone case: look at the pictures, pick the sturdy one, stop thinking. Then a deadline arrives, the export is locked, or the draft reads like it was written by strangers, and the choice matters.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/aifinderplus/one-evening-one-job-posting-a-test-plan-for-ai-resume-builders-4n8g
+```
+
+---
+
+### [#379] I Counted This Week's 10 Most-Commented Career Posts. Half of Them Are About AI Taking the Job. [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 06:40:07`
+- **Original Link**: [https://dev.to/aheadkit/i-counted-this-weeks-10-most-commented-career-posts-half-of-them-are-about-ai-taking-the-job-4eo5](https://dev.to/aheadkit/i-counted-this-weeks-10-most-commented-career-posts-half-of-them-are-about-ai-taking-the-job-4eo5)
+- **Quick Commands**: `python telegram_bot.py --approve 379` | `python telegram_bot.py --reject 379` | `python telegram_bot.py --edit 379`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 I Counted This Week's 10 Most-Commented Career Posts. Half of Them Are About AI Taking the Job. [ONLINE]
+
+📌 What: "How do you truly stand out in Tech?" has 130 reactions and 70 comments this week, and it is the second most-commented career post on dev.to right now. That got me wondering what the career conversation actually is this week, so I counted.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/aheadkit/i-counted-this-weeks-10-most-commented-career-posts-half-of-them-are-about-ai-taking-the-job-4eo5
+```
+
+---
+
+### [#380] Plan Stamping Is Right About the Signature. It's Missing the Invoice. [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 06:40:07`
+- **Original Link**: [https://dev.to/aheadkit/plan-stamping-is-right-about-the-signature-its-missing-the-invoice-1j0e](https://dev.to/aheadkit/plan-stamping-is-right-about-the-signature-its-missing-the-invoice-1j0e)
+- **Quick Commands**: `python telegram_bot.py --approve 380` | `python telegram_bot.py --reject 380` | `python telegram_bot.py --edit 380`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Plan Stamping Is Right About the Signature. It's Missing the Invoice. [ONLINE]
+
+📌 What: I read Ken Walger's "Plan Stamping, for Software" this week, and I have not stopped turning it over since. His argument is simple enough to fit on a napkin: other professions figured out long ago that a signature has to certify a specific relationship between the signer and the work, and software is about to need that answer because agents now produce most of the work and humans just approve it.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/aheadkit/plan-stamping-is-right-about-the-signature-its-missing-the-invoice-1j0e
+```
+
+---
+
+### [#376] I made Data Science & AI quizzes for (almost) every letter of the alphabet [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-11 05:47:59`
+- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xsjur1/i_made_data_science_ai_quizzes_for_almost_every](https://www.reddit.com/r/datascience/comments/1xsjur1/i_made_data_science_ai_quizzes_for_almost_every)
+- **Quick Commands**: `python telegram_bot.py --approve 376` | `python telegram_bot.py --reject 376` | `python telegram_bot.py --edit 376`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 I made Data Science & AI quizzes for (almost) every letter of the alphabet [ONLINE]
+
+📌 What: Enjoy them, learn from them...but mainly be frustrated by how fast you need to answer You can take on the challenge here submitted by /u/analytics-link [link] [comments]
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/datascience/comments/1xsjur1/i_made_data_science_ai_quizzes_for_almost_every/
+```
+
+---
+
+### [#377] OpenAI Launches Businesses in ChatGPT in Beta — Business Hub and AI Agents for Every Storefront [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 05:47:59`
+- **Original Link**: [https://dev.to/rohan_techofficial_81a0f/openai-launches-businesses-in-chatgpt-in-beta-business-hub-and-ai-agents-for-every-storefront-565i](https://dev.to/rohan_techofficial_81a0f/openai-launches-businesses-in-chatgpt-in-beta-business-hub-and-ai-agents-for-every-storefront-565i)
+- **Quick Commands**: `python telegram_bot.py --approve 377` | `python telegram_bot.py --reject 377` | `python telegram_bot.py --edit 377`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 OpenAI Launches Businesses in ChatGPT in Beta — Business Hub and AI Agents for Every Storefront [ONLINE]
+
+📌 What: ChatGPT is starting to look a lot like a search engine — and OpenAI knows it. The company has launched Businesses in ChatGPT in beta, giving businesses a way to claim their profile, keep their product information current in a new Business Hub, and run AI agents that talk to customers on their behalf.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/rohan_techofficial_81a0f/openai-launches-businesses-in-chatgpt-in-beta-business-hub-and-ai-agents-for-every-storefront-565i
+```
+
+---
+
+### [#378] mizu: a new tool to speed up parallel data science workflows [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-11 05:47:59`
+- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xow83g/mizu_a_new_tool_to_speed_up_parallel_data_science](https://www.reddit.com/r/datascience/comments/1xow83g/mizu_a_new_tool_to_speed_up_parallel_data_science)
+- **Quick Commands**: `python telegram_bot.py --approve 378` | `python telegram_bot.py --reject 378` | `python telegram_bot.py --edit 378`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 mizu: a new tool to speed up parallel data science workflows [ONLINE]
+
+📌 What: (I’m Hadley Wickham, Chief Scientist at Posit and I’m posting this for my colleague Charlie Gao (u/shikokuchuo) who doesn't have enough karma to post here ). Resampling (bootstrap, cross-validation, ...) is a common part of modelling that takes a long time and in principle should be trivially parallelisable.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/datascience/comments/1xow83g/mizu_a_new_tool_to_speed_up_parallel_data_science/
+```
+
+---
+
+### [#370] Weekly Entering & Transitioning - Thread 09 Nov, 2026 - 16 Nov, 2026 [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-11 05:47:58`
+- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xrix7s/weekly_entering_transitioning_thread_09_nov_2026](https://www.reddit.com/r/datascience/comments/1xrix7s/weekly_entering_transitioning_thread_09_nov_2026)
+- **Quick Commands**: `python telegram_bot.py --approve 370` | `python telegram_bot.py --reject 370` | `python telegram_bot.py --edit 370`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Weekly Entering & Transitioning - Thread 09 Nov, 2026 - 16 Nov, 2026 [ONLINE]
+
+📌 What: Welcome to this week's entering & transitioning thread! This thread is for any questions about getting started, studying, or transitioning into the data science field.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/datascience/comments/1xrix7s/weekly_entering_transitioning_thread_09_nov_2026/
+```
+
+---
+
+### [#371] Anthropic Launches Claude Sheets, Whiteboards and Meetings — Claude Becomes a Full Workspace [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 05:47:58`
+- **Original Link**: [https://dev.to/rohan_techofficial_81a0f/anthropic-launches-claude-sheets-whiteboards-and-meetings-claude-becomes-a-full-workspace-3bme](https://dev.to/rohan_techofficial_81a0f/anthropic-launches-claude-sheets-whiteboards-and-meetings-claude-becomes-a-full-workspace-3bme)
+- **Quick Commands**: `python telegram_bot.py --approve 371` | `python telegram_bot.py --reject 371` | `python telegram_bot.py --edit 371`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Anthropic Launches Claude Sheets, Whiteboards and Meetings — Claude Becomes a Full Workspace [ONLINE]
+
+📌 What: Claude is no longer just a chat window. Anthropic has launched Claude Sheets and Claude Whiteboards in beta on paid plans, made Claude Data generally available, shown off Claude Meetings for Team and Enterprise, and upgraded its interactive connectors.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/rohan_techofficial_81a0f/anthropic-launches-claude-sheets-whiteboards-and-meetings-claude-becomes-a-full-workspace-3bme
+```
+
+---
+
+### [#372] Data Colada finds evidence of altered data in a fifth Francesca Gino paper, a 2011 leadership study with 900+ citations [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-11 05:47:58`
+- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xssm7t/data_colada_finds_evidence_of_altered_data_in_a](https://www.reddit.com/r/datascience/comments/1xssm7t/data_colada_finds_evidence_of_altered_data_in_a)
+- **Quick Commands**: `python telegram_bot.py --approve 372` | `python telegram_bot.py --reject 372` | `python telegram_bot.py --edit 372`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Data Colada finds evidence of altered data in a fifth Francesca Gino paper, a 2011 leadership study with 900+ citations [ONLINE]
+
+📌 What: submitted by /u/rhiever [link] [comments]
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/datascience/comments/1xssm7t/data_colada_finds_evidence_of_altered_data_in_a/
+```
+
+---
+
+### [#373] Should Developers Apply for Jobs in November and December? (Yes, and Here's Why) [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 05:47:58`
+- **Original Link**: [https://dev.to/mybee_team_efdb884f233a84/should-developers-apply-for-jobs-in-november-and-december-yes-and-heres-why-3jj7](https://dev.to/mybee_team_efdb884f233a84/should-developers-apply-for-jobs-in-november-and-december-yes-and-heres-why-3jj7)
+- **Quick Commands**: `python telegram_bot.py --approve 373` | `python telegram_bot.py --reject 373` | `python telegram_bot.py --edit 373`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Should Developers Apply for Jobs in November and December? (Yes, and Here's Why) [ONLINE]
+
+📌 What: Every year around this time you hear it. "Nobody hires in December." "Code freeze, budget freeze, everyone's on vacation." "Just wait until January." It sounds believable.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Be / be (2026 Batch)
+🔗 https://dev.to/mybee_team_efdb884f233a84/should-developers-apply-for-jobs-in-november-and-december-yes-and-heres-why-3jj7
+```
+
+---
+
+### [#374] Standing out in Data Science Interview Case Studies [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-11 05:47:58`
+- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xt6wqu/standing_out_in_data_science_interview_case](https://www.reddit.com/r/datascience/comments/1xt6wqu/standing_out_in_data_science_interview_case)
+- **Quick Commands**: `python telegram_bot.py --approve 374` | `python telegram_bot.py --reject 374` | `python telegram_bot.py --edit 374`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Standing out in Data Science Interview Case Studies [ONLINE]
+
+📌 What: How do candidates stand out in a data science case study interviews? From my experience giving well over a hundred mock interviews, mostly for senior-level Faang roles, the best candidates can calmly justify their choices and don't get flustered under questioning.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Open to Students & Developers
+🔗 https://www.reddit.com/r/datascience/comments/1xt6wqu/standing_out_in_data_science_interview_case/
+```
+
+---
+
+### [#349] Dev News Digest: 11 Nov 2026, 06:00 [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://dev.to/magnus_ferm/dev-news-digest-11-nov-2026-0600-2ag7](https://dev.to/magnus_ferm/dev-news-digest-11-nov-2026-0600-2ag7)
+- **Quick Commands**: `python telegram_bot.py --approve 349` | `python telegram_bot.py --reject 349` | `python telegram_bot.py --edit 349`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Dev News Digest: 11 Nov 2026, 06:00 [ONLINE]
+
+📌 What: A quick roundup of developer news since the last digest. Security Git patches six vulnerabilities: New releases fix bugs including code execution during recursive clones of a malicious repository, path traversal via a server's advertised HEAD, and memory corruption in merges and binary patches.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/magnus_ferm/dev-news-digest-11-nov-2026-0600-2ag7
+```
+
+---
+
+### [#352] Auditable Human-Agent Teams for Autonomous X-ray Experimentation [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12933](https://arxiv.org/abs/2611.12933)
+- **Quick Commands**: `python telegram_bot.py --approve 352` | `python telegram_bot.py --reject 352` | `python telegram_bot.py --edit 352`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Auditable Human-Agent Teams for Autonomous X-ray Experimentation [ONLINE]
+
+📌 What: arXiv:2611.12933v1 Announce Type: new Abstract: Closed-loop autonomous experimentation can accelerate scientific discovery, but implementation effort limits accessibility. Agentic systems may lower this barrier, although sustained operation on physical instruments remains largely unexplored.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12933
+```
+
+---
+
+### [#353] Staffing Marketplace Growth Like an Engineering Project: A Practical Guide to Fractional Marketing Teams [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://dev.to/journeyhorizon/staffing-marketplace-growth-like-an-engineering-project-a-practical-guide-to-fractional-marketing-1e98](https://dev.to/journeyhorizon/staffing-marketplace-growth-like-an-engineering-project-a-practical-guide-to-fractional-marketing-1e98)
+- **Quick Commands**: `python telegram_bot.py --approve 353` | `python telegram_bot.py --reject 353` | `python telegram_bot.py --edit 353`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Staffing Marketplace Growth Like an Engineering Project: A Practical Guide to Fractional Marketing Teams [ONLINE]
+
+📌 What: Most marketplace teams don't fail at marketing strategy. They fail at execution: the plan exists, but nobody has the hours or the specific skills to ship it on both sides of the market at once.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Be (2025, 2026 Batch)
+🔗 https://dev.to/journeyhorizon/staffing-marketplace-growth-like-an-engineering-project-a-practical-guide-to-fractional-marketing-1e98
+```
+
+---
+
+### [#354] EarthRecord: From Pixels to Land Change with Multimodal Agents over Four Decades of Satellite Imagery [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12934](https://arxiv.org/abs/2611.12934)
+- **Quick Commands**: `python telegram_bot.py --approve 354` | `python telegram_bot.py --reject 354` | `python telegram_bot.py --edit 354`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 EarthRecord: From Pixels to Land Change with Multimodal Agents over Four Decades of Satellite Imagery [ONLINE]
+
+📌 What: arXiv:2611.12934v1 Announce Type: new Abstract: While multimodal agents now carry out complex data analysis with tools, their ability to turn decades of satellite imagery into reliable land-change analysis, crucial for Earth observation science, remains unmeasured. Existing benchmarks fall short: they pose questions on curated images or give agents preprocessed inputs, leaving out the raw multi-sensor archives where such analysis begins.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12934
+```
+
+---
+
+### [#355] Best Route Planning Software in the UK: Features, Pricing and Comparison [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://dev.to/modesh_983618eb836cdcb98e/best-route-planning-software-in-the-uk-features-pricing-and-comparison-17je](https://dev.to/modesh_983618eb836cdcb98e/best-route-planning-software-in-the-uk-features-pricing-and-comparison-17je)
+- **Quick Commands**: `python telegram_bot.py --approve 355` | `python telegram_bot.py --reject 355` | `python telegram_bot.py --edit 355`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Best Route Planning Software in the UK: Features, Pricing and Comparison [ONLINE]
+
+📌 What: Introduction Route planning is an important part of modern logistics and delivery operations. Businesses across the UK are looking for smarter ways to manage transportation, reduce fuel expenses, and improve delivery performance.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/modesh_983618eb836cdcb98e/best-route-planning-software-in-the-uk-features-pricing-and-comparison-17je
+```
+
+---
+
+### [#356] LandslideFM: A Foundation Model Towards Unified Landslide Perception and Understanding [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12936](https://arxiv.org/abs/2611.12936)
+- **Quick Commands**: `python telegram_bot.py --approve 356` | `python telegram_bot.py --reject 356` | `python telegram_bot.py --edit 356`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 LandslideFM: A Foundation Model Towards Unified Landslide Perception and Understanding [ONLINE]
+
+📌 What: arXiv:2611.12936v1 Announce Type: new Abstract: Intelligent landslide detection is essential for disaster prevention. However, existing models primarily focus on isolated visual tasks, require extensive labeled data, and lack deep analytical and scene-understanding capabilities.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12936
+```
+
+---
+
+### [#358] AI Governance Should Prioritize Control and Knowledge Boundaries Over Limiting Intelligence [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12941](https://arxiv.org/abs/2611.12941)
+- **Quick Commands**: `python telegram_bot.py --approve 358` | `python telegram_bot.py --reject 358` | `python telegram_bot.py --edit 358`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 AI Governance Should Prioritize Control and Knowledge Boundaries Over Limiting Intelligence [ONLINE]
+
+📌 What: arXiv:2611.12941v1 Announce Type: new Abstract: The rapid proliferation of autonomously acting AI agents makes the governance of agentic systems urgent. We propose the competence circuit, summarized as Ikc + KC + C, that decomposes an agent's real-world impact into three pathways: intelligence-mediated discovery, procedural know-how, and direct control.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12941
+```
+
+---
+
+### [#359] Preparing for AWS Microcredentials? I created a GitHub repository covering all 10 AWS microcredentials. [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://dev.to/atharva_ka_89e343c0a2c2/preparing-for-aws-microcredentials-i-created-a-github-repository-covering-all-10-aws-3kka](https://dev.to/atharva_ka_89e343c0a2c2/preparing-for-aws-microcredentials-i-created-a-github-repository-covering-all-10-aws-3kka)
+- **Quick Commands**: `python telegram_bot.py --approve 359` | `python telegram_bot.py --reject 359` | `python telegram_bot.py --edit 359`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Preparing for AWS Microcredentials? I created a GitHub repository covering all 10 AWS microcredentials. [ONLINE]
+
+📌 What: While working through the Aws Skill Builder microcredential labs, I started documenting my learning journey and building a collection of practical tutorials.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://dev.to/atharva_ka_89e343c0a2c2/preparing-for-aws-microcredentials-i-created-a-github-repository-covering-all-10-aws-3kka
+```
+
+---
+
+### [#361] SetPrint: Black-Box LLM Fingerprinting via Setwise Correspondence of Response Changes [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.AI RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12950](https://arxiv.org/abs/2611.12950)
+- **Quick Commands**: `python telegram_bot.py --approve 361` | `python telegram_bot.py --reject 361` | `python telegram_bot.py --edit 361`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 SetPrint: Black-Box LLM Fingerprinting via Setwise Correspondence of Response Changes [ONLINE]
+
+📌 What: arXiv:2611.12950v1 Announce Type: new Abstract: Black-box Llm fingerprinting aims to determine whether a target model was derived from a source model when only the output responses to input queries are observable. One way to reveal this relationship is to perturb each query and observe the resulting responses of both models, yielding two corresponding sets of response variations.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12950
+```
+
+---
+
+### [#362] From Senior Engineer to Tech Lead: Skills You Need [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: Dev.to Career RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://dev.to/uzairxdev/from-senior-engineer-to-tech-lead-skills-you-need-14c2](https://dev.to/uzairxdev/from-senior-engineer-to-tech-lead-skills-you-need-14c2)
+- **Quick Commands**: `python telegram_bot.py --approve 362` | `python telegram_bot.py --reject 362` | `python telegram_bot.py --edit 362`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 From Senior Engineer to Tech Lead: Skills You Need [ONLINE]
+
+📌 What: From Senior Engineer to Tech Lead: The Skills Code Doesn't Teach You For the first five to eight years of a software engineer's career, the measure of success is straightforward: How much high-quality code can you ship? You master design patterns, commit thousands of lines of well-tested code, optimize build pipelines, and squash edge-case bugs.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/uzairxdev/from-senior-engineer-to-tech-lead-skills-you-need-14c2
+```
+
+---
+
+### [#364] Exploration via Exploitation: The Blessing of Reward Diversity in Personalized Federated RL [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.LG RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12964](https://arxiv.org/abs/2611.12964)
+- **Quick Commands**: `python telegram_bot.py --approve 364` | `python telegram_bot.py --reject 364` | `python telegram_bot.py --edit 364`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 Exploration via Exploitation: The Blessing of Reward Diversity in Personalized Federated RL [ONLINE]
+
+📌 What: arXiv:2611.12964v1 Announce Type: new Abstract: While federated reinforcement learning (RL) has traditionally guaranteed high efficiency in homogeneous environments, collaboration is often hindered when agents possess distinct goals. In this paper, we flip this paradigm, framing reward heterogeneity not as a hurdle to consensus, but as a structural asset that catalyzes exploration.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12964
+```
+
+---
+
+### [#367] StatPrompt-LLM: A Lightweight Statistical Refinement for Foundation-Style Time-Series Forecasting [ONLINE]
+- **Location**: [ONLINE] Online | **Source**: ArXiv CS.LG RSS | **Created**: `2026-11-11 05:17:30`
+- **Original Link**: [https://arxiv.org/abs/2611.12974](https://arxiv.org/abs/2611.12974)
+- **Quick Commands**: `python telegram_bot.py --approve 367` | `python telegram_bot.py --reject 367` | `python telegram_bot.py --edit 367`
+
+**Formatted Legion Draft (Ready to Copy):**
+```text
+💡 StatPrompt-LLM: A Lightweight Statistical Refinement for Foundation-Style Time-Series Forecasting [ONLINE]
+
+📌 What: arXiv:2611.12974v1 Announce Type: new Abstract: Time-series forecasting has recently seen a paradigm shift with the introduction of foundation-style models that adapt large pretrained language architectures to sequential data. However, effectively exposing fundamental temporal structures, such as trend, scale, and temporal dependence, to these models remains an open challenge, particularly when the available observations are limited.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: 2026 Batch
+🔗 https://arxiv.org/abs/2611.12974
+```
+
+---
 
 ### [#279] 🎮 RIFTFIRE Submitted to CrazyGames — Play the Preview Now [ONLINE]
 - **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-11 04:37:18`
@@ -2435,585 +3595,313 @@
 
 ---
 
-### [#116] Axion 1.0: Open Agent Foundation Models, Simplified [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xqqhrl/axion_10_open_agent_foundation_models_simplified](https://www.reddit.com/r/learnmachinelearning/comments/1xqqhrl/axion_10_open_agent_foundation_models_simplified)
-- **Quick Commands**: `python telegram_bot.py --approve 116` | `python telegram_bot.py --reject 116` | `python telegram_bot.py --edit 116`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Axion 1.0: Open Agent Foundation Models, Simplified [ONLINE]
-
-📌 What: Axion’s main training claim is that useful tool-using agents can be built with two supervised fine-tuning stages followed by reinforcement learning, without dedicated mid-training, DPO, or on-policy distillation.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xqqhrl/axion_10_open_agent_foundation_models_simplified/
-```
-
----
-
-### [#117] Weekly Entering & Transitioning - Thread 02 Nov, 2026 - 09 Nov, 2026 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xloeez/weekly_entering_transitioning_thread_02_nov_2026](https://www.reddit.com/r/datascience/comments/1xloeez/weekly_entering_transitioning_thread_02_nov_2026)
-- **Quick Commands**: `python telegram_bot.py --approve 117` | `python telegram_bot.py --reject 117` | `python telegram_bot.py --edit 117`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Weekly Entering & Transitioning - Thread 02 Nov, 2026 - 09 Nov, 2026 [ONLINE]
-
-📌 What: Welcome to this week's entering & transitioning thread! This thread is for any questions about getting started, studying, or transitioning into the data science field. Topics include: Learning resources (e.g.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/datascience/comments/1xloeez/weekly_entering_transitioning_thread_02_nov_2026/
-```
-
----
-
-### [#119] Demystify the entry-level market for me please? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xnqi9t/demystify_the_entrylevel_market_for_me_please](https://www.reddit.com/r/datascience/comments/1xnqi9t/demystify_the_entrylevel_market_for_me_please)
-- **Quick Commands**: `python telegram_bot.py --approve 119` | `python telegram_bot.py --reject 119` | `python telegram_bot.py --edit 119`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Demystify the entry-level market for me please? [ONLINE]
-
-📌 What: I'm a senior data scientist with about a decade working in the industry. Lately I had been helping college grads with job search but found myself lacking knowledge of the entry-level hiring practices, specifically for…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/datascience/comments/1xnqi9t/demystify_the_entrylevel_market_for_me_please/
-```
-
----
-
-### [#120] Interactive tools for learning Agentic Analytics and evals for free [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xnoy9v/interactive_tools_for_learning_agentic_analytics](https://www.reddit.com/r/datascience/comments/1xnoy9v/interactive_tools_for_learning_agentic_analytics)
-- **Quick Commands**: `python telegram_bot.py --approve 120` | `python telegram_bot.py --reject 120` | `python telegram_bot.py --edit 120`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Interactive tools for learning Agentic Analytics and evals for free [ONLINE]
-
-📌 What: I keep running into data scientists who are trying to understand conversational analytics, like talk-to-your-data Slackbots, because they either want to build one for their company or understand how this could change…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/datascience/comments/1xnoy9v/interactive_tools_for_learning_agentic_analytics/
-```
-
----
-
-### [#121] Is anyone else seeing more relaxed coding rounds lately? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xm1sn9/is_anyone_else_seeing_more_relaxed_coding_rounds](https://www.reddit.com/r/datascience/comments/1xm1sn9/is_anyone_else_seeing_more_relaxed_coding_rounds)
-- **Quick Commands**: `python telegram_bot.py --approve 121` | `python telegram_bot.py --reject 121` | `python telegram_bot.py --edit 121`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Is anyone else seeing more relaxed coding rounds lately? [ONLINE]
-
-📌 What: Over the past month, I’ve interviewed with two companies that didn’t have any traditional coding rounds. Instead, their technical interviews were entirely case study or scenario based.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/datascience/comments/1xm1sn9/is_anyone_else_seeing_more_relaxed_coding_rounds/
-```
-
----
-
-### [#122] What is harness engineering? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/datascience | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://www.reddit.com/r/datascience/comments/1xjnevi/what_is_harness_engineering](https://www.reddit.com/r/datascience/comments/1xjnevi/what_is_harness_engineering)
-- **Quick Commands**: `python telegram_bot.py --approve 122` | `python telegram_bot.py --reject 122` | `python telegram_bot.py --edit 122`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 What is harness engineering? [ONLINE]
-
-📌 What: There's a lot of "conceptual conflation" going around lately, especially regarding the term 'Harness Engineering'. This article formalizes harness engineering with a clear conceptual model.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://www.reddit.com/r/datascience/comments/1xjnevi/what_is_harness_engineering/
-```
-
----
-
-### [#126] GitHub Universe 2026: Evolving every layer of the stack [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack](https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack)
-- **Quick Commands**: `python telegram_bot.py --approve 126` | `python telegram_bot.py --reject 126` | `python telegram_bot.py --edit 126`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 GitHub Universe 2026: Evolving every layer of the stack [ONLINE]
-
-📌 What: Today, we laid out our vision for GitHub as the most comprehensive, end-to-end software delivery system in the world. The post GitHub Universe 2026: Evolving every layer of the stack appeared first on The GitHub Blog.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/
-```
-
----
-
-### [#127] Octoverse: Commits, pushes, reach new highs in 2026 as developers build with agents [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents](https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents)
-- **Quick Commands**: `python telegram_bot.py --approve 127` | `python telegram_bot.py --reject 127` | `python telegram_bot.py --edit 127`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Octoverse: Commits, pushes, reach new highs in 2026 as developers build with agents [ONLINE]
-
-📌 What: See how a record year of growth reached every industry, every field, and every kind of builder in the 2026 Octoverse report.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/
-```
-
----
-
-### [#128] How bug bounty sharpens one researcher’s security skills [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/security/how-bug-bounty-sharpens-one-researchers-security-skills](https://github.blog/security/how-bug-bounty-sharpens-one-researchers-security-skills)
-- **Quick Commands**: `python telegram_bot.py --approve 128` | `python telegram_bot.py --reject 128` | `python telegram_bot.py --edit 128`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 How bug bounty sharpens one researcher’s security skills [ONLINE]
-
-📌 What: As Cybersecurity Awareness Month continues, the GitHub Bug Bounty team spotlights @r31n, diving into their research approach, favorite bug classes, and advice for aspiring hackers.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/security/how-bug-bounty-sharpens-one-researchers-security-skills/
-```
-
----
-
-### [#129] The bridge to agent-scale Git infrastructure [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/engineering/architecture-optimization/the-bridge-to-agent-scale-git-infrastructure](https://github.blog/engineering/architecture-optimization/the-bridge-to-agent-scale-git-infrastructure)
-- **Quick Commands**: `python telegram_bot.py --approve 129` | `python telegram_bot.py --reject 129` | `python telegram_bot.py --edit 129`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 The bridge to agent-scale Git infrastructure [ONLINE]
-
-📌 What: We moved a copy of 99.99999% of GitHub's repositories to Azure. Here's how per-reference quorums will bring over the rest, and how object storage lets reads scale independently.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/engineering/architecture-optimization/the-bridge-to-agent-scale-git-infrastructure/
-```
-
----
-
-### [#130] How 3 Java Champions are using GitHub Copilot for increased productivity [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/ai-and-ml/github-copilot/how-3-java-champions-are-using-github-copilot-for-increased-productivity](https://github.blog/ai-and-ml/github-copilot/how-3-java-champions-are-using-github-copilot-for-increased-productivity)
-- **Quick Commands**: `python telegram_bot.py --approve 130` | `python telegram_bot.py --reject 130` | `python telegram_bot.py --edit 130`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 How 3 Java Champions are using GitHub Copilot for increased productivity [ONLINE]
-
-📌 What: Three Java Champions share how they use GitHub Copilot to solve problems, accelerate development, and keep humans responsible for the results.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/ai-and-ml/github-copilot/how-3-java-champions-are-using-github-copilot-for-increased-productivity/
-```
-
----
-
-### [#131] GitHub Copilot weekly releases — November 2 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Changelog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2)
-- **Quick Commands**: `python telegram_bot.py --approve 131` | `python telegram_bot.py --reject 131` | `python telegram_bot.py --edit 131`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 GitHub Copilot weekly releases — November 2 [ONLINE]
-
-📌 What: This week, Copilot comes to JetBrains Air and Xcode’s coding assistant, with updates to help you manage pull requests, settings, and agent sessions.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2
-```
-
----
-
-### [#132] Usage metrics API adds code review details and addressed rate [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Changelog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate](https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate)
-- **Quick Commands**: `python telegram_bot.py --approve 132` | `python telegram_bot.py --reject 132` | `python telegram_bot.py --edit 132`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Usage metrics API adds code review details and addressed rate [ONLINE]
-
-📌 What: The enterprise and organization repository-level Copilot usage metrics reports now show what happens to Copilot code review feedback.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate
-```
-
----
-
-### [#133] Usage metrics API flags telemetry and version gaps [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Changelog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps](https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps)
-- **Quick Commands**: `python telegram_bot.py --approve 133` | `python telegram_bot.py --reject 133` | `python telegram_bot.py --edit 133`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Usage metrics API flags telemetry and version gaps [ONLINE]
-
-📌 What: The Copilot usage metrics API now shows which users are missing client telemetry or are running IDE or extension versions below the usage metrics minimums.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps
-```
-
----
-
-### [#135] CodeQL 2.27.4 improves accuracy and query metadata [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Changelog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/changelog/2026-11-04-codeql-2-27-4-improves-accuracy-and-query-metadata](https://github.blog/changelog/2026-11-04-codeql-2-27-4-improves-accuracy-and-query-metadata)
-- **Quick Commands**: `python telegram_bot.py --approve 135` | `python telegram_bot.py --reject 135` | `python telegram_bot.py --edit 135`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 CodeQL 2.27.4 improves accuracy and query metadata [ONLINE]
-
-📌 What: CodeQL is the static analysis engine behind GitHub code scanning, which finds and remediates security issues in your code.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/changelog/2026-11-04-codeql-2-27-4-improves-accuracy-and-query-metadata
-```
-
----
-
-### [#136] GitHub Copilot is now available in Xcode’s coding assistant [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: GitHub Changelog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://github.blog/changelog/2026-11-04-github-copilot-is-now-available-in-xcodes-coding-assistant](https://github.blog/changelog/2026-11-04-github-copilot-is-now-available-in-xcodes-coding-assistant)
-- **Quick Commands**: `python telegram_bot.py --approve 136` | `python telegram_bot.py --reject 136` | `python telegram_bot.py --edit 136`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 GitHub Copilot is now available in Xcode’s coding assistant [ONLINE]
-
-📌 What: You can now work with GitHub Copilot directly in Xcode’s built-in coding assistant, bringing Copilot into your native Xcode workflow.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://github.blog/changelog/2026-11-04-github-copilot-is-now-available-in-xcodes-coding-assistant
-```
-
----
-
-### [#137] After the midterms, things are looking rocky for Elon Musk and data centers [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: TechCrunch RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://techcrunch.com/2026/11/07/after-the-midterms-things-are-looking-rocky-for-elon-musk-and-data-centers](https://techcrunch.com/2026/11/07/after-the-midterms-things-are-looking-rocky-for-elon-musk-and-data-centers)
-- **Quick Commands**: `python telegram_bot.py --approve 137` | `python telegram_bot.py --reject 137` | `python telegram_bot.py --edit 137`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 After the midterms, things are looking rocky for Elon Musk and data centers [ONLINE]
-
-📌 What: On Equity, we unpacked what the midterms mean for the tech industry.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://techcrunch.com/2026/11/07/after-the-midterms-things-are-looking-rocky-for-elon-musk-and-data-centers/
-```
-
----
-
-### [#138] Megaspeed exec was recruited to spy on Nvidia CEO, according to US intelligence memo [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: TechCrunch RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://techcrunch.com/2026/11/07/chinese-exec-was-recruited-to-spy-on-nvidia-ceo-according-to-us-intelligence-memo](https://techcrunch.com/2026/11/07/chinese-exec-was-recruited-to-spy-on-nvidia-ceo-according-to-us-intelligence-memo)
-- **Quick Commands**: `python telegram_bot.py --approve 138` | `python telegram_bot.py --reject 138` | `python telegram_bot.py --edit 138`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Megaspeed exec was recruited to spy on Nvidia CEO, according to US intelligence memo [ONLINE]
-
-📌 What: A memo circulated earlier this year reportedly claimed that China’s Ministry of State Security recruited a female technology executive to spy on Nvidia's CEO.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://techcrunch.com/2026/11/07/chinese-exec-was-recruited-to-spy-on-nvidia-ceo-according-to-us-intelligence-memo/
-```
-
----
-
-### [#139] Crusoe sells troubled Wyoming data center project to Google [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: TechCrunch RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://techcrunch.com/2026/11/06/crusoe-sells-troubled-wyoming-data-center-project-to-google](https://techcrunch.com/2026/11/06/crusoe-sells-troubled-wyoming-data-center-project-to-google)
-- **Quick Commands**: `python telegram_bot.py --approve 139` | `python telegram_bot.py --reject 139` | `python telegram_bot.py --edit 139`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Crusoe sells troubled Wyoming data center project to Google [ONLINE]
-
-📌 What: The deal highlights the challenges of developing massive AI data centers.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://techcrunch.com/2026/11/06/crusoe-sells-troubled-wyoming-data-center-project-to-google/
-```
-
----
-
-### [#156] Oh, your agents need OAuth2, too [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://stackoverflow.blog/2026/11/03/oh-your-agents-need-oauth2-too](https://stackoverflow.blog/2026/11/03/oh-your-agents-need-oauth2-too)
-- **Quick Commands**: `python telegram_bot.py --approve 156` | `python telegram_bot.py --reject 156` | `python telegram_bot.py --edit 156`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Oh, your agents need OAuth2, too [ONLINE]
-
-📌 What: Recorded at LDX3 by LeadDev, Ryan chats with Dan Moore, Senior Director of CIAM Strategy and Identity Standards at FusionAuth, about adapting established OAuth2 protocols for the agentic era, the security necessity of…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/11/03/oh-your-agents-need-oauth2-too/
-```
-
----
-
-### [#157] It’s ok that computers are (sometimes) better than us [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://stackoverflow.blog/2026/10/30/it-s-ok-that-computers-are-sometimes-better-than-us](https://stackoverflow.blog/2026/10/30/it-s-ok-that-computers-are-sometimes-better-than-us)
-- **Quick Commands**: `python telegram_bot.py --approve 157` | `python telegram_bot.py --reject 157` | `python telegram_bot.py --edit 157`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 It’s ok that computers are (sometimes) better than us [ONLINE]
-
-📌 What: Ryan is joined by Charity Majors, co-founder and CTO at Honeycomb, for a conversation about applying the concept of immutable infrastructure to software development to treat code like cattle instead of pets, shifting…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/10/30/it-s-ok-that-computers-are-sometimes-better-than-us/
-```
-
----
-
-### [#158] A JSON schema Is not an AI governance layer [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://stackoverflow.blog/2026/10/28/a-json-schema-is-not-an-ai-governance-layer](https://stackoverflow.blog/2026/10/28/a-json-schema-is-not-an-ai-governance-layer)
-- **Quick Commands**: `python telegram_bot.py --approve 158` | `python telegram_bot.py --reject 158` | `python telegram_bot.py --edit 158`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 A JSON schema Is not an AI governance layer [ONLINE]
-
-📌 What: The AI governance argument is happening one layer above the code that actually stops your agent.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/10/28/a-json-schema-is-not-an-ai-governance-layer/
-```
-
----
-
-### [#159] Elevators, toasters, and the birth of Java [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://stackoverflow.blog/2026/10/27/elevators-toasters-and-the-birth-of-java](https://stackoverflow.blog/2026/10/27/elevators-toasters-and-the-birth-of-java)
-- **Quick Commands**: `python telegram_bot.py --approve 159` | `python telegram_bot.py --reject 159` | `python telegram_bot.py --edit 159`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Elevators, toasters, and the birth of Java [ONLINE]
-
-📌 What: Ryan sits down with James Gosling, creator of Java at Sun Microsystems, to talk about the early networking friction that drove the need for interconnectedness, the stringent reliability requirements of consumer…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/10/27/elevators-toasters-and-the-birth-of-java/
-```
-
----
-
-### [#160] Rumors of the SaaS demise are greatly exaggerated [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-08 07:15:13`
-- **Original Link**: [https://stackoverflow.blog/2026/10/23/rumors-of-the-saas-demise-are-greatly-exaggerated](https://stackoverflow.blog/2026/10/23/rumors-of-the-saas-demise-are-greatly-exaggerated)
-- **Quick Commands**: `python telegram_bot.py --approve 160` | `python telegram_bot.py --reject 160` | `python telegram_bot.py --edit 160`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Rumors of the SaaS demise are greatly exaggerated [ONLINE]
-
-📌 What: Recorded on the floor of LDX3, Ryan chats with Nivia Henry, an engineering leader most recently at Netflix, about the reality of the supposed SaaS apocalypse, the complex calculus of the modern build-versus-buy decision…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/10/23/rumors-of-the-saas-demise-are-greatly-exaggerated/
-```
-
----
-
-### [#74] Dev News Digest: 7 Nov 2026, 18:00 [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Dev.to News RSS | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://dev.to/magnus_ferm/dev-news-digest-7-nov-2026-1800-3079](https://dev.to/magnus_ferm/dev-news-digest-7-nov-2026-1800-3079)
-- **Quick Commands**: `python telegram_bot.py --approve 74` | `python telegram_bot.py --reject 74` | `python telegram_bot.py --edit 74`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Dev News Digest: 7 Nov 2026, 18:00 [ONLINE]
-
-📌 What: A quick roundup of developer news since the last digest. AI & tooling Grab tackles the flood of AI-generated code changes: Grab describes how it kept its mobile app stable while AI coding assistants increased the number…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://dev.to/magnus_ferm/dev-news-digest-7-nov-2026-1800-3079
-```
-
----
-
-### [#86] How are you dealing with all the negative side effects of AI on the web? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Lobste.rs RSS | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://lobste.rs/s/ipplhe/how_are_you_dealing_with_all_negative_side](https://lobste.rs/s/ipplhe/how_are_you_dealing_with_all_negative_side)
-- **Quick Commands**: `python telegram_bot.py --approve 86` | `python telegram_bot.py --reject 86` | `python telegram_bot.py --edit 86`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 How are you dealing with all the negative side effects of AI on the web? [ONLINE]
-
-📌 What: It seems to me that the AI hype killed the web for good, but not for the reasons we immediately associate with it.
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://lobste.rs/s/ipplhe/how_are_you_dealing_with_all_negative_side
-```
-
----
-
-### [#89] Welcome to life in the chip age [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: StackOverflow Blog RSS | **Created**: `2026-11-07 17:42:11`
-- **Original Link**: [https://stackoverflow.blog/2026/11/06/welcome-to-life-in-the-chip-age](https://stackoverflow.blog/2026/11/06/welcome-to-life-in-the-chip-age)
-- **Quick Commands**: `python telegram_bot.py --approve 89` | `python telegram_bot.py --reject 89` | `python telegram_bot.py --edit 89`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 Welcome to life in the chip age [ONLINE]
-
-📌 What: Ryan sits down with Rakesh Kumar, professor of computer engineering at the University of Illinois Urbana-Champaign, about the astounding complexity of manufacturing modern semiconductors, the massive environmental and…
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Open to all
-🔗 https://stackoverflow.blog/2026/11/06/welcome-to-life-in-the-chip-age/
-```
-
----
-
-### [#28] The Components of Agent Memory [ONLINE]
-- **Location**: [ONLINE] Global | **Source**: Hacker News API | **Created**: `2026-11-07 09:34:08`
-- **Original Link**: [https://www.anthropic.com/research/components-of-agent-memory](https://www.anthropic.com/research/components-of-agent-memory)
-- **Quick Commands**: `python telegram_bot.py --approve 28` | `python telegram_bot.py --reject 28` | `python telegram_bot.py --edit 28`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-💡 The Components of Agent Memory
-
-📌 What: Trending on Hacker News (33 points, 13 comments) posted by @geoffbp.
-📅 Date / Deadline: Ongoing / Published
-📍 Where: Global
-🎯 Who: Open to all
-🔗 https://www.anthropic.com/research/components-of-agent-memory
-```
-
----
-
-### [#35] Undergrads in ML / medical AI / neuroscience around the world: let's get to know each other [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
-- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpx2u7/undergrads_in_ml_medical_ai_neuroscience_around](https://www.reddit.com/r/learnmachinelearning/comments/1xpx2u7/undergrads_in_ml_medical_ai_neuroscience_around)
-- **Quick Commands**: `python telegram_bot.py --approve 35` | `python telegram_bot.py --reject 35` | `python telegram_bot.py --edit 35`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Undergrads in ML / medical AI / neuroscience around the world: let's get to know each other
-
-📌 What: Hi everyone! I'm a third-year biomedical engineering undergrad based in China (UTC+8). I work on medical AI: medical imaging, EEG and brain-computer interfac...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xpx2u7/undergrads_in_ml_medical_ai_neuroscience_around/
-```
-
----
-
-### [#36] Math for AI & ML video series for Linear Algebra [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
-- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpv96l/math_for_ai_ml_video_series_for_linear_algebra](https://www.reddit.com/r/learnmachinelearning/comments/1xpv96l/math_for_ai_ml_video_series_for_linear_algebra)
-- **Quick Commands**: `python telegram_bot.py --approve 36` | `python telegram_bot.py --reject 36` | `python telegram_bot.py --edit 36`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 Math for AI & ML video series for Linear Algebra
-
-📌 What: I create a Youtube channel https://www.youtube.com/@math4aiorg for the book (https://www.amazon.com/dp/B0GSXVFMLD/ ) Math for AI & ML's Part I. Part I (Chapt...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xpv96l/math_for_ai_ml_video_series_for_linear_algebra/
-```
-
----
-
-### [#37] How are other AIML students planning their learning journey? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
-- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xpxgqd/how_are_other_aiml_students_planning_their](https://www.reddit.com/r/learnmachinelearning/comments/1xpxgqd/how_are_other_aiml_students_planning_their)
-- **Quick Commands**: `python telegram_bot.py --approve 37` | `python telegram_bot.py --reject 37` | `python telegram_bot.py --edit 37`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 How are other AIML students planning their learning journey?
-
-📌 What: Hello everyone! I'm currently pursuing B.Tech in Artificial Intelligence and Machine Learning. I'm at the beginner stage and trying to figure out how to bala...
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xpxgqd/how_are_other_aiml_students_planning_their/
-```
-
----
-
-### [#42] ML JOB SITUATION IN INDIA? [ONLINE]
-- **Location**: [ONLINE] Online | **Source**: Reddit r/learnmachinelearning | **Created**: `2026-11-07 09:34:08`
-- **Original Link**: [https://www.reddit.com/r/learnmachinelearning/comments/1xq0g3q/ml_job_situation_in_india](https://www.reddit.com/r/learnmachinelearning/comments/1xq0g3q/ml_job_situation_in_india)
-- **Quick Commands**: `python telegram_bot.py --approve 42` | `python telegram_bot.py --reject 42` | `python telegram_bot.py --edit 42`
-
-**Formatted Legion Draft (Ready to Copy):**
-```text
-🎓 ML JOB SITUATION IN INDIA?
-
-📌 What: submitted by /u/Unusual-Income-1093 [link] [comments]
-📅 Date / Deadline: Self-paced / Always open
-📍 Where: Online
-🎯 Who: Free / Open to all learners
-🔗 https://www.reddit.com/r/learnmachinelearning/comments/1xq0g3q/ml_job_situation_in_india/
-```
-
----
-
 ## 🔍 Review Queue (Needs Admin Verification)
 
-*Items flagged for manual verification: `44`*
+*Items flagged for manual verification: `51`*
+
+### [#449] Hacknauts 2.0 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://hacknauts26.devfolio.co](https://hacknauts26.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 449` | `python telegram_bot.py --reject 449`
+```text
+⚡ Hacknauts 2.0
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-11-15
+📍 Where: India
+🎯 Who: Freshers
+🔗 https://hacknauts26.devfolio.co
+```
+
+---
+
+### [#450] DevNexus 2.0 [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://devnexus2.devfolio.co](https://devnexus2.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 450` | `python telegram_bot.py --reject 450`
+```text
+⚡ DevNexus 2.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-11-28
+📍 Where: [ONLINE] India
+🎯 Who: be (2026 Batch)
+🔗 https://devnexus2.devfolio.co
+```
+
+---
+
+### [#451] GeNarrative Clash [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://genarrative-clash.devfolio.co](https://genarrative-clash.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 451` | `python telegram_bot.py --reject 451`
+```text
+⚡ GeNarrative Clash [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-11-21
+📍 Where: [ONLINE] India
+🎯 Who: Working professionals
+🔗 https://genarrative-clash.devfolio.co
+```
+
+---
+
+### [#452] Code N Mod 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://codenmod.devfolio.co](https://codenmod.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 452` | `python telegram_bot.py --reject 452`
+```text
+⚡ Code N Mod
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-11-18
+📍 Where: India
+🎯 Who: Students
+🔗 https://codenmod.devfolio.co
+```
+
+---
+
+### [#453] Lean In Hacks 8.0 [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://lean-in-hacks-8.devfolio.co](https://lean-in-hacks-8.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 453` | `python telegram_bot.py --reject 453`
+```text
+⚡ Lean In Hacks 8.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-11-22
+📍 Where: [ONLINE] India
+🎯 Who: Students
+🔗 https://lean-in-hacks-8.devfolio.co
+```
+
+---
+
+### [#454] Clash of Commits [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://clash-of-commits.devfolio.co](https://clash-of-commits.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 454` | `python telegram_bot.py --reject 454`
+```text
+⚡ Clash of Commits [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2026-12-05
+📍 Where: [ONLINE] India
+🎯 Who: be (2026 Batch)
+🔗 https://clash-of-commits.devfolio.co
+```
+
+---
+
+### [#455] Health Hackathon 3.0 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://health-hackathon.devfolio.co](https://health-hackathon.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 455` | `python telegram_bot.py --reject 455`
+```text
+⚡ Health Hackathon 3.0
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-29
+📍 Where: India
+🎯 Who: Students
+🔗 https://health-hackathon.devfolio.co
+```
+
+---
+
+### [#457] haxfinity 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://haxfinity.devfolio.co](https://haxfinity.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 457` | `python telegram_bot.py --reject 457`
+```text
+⚡ haxfinity
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-04
+📍 Where: India
+🎯 Who: Students
+🔗 https://haxfinity.devfolio.co
+```
+
+---
+
+### [#458] Hack Nexus 2027 
+- **Flag Reason**: ⚠️ `2027 Batch`
+- **Source**: Devfolio | **Link**: [https://hack-nexus.devfolio.co](https://hack-nexus.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 458` | `python telegram_bot.py --reject 458`
+```text
+⚡ Hack Nexus 2027
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-31
+📍 Where: India
+🎯 Who: Students
+🔗 https://hack-nexus.devfolio.co
+```
+
+---
+
+### [#459] Hacksprint 3.0 [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://hacksprint-3.devfolio.co](https://hacksprint-3.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 459` | `python telegram_bot.py --reject 459`
+```text
+⚡ Hacksprint 3.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-30
+📍 Where: [ONLINE] India
+🎯 Who: Only shortlisted teams may participate in the offl
+🔗 https://hacksprint-3.devfolio.co
+```
+
+---
+
+### [#460] Innerve 11.0 [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://innerve-11.devfolio.co](https://innerve-11.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 460` | `python telegram_bot.py --reject 460`
+```text
+⚡ Innerve 11.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-30
+📍 Where: [ONLINE] India
+🎯 Who: be (2026, 2027 Batch)
+🔗 https://innerve-11.devfolio.co
+```
+
+---
+
+### [#461] Techacks 5.0 [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://techacks05.devfolio.co](https://techacks05.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 461` | `python telegram_bot.py --reject 461`
+```text
+⚡ Techacks 5.0 [ONLINE]
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-16
+📍 Where: [ONLINE] India
+🎯 Who: Students
+🔗 https://techacks05.devfolio.co
+```
+
+---
+
+### [#462] HACK WITH GDG S4 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Devfolio | **Link**: [https://hack-with-gdg-s4.devfolio.co](https://hack-with-gdg-s4.devfolio.co)
+- **Quick Commands**: `python telegram_bot.py --approve 462` | `python telegram_bot.py --reject 462`
+```text
+⚡ HACK WITH GDG S4
+
+📌 What: Devfolio Indian developer hackathon
+📅 Date / Deadline: 2027-01-24
+📍 Where: India
+🎯 Who: be (2026, 2027 Batch)
+🔗 https://hack-with-gdg-s4.devfolio.co
+```
+
+---
+
+### [#405] How We Took Second at a Hackathon with Codex and 18 Git Worktrees 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Dev.to API | **Link**: [https://dev.to/carlos/how-we-took-second-at-a-hackathon-with-codex-and-18-git-worktrees-n1b](https://dev.to/carlos/how-we-took-second-at-a-hackathon-with-codex-and-18-git-worktrees-n1b)
+- **Quick Commands**: `python telegram_bot.py --approve 405` | `python telegram_bot.py --reject 405`
+```text
+💡 How We Took Second at a Hackathon with Codex and 18 Git Worktrees
+
+📌 What: A friend and I took second place at the Codex Community hackathon in Guadalajara with Panas. Across...
+📅 Date / Deadline: See article
+📍 Where: Unspecified
+🎯 Who: 2026 Batch
+🔗 https://dev.to/carlos/how-we-took-second-at-a-hackathon-with-codex-and-18-git-worktrees-n1b
+```
+
+---
+
+### [#406] OSS projects banning AI-generated contributions [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Hacker News RSS | **Link**: [https://osssaysno.com](https://osssaysno.com)
+- **Quick Commands**: `python telegram_bot.py --approve 406` | `python telegram_bot.py --reject 406`
+```text
+💡 OSS projects banning AI-generated contributions [ONLINE]
+
+📌 What: Comments
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://osssaysno.com
+```
+
+---
+
+### [#415] SolanaGuard AI: Understand Before You Sign 
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Dev.to API | **Link**: [https://dev.to/sammynug/solanaguard-ai-understand-before-you-sign-374o](https://dev.to/sammynug/solanaguard-ai-understand-before-you-sign-374o)
+- **Quick Commands**: `python telegram_bot.py --approve 415` | `python telegram_bot.py --reject 415`
+```text
+💡 SolanaGuard AI: Understand Before You Sign
+
+📌 What: What if you could understand what a Solana transaction is doing before deciding whether to approve...
+📅 Date / Deadline: See article
+📍 Where: Unspecified
+🎯 Who: be (2026 Batch)
+🔗 https://dev.to/sammynug/solanaguard-ai-understand-before-you-sign-374o
+```
+
+---
+
+### [#383] Apple has new Mac app coming to make running local AI models easy [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Hacker News RSS | **Link**: [https://9to5mac.com/2026/11/10/apple-has-new-mac-app-coming-to-make-running-local-ai-models-easy](https://9to5mac.com/2026/11/10/apple-has-new-mac-app-coming-to-make-running-local-ai-models-easy)
+- **Quick Commands**: `python telegram_bot.py --approve 383` | `python telegram_bot.py --reject 383`
+```text
+💡 Apple has new Mac app coming to make running local AI models easy [ONLINE]
+
+📌 What: Comments
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Be (2026 Batch)
+🔗 https://9to5mac.com/2026/11/10/apple-has-new-mac-app-coming-to-make-running-local-ai-models-easy/
+```
+
+---
+
+### [#384] Memory Safety Bugs in Rust Standard Library [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Lobste.rs RSS | **Link**: [https://forge-blog.github.io/posts/rust-std-memory-safety](https://forge-blog.github.io/posts/rust-std-memory-safety)
+- **Quick Commands**: `python telegram_bot.py --approve 384` | `python telegram_bot.py --reject 384`
+```text
+💡 Memory Safety Bugs in Rust Standard Library [ONLINE]
+
+📌 What: Comments
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: be (2026 Batch)
+🔗 https://forge-blog.github.io/posts/rust-std-memory-safety/
+```
+
+---
+
+### [#348] A never-ending programming contest for chess and shogi engines [ONLINE]
+- **Flag Reason**: ⚠️ `Open to Students & Developers`
+- **Source**: Dev.to Hackathons RSS | **Link**: [https://dev.to/tinyairun/a-never-ending-programming-contest-for-chess-and-shogi-engines-5og](https://dev.to/tinyairun/a-never-ending-programming-contest-for-chess-and-shogi-engines-5og)
+- **Quick Commands**: `python telegram_bot.py --approve 348` | `python telegram_bot.py --reject 348`
+```text
+⚡ A never-ending programming contest for chess and shogi engines [ONLINE]
+
+📌 What: Hi everyone, Remember Topcoder Marathon Matches and Google Code Jam? I built something for people who miss that kind of competition.
+📅 Date / Deadline: See details
+📍 Where: [ONLINE] Online
+🎯 Who: Review needed: no date
+🔗 https://dev.to/tinyairun/a-never-ending-programming-contest-for-chess-and-shogi-engines-5og
+```
+
+---
 
 ### [#345] Design School S2: AI took my brief, not my job [BENGALURU - OFFLINE]
 - **Flag Reason**: ⚠️ `Open to Students & Developers`
@@ -3255,38 +4143,6 @@
 
 ---
 
-### [#229] Hackathons are kinda hard [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to Hackathons RSS | **Link**: [https://dev.to/lamc4/hackathons-are-kinda-hard-4mg1](https://dev.to/lamc4/hackathons-are-kinda-hard-4mg1)
-- **Quick Commands**: `python telegram_bot.py --approve 229` | `python telegram_bot.py --reject 229`
-```text
-⚡ Hackathons are kinda hard [ONLINE]
-
-📌 What: This is a submission for the Mlh x Dev Writing Challenge What I Built My team and I built CumulusFit, a fitness app, tailored to the theme of our hackathon "In The Clouds" that has Gemini Api integration to help you g...
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Review needed: no date
-🔗 https://dev.to/lamc4/hackathons-are-kinda-hard-4mg1
-```
-
----
-
-### [#228] Skilltrii [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to Hackathons RSS | **Link**: [https://dev.to/lebo45/skilltrii-3a7j](https://dev.to/lebo45/skilltrii-3a7j)
-- **Quick Commands**: `python telegram_bot.py --approve 228` | `python telegram_bot.py --reject 228`
-```text
-⚡ Skilltrii [ONLINE]
-
-📌 What: This is a submission for the Mlh x Dev Writing Challenge What I Built Demo Partner Technologies Hackathon Experience
-📅 Date / Deadline: See details
-📍 Where: [ONLINE] Online
-🎯 Who: Review needed: no date
-🔗 https://dev.to/lebo45/skilltrii-3a7j
-```
-
----
-
 ### [#227] CoreWeave bond yield tops 16% as AI credit stress rises [ONLINE]
 - **Flag Reason**: ⚠️ `Open to Students & Developers`
 - **Source**: Hacker News API | **Link**: [https://www.cnbc.com/2026/11/06/coreweave-bond-yield-tops-16percent-as-ai-credit-stress-rises.html](https://www.cnbc.com/2026/11/06/coreweave-bond-yield-tops-16percent-as-ai-credit-stress-rises.html)
@@ -3431,134 +4287,6 @@
 
 ---
 
-### [#94] Freeing AI from the Terminal: How We Built SwitchWarRoom to Turn Coding Agents into SRE Teammates in Slack [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/vidisha_gupta_/freeing-ai-from-the-terminal-how-we-built-switchwarroom-to-turn-coding-agents-into-sre-teammates-2aom](https://dev.to/vidisha_gupta_/freeing-ai-from-the-terminal-how-we-built-switchwarroom-to-turn-coding-agents-into-sre-teammates-2aom)
-- **Quick Commands**: `python telegram_bot.py --approve 94` | `python telegram_bot.py --reject 94`
-```text
-⚡ Freeing AI from the Terminal: How We Built SwitchWarRoom to Turn Coding Agents into SRE Teammates in Slack
-
-📌 What: Submitted for the Flip the Switch Hackathon by WeMakeDevs & DevTools Academy (Powered by Switch...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/vidisha_gupta_/freeing-ai-from-the-terminal-how-we-built-switchwarroom-to-turn-coding-agents-into-sre-teammates-2aom
-```
-
----
-
-### [#95] PR Pilot: Putting Multi-Agent AI Code Reviewers Inside Discord [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/jaysid97/pr-pilot-putting-multi-agent-ai-code-reviewers-inside-discord-36a8](https://dev.to/jaysid97/pr-pilot-putting-multi-agent-ai-code-reviewers-inside-discord-36a8)
-- **Quick Commands**: `python telegram_bot.py --approve 95` | `python telegram_bot.py --reject 95`
-```text
-⚡ PR Pilot: Putting Multi-Agent AI Code Reviewers Inside Discord
-
-📌 What: This is a submission for the MLH x DEV Writing Challenge What I Built Every developer...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/jaysid97/pr-pilot-putting-multi-agent-ai-code-reviewers-inside-discord-36a8
-```
-
----
-
-### [#96] I let AI agents build and run my T-shirt store from Slack in just 24 hours [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-379h](https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-379h)
-- **Quick Commands**: `python telegram_bot.py --approve 96` | `python telegram_bot.py --reject 96`
-```text
-⚡ I let AI agents build and run my T-shirt store from Slack in just 24 hours
-
-📌 What: Switch Gear: a one-founder store where every department, and the engineering team that built it, is an AI agent working in Slack through Switch.
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-379h
-```
-
----
-
-### [#97] Two Rooms, One Operator [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/snedz/two-rooms-one-operator-no9](https://dev.to/snedz/two-rooms-one-operator-no9)
-- **Quick Commands**: `python telegram_bot.py --approve 97` | `python telegram_bot.py --reject 97`
-```text
-⚡ Two Rooms, One Operator
-
-📌 What: A deadline board that caught this hackathon's wrong deadline, and a producer agent that tells the...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/snedz/two-rooms-one-operator-no9
-```
-
----
-
-### [#98] A Screenshot Is a Claim: Building Private Money Agents for Indian Groups on Switch [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/sahvi/a-screenshot-is-a-claim-building-private-money-agents-for-indian-groups-on-switch-18o](https://dev.to/sahvi/a-screenshot-is-a-claim-building-private-money-agents-for-indian-groups-on-switch-18o)
-- **Quick Commands**: `python telegram_bot.py --approve 98` | `python telegram_bot.py --reject 98`
-```text
-⚡ A Screenshot Is a Claim: Building Private Money Agents for Indian Groups on Switch
-
-📌 What: Every person gets their own AI agent, a clerk does the group's maths in plain code, and Switch's...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/sahvi/a-screenshot-is-a-claim-building-private-money-agents-for-indian-groups-on-switch-18o
-```
-
----
-
-### [#99] Building Orquest at SharkByte: Turning Career Planning Into an AI-Powered Game 🦈🎮 [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/oliver102274/building-orquest-at-sharkbyte-turning-career-planning-into-an-ai-powered-game-3b02](https://dev.to/oliver102274/building-orquest-at-sharkbyte-turning-career-planning-into-an-ai-powered-game-3b02)
-- **Quick Commands**: `python telegram_bot.py --approve 99` | `python telegram_bot.py --reject 99`
-```text
-⚡ Building Orquest at SharkByte: Turning Career Planning Into an AI-Powered Game 🦈🎮
-
-📌 What: Building Orquest at SharkByte: Turning Career Planning Into an AI-Powered Game 🦈🎮 ...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/oliver102274/building-orquest-at-sharkbyte-turning-career-planning-into-an-ai-powered-game-3b02
-```
-
----
-
-### [#100] I let AI agents build and run my T-shirt store from Slack in just 24 hours [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-58k2](https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-58k2)
-- **Quick Commands**: `python telegram_bot.py --approve 100` | `python telegram_bot.py --reject 100`
-```text
-⚡ I let AI agents build and run my T-shirt store from Slack in just 24 hours
-
-📌 What: Switch Gear: a one-founder store where every department, and the engineering team that built it, is an AI agent working in Slack through Switch.
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/adybose/i-let-ai-agents-build-and-run-my-t-shirt-store-from-slack-in-just-24-hours-58k2
-```
-
----
-
-### [#101] Escalation Room: I turned three AI agents into a support team in Telegram with Switch [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/olacode/escalation-room-i-turned-three-ai-agents-into-a-support-team-in-telegram-with-switch-3524](https://dev.to/olacode/escalation-room-i-turned-three-ai-agents-into-a-support-team-in-telegram-with-switch-3524)
-- **Quick Commands**: `python telegram_bot.py --approve 101` | `python telegram_bot.py --reject 101`
-```text
-⚡ Escalation Room: I turned three AI agents into a support team in Telegram with Switch
-
-📌 What: A customer writes: "I used SAVE10 and got charged $106.38. That's way more than 10% off a $100...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/olacode/escalation-room-i-turned-three-ai-agents-into-a-support-team-in-telegram-with-switch-3524
-```
-
----
-
 ### [#140] Scriptable GeoDNS: leaving AWS for Bunny [ONLINE]
 - **Flag Reason**: ⚠️ `Open to Students & Developers`
 - **Source**: Lobste.rs RSS | **Link**: [https://vincent.bernat.ch/en/blog/2026-bunny-geodns](https://vincent.bernat.ch/en/blog/2026-bunny-geodns)
@@ -3603,38 +4331,6 @@
 📍 Where: [ONLINE] Online
 🎯 Who: Open to all
 🔗 https://opensourcesecurity.io/2026/10-embargo/
-```
-
----
-
-### [#90] Pulse Flow: AI agents inside a hospital's Telegram groups, built on Switch [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/anupama003/pulse-flow-ai-agents-inside-a-hospitals-telegram-groups-built-on-switch-2311](https://dev.to/anupama003/pulse-flow-ai-agents-inside-a-hospitals-telegram-groups-built-on-switch-2311)
-- **Quick Commands**: `python telegram_bot.py --approve 90` | `python telegram_bot.py --reject 90`
-```text
-⚡ Pulse Flow: AI agents inside a hospital's Telegram groups, built on Switch
-
-📌 What: How I used Switch, Claude Code and MCP to put three agents into a hospital's ward, front-desk and...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/anupama003/pulse-flow-ai-agents-inside-a-hospitals-telegram-groups-built-on-switch-2311
-```
-
----
-
-### [#91] Night shift without the night: AI agents that keep a SOC's watch, built on Switch [ONLINE]
-- **Flag Reason**: ⚠️ `Open to Students & Developers`
-- **Source**: Dev.to API | **Link**: [https://dev.to/manoj1698/night-shift-without-the-night-ai-agents-that-keep-a-socs-watch-built-on-switch-go](https://dev.to/manoj1698/night-shift-without-the-night-ai-agents-that-keep-a-socs-watch-built-on-switch-go)
-- **Quick Commands**: `python telegram_bot.py --approve 91` | `python telegram_bot.py --reject 91`
-```text
-⚡ Night shift without the night: AI agents that keep a SOC's watch, built on Switch
-
-📌 What: Built for Flip the Switch (WeMakeDevs, DevTools Academy, Switch AI), Track 01: Best Business...
-📅 Date / Deadline: See article
-📍 Where: Unspecified
-🎯 Who: Open to all
-🔗 https://dev.to/manoj1698/night-shift-without-the-night-ai-agents-that-keep-a-socs-watch-built-on-switch-go
 ```
 
 ---
